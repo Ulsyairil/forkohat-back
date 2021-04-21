@@ -12,7 +12,8 @@ class ProgramFilesSchema extends Schema {
         .notNullable()
         .unsigned()
         .references("id")
-        .inTable("programs");
+        .inTable("programs")
+        .unique();
       table.string("name", 254).notNullable();
       table.string("mime", 5).notNullable();
       table.text("path").notNullable();

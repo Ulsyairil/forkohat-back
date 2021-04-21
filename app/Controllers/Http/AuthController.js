@@ -1,6 +1,7 @@
 "use strict";
 
 const { validate } = use("Validator");
+const Hash = use("Hash");
 const User = use("App/Models/User");
 
 class AuthController {
@@ -31,21 +32,30 @@ class AuthController {
         check = await User.where("nip", request.input("nip")).first();
       }
 
-      console.log(check.id);
-
       if (check == null) {
         let message;
 
         if (request.input("select") == "email") {
-          message = "email or password wrong";
+          message = "email not exists";
         }
 
         if (request.input("select") == "nip") {
-          message = "nip or password wrong";
+          message = "nip not exists";
         }
 
         return response.status(401).send({
           message: message,
+        });
+      }
+
+      const isSame = await Hash.verify(
+        request.input("password"),
+        check.password
+      );
+
+      if (!isSame) {
+        return response.status(401).send({
+          message: "wrong password",
         });
       }
 

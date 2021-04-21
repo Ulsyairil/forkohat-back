@@ -13,6 +13,7 @@ class OrderFilesSchema extends Schema {
         .unsigned()
         .references("id")
         .inTable("order_stuffs");
+      table.integer("page").notNullable();
       table.string("name", 254).notNullable();
       table.string("mime", 5).notNullable();
       table.text("path").notNullable();

@@ -13,6 +13,7 @@ class UserSchema extends Schema {
         .unsigned()
         .references("id")
         .inTable("rules");
+      table.string("name", 254).notNullable().unique();
       table.string("email", 254).notNullable().unique();
       table.string("nip", 18).nullable().unique();
       table.string("password", 60).notNullable();

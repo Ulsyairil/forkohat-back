@@ -12,7 +12,9 @@ class UserFilesSchema extends Schema {
         .notNullable()
         .unsigned()
         .references("id")
-        .inTable("users");
+        .inTable("users")
+        .unique();
+      table.enu("type", ["profile_picture", "files"]).notNullable();
       table.string("name", 254).notNullable();
       table.string("mime", 5).notNullable();
       table.text("path").notNullable();

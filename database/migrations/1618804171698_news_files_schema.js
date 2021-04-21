@@ -13,6 +13,7 @@ class NewsFilesSchema extends Schema {
         .unsigned()
         .references("id")
         .inTable("news");
+      table.enu("type", ["banner", "files"]).notNullable();
       table.string("name", 254).notNullable();
       table.string("mime", 5).notNullable();
       table.text("path").notNullable();

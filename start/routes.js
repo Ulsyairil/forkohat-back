@@ -34,7 +34,23 @@ Route.group(() => {
   Route.post("refresh", "AuthController.refreshToken").middleware(["access"]);
 }).prefix("api/v1");
 
-Route.group(function () {}).prefix("api/v1/superadmin");
+Route.group(function () {
+  Route.post("events", "Superadmin/EventController.index");
+  Route.get("event", "Superadmin/EventController.get").validator(
+    "Superadmin/GetEvent"
+  );
+  Route.post("event", "Superadmin/EventController.create").validator(
+    "Superadmin/CreateEvent"
+  );
+  Route.put("event", "Superadmin/EventController.edit").validator(
+    "Superadmin/EditEvent"
+  );
+  Route.put("event/dump", "Superadmin/EventController.dump");
+  Route.put("event/restore", "Superadmin/EventController.restore");
+  Route.delete("event", "Superadmin/EventController.delete");
+})
+  .prefix("api/v1/superadmin")
+  .middleware(["access"]);
 
 Route.group(function () {}).prefix("api/v1/admin");
 
