@@ -35,6 +35,7 @@ Route.group(() => {
 }).prefix("api/v1");
 
 Route.group(function () {
+  // Event routes
   Route.post("events", "Superadmin/EventController.index");
   Route.get("event", "Superadmin/EventController.get").validator(
     "Superadmin/GetEvent"
@@ -48,6 +49,47 @@ Route.group(function () {
   Route.put("event/dump", "Superadmin/EventController.dump");
   Route.put("event/restore", "Superadmin/EventController.restore");
   Route.delete("event", "Superadmin/EventController.delete");
+  Route.delete("event/file", "Superadmin/EventController.deleteFile");
+
+  // Rule routes
+  Route.post("rules", "Superadmin/RuleController.index");
+  Route.get("rule", "Superadmin/RuleController.get").validator(
+    "Superadmin/GetRule"
+  );
+  Route.post("rule", "Superadmin/RuleController.create").validator(
+    "Superadmin/CreateRule"
+  );
+  Route.put("rule", "Superadmin/RuleController.edit").validator(
+    "Superadmin/EditRule"
+  );
+  Route.put("rule/dump", "Superadmin/RuleController.dump").validator(
+    "Superadmin/GetRule"
+  );
+  Route.put("rule/restore", "Superadmin/RuleController.restore").validator(
+    "Superadmin/GetRule"
+  );
+
+  // Program route
+  Route.post("programs", "Superadmin/ProgramController.index");
+  Route.get("program", "Superadmin/ProgramController.get").validator(
+    "Superadmin/GetProgram"
+  );
+  Route.post("program", "Superadmin/ProgramController.create").validator(
+    "Superadmin/CreateProgram"
+  );
+  Route.put("program", "Superadmin/ProgramController.edit").validator(
+    "Superadmin/EditProgram"
+  );
+  Route.put("program/dump", "Superadmin/ProgramController.dump").validator(
+    "Superadmin/GetProgram"
+  );
+  Route.put(
+    "program/restore",
+    "Superadmin/ProgramController.restore"
+  ).validator("Superadmin/GetProgram");
+  Route.delete("program", "Superadmin/ProgramController.delete").validator(
+    "Superadmin/GetProgram"
+  );
 })
   .prefix("api/v1/superadmin")
   .middleware(["access"]);

@@ -9,7 +9,7 @@ class ProgramFile extends Model {
   }
 
   programs() {
-    return this.hasOne("App/Models/Program");
+    return this.hasOne("App/Models/Program", "program_id", "id");
   }
 }
 

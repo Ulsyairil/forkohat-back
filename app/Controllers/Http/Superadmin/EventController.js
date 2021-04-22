@@ -79,6 +79,7 @@ class EventController {
         data: data,
       });
     } catch (error) {
+      console.log(error);
       return response.status(500).send(error);
     }
   }
@@ -99,6 +100,7 @@ class EventController {
 
       return response.send(data);
     } catch (error) {
+      console.log(error);
       return response.status(500).send(error);
     }
   }
@@ -194,6 +196,7 @@ class EventController {
 
       return response.send(data);
     } catch (error) {
+      console.log(error);
       return response.status(500).send(error);
     }
   }
@@ -398,6 +401,41 @@ class EventController {
 
       return response.send({
         message: "deleted",
+      });
+    } catch (error) {
+      console.log(error);
+      return response.status(500).send(error);
+    }
+  }
+
+  async deleteFile({ request, response }) {
+    try {
+      const rules = {
+        file_id: "required|number",
+      };
+
+      const validation = await validate(request.all(), rules);
+
+      if (validation.fails()) {
+        return response.status(422).send(validation.messages());
+      }
+
+      let findFile = await EventFile.query()
+        .where("id", request.input("file_id"))
+        .first();
+
+      if (!findFile) {
+        return response.status(404).send({
+          message: "file not found",
+        });
+      }
+
+      removeFile(path.join(findFile.path, findFile.name));
+
+      await EventFile.query().where("id", request.input("file_id")).delete();
+
+      return response.send({
+        message: "file deleted",
       });
     } catch (error) {
       console.log(error);
