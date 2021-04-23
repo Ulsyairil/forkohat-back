@@ -8,7 +8,7 @@ const Program = use("App/Models/Program");
 const ProgramFile = use("App/Models/ProgramFile");
 const RandomString = use("randomstring");
 const Moment = use("moment");
-const { validate } = use("Validator");
+const { validateAll } = use("Validator");
 
 class ProgramController {
   async index({ request, response }) {

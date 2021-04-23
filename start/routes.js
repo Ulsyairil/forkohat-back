@@ -92,10 +92,27 @@ Route.group(function () {
   );
 
   // Program rules route
-  Route.get("rule/program", "Superadmin/ProgramRuledController.index");
-  Route.post("rule/program", "Superadmin/ProgramRuledController.create");
-  Route.put("rule/program", "Superadmin/ProgramRuledController.edit");
-  Route.delete("rule/program", "Superadmin/ProgramRuledController.delete");
+  Route.get("rule/program", "Superadmin/RuleController.index");
+  Route.post("rule/program", "Superadmin/RuleController.create");
+  Route.put("rule/program", "Superadmin/RuleController.edit");
+  Route.delete("rule/program", "Superadmin/RuleController.delete");
+
+  // FAQ route
+  Route.post("faqs", "Superadmin/FaqController.index");
+  Route.get("faq", "Superadmin/FaqController.get");
+  Route.post("faq", "Superadmin/FaqController.create");
+  Route.put("faq", "Superadmin/FaqController.edit");
+  Route.put("faq/dump", "Superadmin/FaqController.dump");
+  Route.put("faq/restore", "Superadmin/FaqController.restore");
+  Route.delete("faq", "Superadmin/FaqController.delete");
+
+  // FAQ topic route
+  Route.get("faq/topics", "Superadmin/FaqTopicController.index");
+  Route.post("faq/topic", "Superadmin/FaqTopicController.create");
+  Route.put("faq/topic", "Superadmin/FaqTopicController.edit");
+  Route.put("faq/topic/dump", "Superadmin/FaqTopicController.dump");
+  Route.put("faq/topic/restore", "Superadmin/FaqTopicController.restore");
+  Route.delete("faq/topic", "Superadmin/FaqTopicController.delete");
 })
   .prefix("api/v1/superadmin")
   .middleware(["access"]);

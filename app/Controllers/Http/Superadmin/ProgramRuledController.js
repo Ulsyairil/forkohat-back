@@ -2,7 +2,7 @@
 
 const ProgramRuled = use("App/Models/ProgramRuled");
 const Moment = use("moment");
-const { validate } = use("Validator");
+const { validateAll } = use("Validator");
 
 class ProgramRuledController {
   async index({ request, response }) {
@@ -11,7 +11,7 @@ class ProgramRuledController {
         rule_id: "required|number",
       };
 
-      const validation = await validate(request.all(), rules);
+      const validation = await validateAll(request.all(), rules);
 
       if (validation.fails()) {
         return response.status(422).send(validation.messages());
@@ -37,7 +37,7 @@ class ProgramRuledController {
         program_id: "required|number",
       };
 
-      const validation = await validate(request.all(), rules);
+      const validation = await validateAll(request.all(), rules);
 
       if (validation.fails()) {
         return response.status(422).send(validation.messages());
@@ -69,7 +69,7 @@ class ProgramRuledController {
         program_id: "required|number",
       };
 
-      const validation = await validate(request.all(), rules);
+      const validation = await validateAll(request.all(), rules);
 
       if (validation.fails()) {
         return response.status(422).send(validation.messages());
@@ -101,7 +101,7 @@ class ProgramRuledController {
         id: "required|number",
       };
 
-      const validation = await validate(request.all(), rules);
+      const validation = await validateAll(request.all(), rules);
 
       if (validation.fails()) {
         return response.status(422).send(validation.messages());

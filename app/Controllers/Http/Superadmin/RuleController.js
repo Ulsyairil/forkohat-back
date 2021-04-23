@@ -2,7 +2,7 @@
 
 const Rule = use("App/Models/Rule");
 const Moment = use("moment");
-const { validate } = use("Validator");
+const { validateAll } = use("Validator");
 
 class RuleController {
   async index({ request, response }) {

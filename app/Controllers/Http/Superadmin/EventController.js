@@ -8,7 +8,7 @@ const Event = use("App/Models/Event");
 const EventFile = use("App/Models/EventFile");
 const RandomString = use("randomstring");
 const Moment = use("moment");
-const { validate } = use("Validator");
+const { validateAll } = use("Validator");
 
 class EventController {
   async index({ request, response }) {
@@ -318,7 +318,7 @@ class EventController {
         event_id: "required|number",
       };
 
-      const validation = await validate(request.all(), rules);
+      const validation = await validateAll(request.all(), rules);
 
       if (validation.fails()) {
         return response.status(422).send(validation.messages());
@@ -348,7 +348,7 @@ class EventController {
         event_id: "required|number",
       };
 
-      const validation = await validate(request.all(), rules);
+      const validation = await validateAll(request.all(), rules);
 
       if (validation.fails()) {
         return response.status(422).send(validation.messages());
@@ -378,7 +378,7 @@ class EventController {
         event_id: "required|number",
       };
 
-      const validation = await validate(request.all(), rules);
+      const validation = await validateAll(request.all(), rules);
 
       if (validation.fails()) {
         return response.status(422).send(validation.messages());
@@ -414,7 +414,7 @@ class EventController {
         file_id: "required|number",
       };
 
-      const validation = await validate(request.all(), rules);
+      const validation = await validateAll(request.all(), rules);
 
       if (validation.fails()) {
         return response.status(422).send(validation.messages());
