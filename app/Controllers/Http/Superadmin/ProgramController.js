@@ -243,6 +243,7 @@ class ProgramController {
       await ProgramFile.query()
         .where("program_id", request.input("program_id"))
         .delete();
+        
       await Program.query().where("id", request.input("program_id")).delete();
 
       return response.send({

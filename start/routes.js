@@ -90,6 +90,12 @@ Route.group(function () {
   Route.delete("program", "Superadmin/ProgramController.delete").validator(
     "Superadmin/GetProgram"
   );
+
+  // Program rules route
+  Route.get("rule/program", "Superadmin/ProgramRuledController.index");
+  Route.post("rule/program", "Superadmin/ProgramRuledController.create");
+  Route.put("rule/program", "Superadmin/ProgramRuledController.edit");
+  Route.delete("rule/program", "Superadmin/ProgramRuledController.delete");
 })
   .prefix("api/v1/superadmin")
   .middleware(["access"]);

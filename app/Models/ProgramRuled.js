@@ -2,6 +2,7 @@
 
 /** @type {typeof import('@adonisjs/lucid/src/Lucid/Model')} */
 const Model = use("Model");
+const Moment = require("moment");
 
 class ProgramRuled extends Model {
   static get table() {
