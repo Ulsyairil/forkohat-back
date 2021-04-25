@@ -6,13 +6,14 @@ const Schema = use("Schema");
 class OrderStuffSchema extends Schema {
   up() {
     this.create("order_stuffs", (table) => {
-      table.increments();
+      table.bigIncrements();
       table
-        .integer("order_id")
+        .bigInteger("order_id")
         .notNullable()
         .unsigned()
         .references("id")
-        .inTable("orders");
+        .inTable("orders")
+        .onDelete('cascade');
       table.string("name", 254).notNullable();
       table.text("description").nullable();
       table.timestamps();

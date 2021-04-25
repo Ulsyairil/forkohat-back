@@ -6,7 +6,7 @@ const Schema = use("Schema");
 class ProgramsSchema extends Schema {
   up() {
     this.create("programs", (table) => {
-      table.increments();
+      table.bigIncrements();
       table.string("name", 254).notNullable();
       table.text("description").nullable();
       table.timestamps();

@@ -6,13 +6,14 @@ const Schema = use("Schema");
 class EventsSchema extends Schema {
   up() {
     this.create("events", (table) => {
-      table.increments();
+      table.bigIncrements();
       table
-        .integer("author_id")
+        .bigInteger("author_id")
         .notNullable()
         .unsigned()
         .references("id")
-        .inTable("users");
+        .inTable("users")
+        .onDelete('cascade');
       table.string("name", 254).notNullable();
       table.text("content").nullable();
       table.date("registration_date").nullable();

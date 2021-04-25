@@ -6,19 +6,21 @@ const Schema = use("Schema");
 class ProgramRuledSchema extends Schema {
   up() {
     this.create("program_ruled", (table) => {
-      table.increments();
+      table.bigIncrements();
       table
-        .integer("rule_id")
+        .bigInteger("rule_id")
         .notNullable()
         .unsigned()
         .references("id")
-        .inTable("rules");
+        .inTable("rules")
+        .onDelete('cascade');
       table
-        .integer("program_id")
+        .bigInteger("program_id")
         .notNullable()
         .unsigned()
         .references("id")
-        .inTable("programs");
+        .inTable("programs")
+        .onDelete('cascade');
       table.timestamps();
     });
   }

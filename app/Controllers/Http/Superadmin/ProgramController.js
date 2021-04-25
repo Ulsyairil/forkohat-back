@@ -32,7 +32,7 @@ class ProgramController {
       let count = await queryTotalFilteredData.count("* as total");
       let totalFiltered = count[0].total;
 
-      let getData = Program.query().with("programFile");
+      let getData = Program.query().with("programFiles");
 
       if (request.input("search").value != "") {
         getData
@@ -67,7 +67,7 @@ class ProgramController {
   async get({ request, response }) {
     try {
       let data = await Program.query()
-        .with("programFile")
+        .with("programFiles")
         .where("id", request.input("program_id"))
         .first();
 
@@ -86,17 +86,12 @@ class ProgramController {
 
   async create({ request, response }) {
     try {
-      // Insert to programs table
-      let program = await Program.create({
-        name: request.input("name"),
-        description: request.input("description"),
-      });
-
+      let fileName;
       // Upload image
       let inputImage = request.file("image");
 
       if (inputImage) {
-        let fileName = `${RandomString.generate()}.${inputImage.subtype}`;
+        fileName = `${RandomString.generate()}.${inputImage.subtype}`;
 
         await inputImage.move(Helpers.resourcesPath("uploads/programs"), {
           name: fileName,
@@ -105,7 +100,15 @@ class ProgramController {
         if (!inputImage.moved()) {
           return response.status(422).send(inputImage.errors());
         }
+      }
 
+      // Insert to programs table
+      let program = await Program.create({
+        name: request.input("name"),
+        description: request.input("description"),
+      });
+
+      if (inputImage) {
         await ProgramFile.create({
           program_id: program.id,
           name: fileName,
@@ -117,9 +120,9 @@ class ProgramController {
 
       // Get data created
       let data = await Program.query()
-        .with("programFile")
+        .with("programFiles")
         .where("id", program.id)
-        .fetch();
+        .first();
 
       return response.send(data);
     } catch (error) {
@@ -130,13 +133,7 @@ class ProgramController {
 
   async edit({ request, response }) {
     try {
-      // Insert to programs table
-      await Program.query()
-        .where("id", request.input("program_id"))
-        .update({
-          name: request.input("name"),
-          description: request.input("description"),
-        });
+      let fileName;
 
       // Upload image
       let inputImage = request.file("image", {
@@ -158,7 +155,7 @@ class ProgramController {
           await ProgramFile.query().where("id", findImage.id).delete();
         }
 
-        let fileName = `${RandomString.generate()}.${inputImage.subtype}`;
+        fileName = `${RandomString.generate()}.${inputImage.subtype}`;
 
         await inputImage.move(Helpers.resourcesPath("uploads/programs"), {
           name: fileName,
@@ -167,7 +164,17 @@ class ProgramController {
         if (!inputImage.moved()) {
           return response.status(422).send(inputImage.errors());
         }
+      }
 
+      // Insert to programs table
+      await Program.query()
+        .where("id", request.input("program_id"))
+        .update({
+          name: request.input("name"),
+          description: request.input("description"),
+        });
+
+      if (inputImage) {
         await ProgramFile.create({
           program_id: request.input("program_id"),
           name: fileName,
@@ -179,9 +186,9 @@ class ProgramController {
 
       // Get data created
       let data = await Program.query()
-        .with("programFile")
+        .with("programFiles")
         .where("id", request.input("program_id"))
-        .fetch();
+        .first();
 
       return response.send(data);
     } catch (error) {
@@ -198,9 +205,9 @@ class ProgramController {
 
       // Get data created
       let data = await Program.query()
-        .with("programFile")
+        .with("programFiles")
         .where("id", request.input("program_id"))
-        .fetch();
+        .first();
 
       return response.send(data);
     } catch (error) {
@@ -217,9 +224,9 @@ class ProgramController {
 
       // Get data created
       let data = await Program.query()
-        .with("programFile")
+        .with("programFiles")
         .where("id", request.input("program_id"))
-        .fetch();
+        .first();
 
       return response.send(data);
     } catch (error) {
@@ -243,7 +250,7 @@ class ProgramController {
       await ProgramFile.query()
         .where("program_id", request.input("program_id"))
         .delete();
-        
+
       await Program.query().where("id", request.input("program_id")).delete();
 
       return response.send({

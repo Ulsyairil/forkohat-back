@@ -30,8 +30,9 @@ Route.group(() => {
   );
 
   Route.post("login", "AuthController.login");
-  Route.get("user", "AuthController.checkUser").middleware(["access"]);
-  Route.post("refresh", "AuthController.refreshToken").middleware(["access"]);
+  Route.get("user", "AuthController.checkUser").middleware(["auth"]);
+  Route.post("refresh", "AuthController.refreshToken").middleware(["auth"]);
+  Route.post("logout", "AuthController.logout").middleware(["auth"]);
 }).prefix("api/v1");
 
 Route.group(function () {
@@ -113,9 +114,35 @@ Route.group(function () {
   Route.put("faq/topic/dump", "Superadmin/FaqTopicController.dump");
   Route.put("faq/topic/restore", "Superadmin/FaqTopicController.restore");
   Route.delete("faq/topic", "Superadmin/FaqTopicController.delete");
+
+  // User route
+  Route.post("users", "Superadmin/UserController.index");
+  Route.get("user", "Superadmin/UserController.get");
+  Route.post("user", "Superadmin/UserController.create").validator(
+    "Superadmin/CreateUser"
+  );
+  Route.put("user", "Superadmin/UserController.edit").validator(
+    "Superadmin/EditUser"
+  );
+  Route.put("user/dump", "Superadmin/UserController.dump");
+  Route.put("user/restore", "Superadmin/UserController.restore");
+
+  // News route
+  Route.post("news", "Superadmin/NewsController.index");
+  Route.get("news", "Superadmin/NewsController.get");
+  Route.post("news/add", "Superadmin/NewsController.create").validator(
+    "Superadmin/CreateNews"
+  );
+  Route.put("news", "Superadmin/NewsController.edit").validator(
+    "Superadmin/EditNews"
+  );
+  Route.put("news/dump", "Superadmin/NewsController.dump");
+  Route.put("news/restore", "Superadmin/NewsController.restore");
+  Route.delete("news", "Superadmin/NewsController.delete");
+  Route.delete("news/file", "Superadmin/NewsController.deleteFile");
 })
   .prefix("api/v1/superadmin")
-  .middleware(["access"]);
+  .middleware(["auth"]);
 
 Route.group(function () {}).prefix("api/v1/admin");
 

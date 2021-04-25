@@ -6,13 +6,14 @@ const Schema = use("Schema");
 class NewsFilesSchema extends Schema {
   up() {
     this.create("news_files", (table) => {
-      table.increments();
+      table.bigIncrements();
       table
-        .integer("news_id")
+        .bigInteger("news_id")
         .notNullable()
         .unsigned()
         .references("id")
-        .inTable("news");
+        .inTable("news")
+        .onDelete('cascade');
       table.enu("type", ["banner", "files"]).notNullable();
       table.string("name", 254).notNullable();
       table.string("mime", 5).notNullable();

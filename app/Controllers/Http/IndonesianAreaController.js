@@ -13,6 +13,7 @@ class IndonesianAreaController {
 
       return response.send(province.data.provinsi);
     } catch (error) {
+      console.log(error);
       return response.status(500).send(error);
     }
   }
@@ -38,6 +39,7 @@ class IndonesianAreaController {
 
       return response.send(province.data);
     } catch (error) {
+      console.log(error);
       return response.status(500).send(error);
     }
   }
@@ -63,6 +65,7 @@ class IndonesianAreaController {
 
       return response.send(city.data.kota_kabupaten);
     } catch (error) {
+      console.log(error);
       return response.status(500).send(error);
     }
   }
@@ -88,6 +91,7 @@ class IndonesianAreaController {
 
       return response.send(city.data);
     } catch (error) {
+      console.log(error);
       return response.status(500).send(error);
     }
   }
@@ -113,6 +117,7 @@ class IndonesianAreaController {
 
       return response.send(district.data.kecamatan);
     } catch (error) {
+      console.log(error);
       return response.status(500).send(error);
     }
   }
@@ -138,6 +143,7 @@ class IndonesianAreaController {
 
       return response.send(district.data);
     } catch (error) {
+      console.log(error);
       return response.status(500).send(error);
     }
   }
@@ -163,6 +169,7 @@ class IndonesianAreaController {
 
       return response.send(sub_district.data.kelurahan);
     } catch (error) {
+      console.log(error);
       return response.status(500).send(error);
     }
   }
@@ -188,6 +195,7 @@ class IndonesianAreaController {
 
       return response.send(sub_district.data);
     } catch (error) {
+      console.log(error);
       return response.status(500).send(error);
     }
   }

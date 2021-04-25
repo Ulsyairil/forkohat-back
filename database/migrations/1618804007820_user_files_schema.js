@@ -6,13 +6,14 @@ const Schema = use("Schema");
 class UserFilesSchema extends Schema {
   up() {
     this.create("user_files", (table) => {
-      table.increments();
+      table.bigIncrements();
       table
-        .integer("user_id")
+        .bigInteger("user_id")
         .notNullable()
         .unsigned()
         .references("id")
         .inTable("users")
+        .onDelete('cascade')
         .unique();
       table.enu("type", ["profile_picture", "files"]).notNullable();
       table.string("name", 254).notNullable();

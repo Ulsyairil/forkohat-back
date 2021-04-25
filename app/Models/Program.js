@@ -29,7 +29,7 @@ class Program extends Model {
     return super.formatDates(field, value);
   }
 
-  programFile() {
+  programFiles() {
     return this.hasMany("App/Models/ProgramFile", "id", "program_id");
   }
 }

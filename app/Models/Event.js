@@ -45,7 +45,7 @@ class Event extends Model {
     return this.hasOne("App/Models/User", "author_id", "id");
   }
 
-  eventFile() {
+  eventFiles() {
     return this.hasMany("App/Models/EventFile", "id", "event_id");
   }
 }

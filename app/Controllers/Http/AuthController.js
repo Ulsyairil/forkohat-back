@@ -63,6 +63,7 @@ class AuthController {
 
       return response.send(generate);
     } catch (error) {
+      console.log(error);
       return response.status(500).send(error);
     }
   }
@@ -72,6 +73,7 @@ class AuthController {
       let get_user = await auth.getUser();
       return response.send(get_user);
     } catch (error) {
+      console.log(error);
       return response.status(500).send(error);
     }
   }
@@ -95,6 +97,32 @@ class AuthController {
 
       return response.send(refresh_token);
     } catch (error) {
+      console.log(error);
+      return response.status(500).send(error);
+    }
+  }
+
+  async logout({ auth, request, response }) {
+    try {
+      const rules = {
+        refresh_token: "required|string",
+      };
+
+      const validation = await validate(request.all(), rules);
+
+      if (validation.fails()) {
+        return response.status(422).send(validation.messages());
+      }
+
+      await auth
+        .authenticator("jwt")
+        .revokeTokens([request.input("refresh_token")], true);
+
+      return response.send({
+        message: "logout success",
+      });
+    } catch (error) {
+      console.log(error);
       return response.status(500).send(error);
     }
   }
