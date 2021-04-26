@@ -323,16 +323,6 @@ class EventController {
 
   async dump({ request, response }) {
     try {
-      const rules = {
-        event_id: "required|number",
-      };
-
-      const validation = await validateAll(request.all(), rules);
-
-      if (validation.fails()) {
-        return response.status(422).send(validation.messages());
-      }
-
       await Event.query().where("id", request.input("event_id")).update({
         deleted_at: Moment.now(),
       });
@@ -353,16 +343,6 @@ class EventController {
 
   async restore({ request, response }) {
     try {
-      const rules = {
-        event_id: "required|number",
-      };
-
-      const validation = await validateAll(request.all(), rules);
-
-      if (validation.fails()) {
-        return response.status(422).send(validation.messages());
-      }
-
       await Event.query().where("id", request.input("event_id")).update({
         deleted_at: null,
       });
@@ -383,16 +363,6 @@ class EventController {
 
   async delete({ request, response }) {
     try {
-      const rules = {
-        event_id: "required|number",
-      };
-
-      const validation = await validateAll(request.all(), rules);
-
-      if (validation.fails()) {
-        return response.status(422).send(validation.messages());
-      }
-
       let findImage = await EventFile.query()
         .where("event_id", request.input("event_id"))
         .fetch();
@@ -419,16 +389,6 @@ class EventController {
 
   async deleteFile({ request, response }) {
     try {
-      const rules = {
-        file_id: "required|number",
-      };
-
-      const validation = await validateAll(request.all(), rules);
-
-      if (validation.fails()) {
-        return response.status(422).send(validation.messages());
-      }
-
       let findFile = await EventFile.query()
         .where("id", request.input("file_id"))
         .first();

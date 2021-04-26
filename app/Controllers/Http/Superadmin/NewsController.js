@@ -72,16 +72,6 @@ class NewsController {
 
   async get({ request, response }) {
     try {
-      const rules = {
-        id: "required|number",
-      };
-
-      const validation = await validateAll(request.all(), rules);
-
-      if (validation.fails()) {
-        return response.status(422).send(validation.messages());
-      }
-
       let data = await News.query()
         .with("users")
         .with("newsFiles")
@@ -108,7 +98,8 @@ class NewsController {
 
       // Upload multi file
       const validationFile = {
-        size: "2mb",
+        size: "5mb",
+        extnames: ["png", "jpg", "jpeg"],
       };
       let inputFiles = request.file("files", validationFile);
 
@@ -204,7 +195,8 @@ class NewsController {
 
       // Upload multi file
       let inputFiles = request.file("files", {
-        size: "2mb",
+        size: "5mb",
+        extnames: ["png", "jpg", "jpeg"],
       });
 
       if (inputFiles) {
@@ -313,16 +305,6 @@ class NewsController {
 
   async dump({ request, response }) {
     try {
-      const rules = {
-        id: "required|number",
-      };
-
-      const validation = await validateAll(request.all(), rules);
-
-      if (validation.fails()) {
-        return response.status(422).send(validation.messages());
-      }
-
       await News.query().where("id", request.input("id")).update({
         deleted_at: Moment.now(),
       });
@@ -343,16 +325,6 @@ class NewsController {
 
   async restore({ request, response }) {
     try {
-      const rules = {
-        id: "required|number",
-      };
-
-      const validation = await validateAll(request.all(), rules);
-
-      if (validation.fails()) {
-        return response.status(422).send(validation.messages());
-      }
-
       await News.query().where("id", request.input("id")).update({
         deleted_at: null,
       });
@@ -373,16 +345,6 @@ class NewsController {
 
   async delete({ request, response }) {
     try {
-      const rules = {
-        id: "required|number",
-      };
-
-      const validation = await validateAll(request.all(), rules);
-
-      if (validation.fails()) {
-        return response.status(422).send(validation.messages());
-      }
-
       let findImage = await NewsFile.query()
         .where("news_id", request.input("id"))
         .fetch();
@@ -407,16 +369,6 @@ class NewsController {
 
   async deleteFile({ request, response }) {
     try {
-      const rules = {
-        file_id: "required|number",
-      };
-
-      const validation = await validateAll(request.all(), rules);
-
-      if (validation.fails()) {
-        return response.status(422).send(validation.messages());
-      }
-
       let findFile = await NewsFile.query()
         .where("id", request.input("file_id"))
         .first();

@@ -5,198 +5,133 @@ const Moment = use("moment");
 const { validateAll } = use("Validator");
 
 class FaqTopicController {
-  async index({ request, response }) {
-    try {
-      const rules = {
-        faq_id: "required|number",
-      };
+	async index({ request, response }) {
+		try {
+			let data = await FaqTopic.query()
+				.where("faq_id", request.input("faq_id"))
+				.fetch();
 
-      const validation = await validateAll(request.all(), rules);
+			return response.send(data);
+		} catch (error) {
+			console.log(error);
+			return response.status(500).send(error);
+		}
+	}
 
-      if (validation.fails()) {
-        return response.status(422).send(validation.messages());
-      }
+	async create({ request, response }) {
+		try {
+			let create = await FaqTopic.create({
+				faq_id: request.input("faq_id"),
+				title: request.input("title"),
+				description: request.input("description"),
+			});
 
-      let data = await FaqTopic.query()
-        .where("faq_id", request.input("faq_id"))
-        .fetch();
+			return response.send(create);
+		} catch (error) {
+			console.log(error);
+			return response.status(500).send(error);
+		}
+	}
 
-      return response.send(data);
-    } catch (error) {
-      console.log(error);
-      return response.status(500).send(error);
-    }
-  }
+	async edit({ request, response }) {
+		try {
+			await FaqTopic.query()
+				.where("id", request.input("id"))
+				.update({
+					faq_id: request.input("faq_id"),
+					title: request.input("title"),
+					description: request.input("description"),
+				});
 
-  async create({ request, response }) {
-    try {
-      const rules = {
-        faq_id: "required|number",
-        title: "required|string",
-        description: "required|string",
-      };
+			let data = await FaqTopic.query()
+				.where("id", request.input("id"))
+				.first();
 
-      const validation = await validateAll(request.all(), rules);
+			if (!data) {
+				return response.status(404).send({
+					message: "not found",
+				});
+			}
 
-      if (validation.fails()) {
-        return response.status(422).send(validation.messages());
-      }
+			return response.send(data);
+		} catch (error) {
+			console.log(error);
+			return response.status(500).send(error);
+		}
+	}
 
-      let create = await FaqTopic.create({
-        faq_id: request.input("faq_id"),
-        title: request.input("title"),
-        description: request.input("description"),
-      });
+	async dump({ request, response }) {
+		try {
+			let update = await FaqTopic.query()
+				.where("id", request.input("id"))
+				.update({
+					deleted_at: Moment.now(),
+				});
 
-      return response.send(create);
-    } catch (error) {
-      console.log(error);
-      return response.status(500).send(error);
-    }
-  }
+			let data = await FaqTopic.query()
+				.where("id", request.input("id"))
+				.first();
 
-  async edit({ request, response }) {
-    try {
-      const rules = {
-        id: "required|number",
-        faq_id: "required|number",
-        title: "required|string",
-        description: "required|string",
-      };
+			if (!data) {
+				return response.status(404).send({
+					message: "not found",
+				});
+			}
 
-      const validation = await validateAll(request.all(), rules);
+			return response.send(data);
+		} catch (error) {
+			console.log(error);
+			return response.status(500).send(error);
+		}
+	}
 
-      if (validation.fails()) {
-        return response.status(422).send(validation.messages());
-      }
+	async restore({ request, response }) {
+		try {
+			let update = await FaqTopic.query()
+				.where("id", request.input("id"))
+				.update({
+					deleted_at: null,
+				});
 
-      await FaqTopic.query()
-        .where("id", request.input("id"))
-        .update({
-          faq_id: request.input("faq_id"),
-          title: request.input("title"),
-          description: request.input("description"),
-        });
+			let data = await FaqTopic.query()
+				.where("id", request.input("id"))
+				.first();
 
-      let data = await FaqTopic.query()
-        .where("id", request.input("id"))
-        .first();
+			if (!data) {
+				return response.status(404).send({
+					message: "not found",
+				});
+			}
 
-      if (!data) {
-        return response.status(404).send({
-          message: "not found",
-        });
-      }
+			return response.send(data);
+		} catch (error) {
+			console.log(error);
+			return response.status(500).send(error);
+		}
+	}
 
-      return response.send(data);
-    } catch (error) {
-      console.log(error);
-      return response.status(500).send(error);
-    }
-  }
+	async delete({ request, response }) {
+		try {
+			let data = await FaqTopic.query()
+				.where("id", request.input("id"))
+				.first();
 
-  async dump({ request, response }) {
-    try {
-      const rules = {
-        id: "required|number",
-      };
+			if (!data) {
+				return response.status(404).send({
+					message: "not found",
+				});
+			}
 
-      const validation = await validateAll(request.all(), rules);
+			await FaqTopic.query().where("id", request.input("id")).delete();
 
-      if (validation.fails()) {
-        return response.status(422).send(validation.messages());
-      }
-
-      let update = await FaqTopic.query()
-        .where("id", request.input("id"))
-        .update({
-          deleted_at: Moment.now(),
-        });
-
-      let data = await FaqTopic.query()
-        .where("id", request.input("id"))
-        .first();
-
-      if (!data) {
-        return response.status(404).send({
-          message: "not found",
-        });
-      }
-
-      return response.send(data);
-    } catch (error) {
-      console.log(error);
-      return response.status(500).send(error);
-    }
-  }
-
-  async restore({ request, response }) {
-    try {
-      const rules = {
-        id: "required|number",
-      };
-
-      const validation = await validateAll(request.all(), rules);
-
-      if (validation.fails()) {
-        return response.status(422).send(validation.messages());
-      }
-
-      let update = await FaqTopic.query()
-        .where("id", request.input("id"))
-        .update({
-          deleted_at: null,
-        });
-
-      let data = await FaqTopic.query()
-        .where("id", request.input("id"))
-        .first();
-
-      if (!data) {
-        return response.status(404).send({
-          message: "not found",
-        });
-      }
-
-      return response.send(data);
-    } catch (error) {
-      console.log(error);
-      return response.status(500).send(error);
-    }
-  }
-
-  async delete({ request, response }) {
-    try {
-      const rules = {
-        id: "required|number",
-      };
-
-      const validation = await validateAll(request.all(), rules);
-
-      if (validation.fails()) {
-        return response.status(422).send(validation.messages());
-      }
-
-      let data = await FaqTopic.query()
-        .where("id", request.input("id"))
-        .first();
-
-      if (!data) {
-        return response.status(404).send({
-          message: "not found",
-        });
-      }
-
-      await FaqTopic.query().where("id", request.input("id")).delete();
-
-      return response.send({
-        message: "deleted",
-      });
-    } catch (error) {
-      console.log(error);
-      return response.status(500).send(error);
-    }
-  }
+			return response.send({
+				message: "deleted",
+			});
+		} catch (error) {
+			console.log(error);
+			return response.status(500).send(error);
+		}
+	}
 }
 
 module.exports = FaqTopicController;
