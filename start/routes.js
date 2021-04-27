@@ -116,6 +116,15 @@ Route.group(function () {
 	Route.put("order/stuff", "Superadmin/OrderStuffController.edit").validator("Superadmin/OrderStuff");
 	Route.put("order/stuff/dump", "Superadmin/OrderStuffController.dump").validator("Superadmin/OrderStuff");
 	Route.put("order/stuff/restore", "Superadmin/OrderStuffController.restore").validator("Superadmin/OrderStuff");
+
+	// Order stuff file route
+	Route.get("order/stuff/files", "Superadmin/OrderFileController.index").validator("Superadmin/OrderFile");
+	Route.post("order/stuff/file", "Superadmin/OrderFileController.create").validator("Superadmin/OrderFile");
+	Route.post("order/stuff/file/check", "Superadmin/OrderFileController.checkImageRequest").validator("Superadmin/OrderFile");
+	Route.put("order/stuff/file", "Superadmin/OrderFileController.edit").validator("Superadmin/OrderFile");
+	Route.put("order/stuff/file/dump", "Superadmin/OrderFileController.dump").validator("Superadmin/OrderFile");
+	Route.put("order/stuff/file/restore", "Superadmin/OrderFileController.restore").validator("Superadmin/OrderFile");
+	Route.delete("order/stuff/file", "Superadmin/OrderFileController.delete").validator("Superadmin/OrderFile");
 })
 	.prefix("api/v1/superadmin")
 	.middleware(["jwt"]);
