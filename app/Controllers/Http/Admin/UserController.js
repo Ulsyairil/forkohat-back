@@ -19,6 +19,7 @@ class UserController {
       let queryTotalData = await User.query()
         .with("rules")
         .whereNot("id", user.id)
+        .whereNot("rule_id", 1)
         .count("* as total");
 
       let totalData = queryTotalData[0].total;
@@ -26,7 +27,8 @@ class UserController {
 
       let queryTotalFilteredData = User.query()
         .with("rules")
-        .whereNot("id", user.id);
+        .whereNot("id", user.id)
+        .whereNot("rule_id", 1);
 
       if (request.input("search").value != "") {
         queryTotalFilteredData
@@ -46,7 +48,10 @@ class UserController {
       let count = await queryTotalFilteredData.count("* as total");
       let totalFiltered = count[0].total;
 
-      let getData = User.query().with("rules").whereNot("id", user.id);
+      let getData = User.query()
+        .with("rules")
+        .whereNot("id", user.id)
+        .whereNot("rule_id", 1);
 
       if (request.input("search").value != "") {
         getData
@@ -90,6 +95,7 @@ class UserController {
         .with("rules")
         .with("userFiles")
         .where("id", request.input("id"))
+        .whereNot("rule_id", 1)
         .first();
 
       if (!data) {

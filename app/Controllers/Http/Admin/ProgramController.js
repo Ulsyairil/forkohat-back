@@ -4,40 +4,26 @@ const Helpers = use("Helpers");
 const fs = use("fs");
 const path = use("path");
 const removeFile = Helpers.promisify(fs.unlink);
-const User = use("App/Models/User");
-const UserFile = use("App/Models/UserFile");
+const Program = use("App/Models/Program");
+const ProgramFile = use("App/Models/ProgramFile");
 const RandomString = use("randomstring");
 const Moment = use("moment");
-const Hash = use("Hash");
 const { validateAll } = use("Validator");
 
-class UserController {
-  async index({ auth, request, response }) {
+class ProgramController {
+  async index({ request, response }) {
     try {
-      let user = await auth.getUser();
-
-      let queryTotalData = await User.query()
-        .with("rules")
-        .whereNot("id", user.id)
-        .count("* as total");
+      let queryTotalData = await Program.query().count("* as total");
 
       let totalData = queryTotalData[0].total;
       console.log(totalData);
 
-      let queryTotalFilteredData = User.query()
-        .with("rules")
-        .whereNot("id", user.id);
+      let queryTotalFilteredData = Program.query();
 
       if (request.input("search").value != "") {
         queryTotalFilteredData
-          .with("rules", (builder) => {
-            builder.where("rule", "like", `%${request.input("search").value}%`);
-          })
           .where("name", "like", `%${request.input("search").value}%`)
-          .orWhere("email", "like", `%${request.input("search").value}%`)
-          .orWhere("nip", "like", `%${request.input("search").value}%`)
-          .orWhere("job", "like", `%${request.input("search").value}%`)
-          .orWhere("gender", "like", `%${request.input("search").value}%`)
+          .orWhere("description", "like", `%${request.input("search").value}%`)
           .orWhere("created_at", "like", `%${request.input("search").value}%`)
           .orWhere("updated_at", "like", `%${request.input("search").value}%`)
           .orWhere("deleted_at", "like", `%${request.input("search").value}%`);
@@ -46,18 +32,12 @@ class UserController {
       let count = await queryTotalFilteredData.count("* as total");
       let totalFiltered = count[0].total;
 
-      let getData = User.query().with("rules").whereNot("id", user.id);
+      let getData = Program.query().with("programFiles");
 
       if (request.input("search").value != "") {
         getData
-          .with("rules", (builder) => {
-            builder.where("rule", "like", `%${request.input("search").value}%`);
-          })
           .where("name", "like", `%${request.input("search").value}%`)
-          .orWhere("email", "like", `%${request.input("search").value}%`)
-          .orWhere("nip", "like", `%${request.input("search").value}%`)
-          .orWhere("job", "like", `%${request.input("search").value}%`)
-          .orWhere("gender", "like", `%${request.input("search").value}%`)
+          .orWhere("description", "like", `%${request.input("search").value}%`)
           .orWhere("created_at", "like", `%${request.input("search").value}%`)
           .orWhere("updated_at", "like", `%${request.input("search").value}%`)
           .orWhere("deleted_at", "like", `%${request.input("search").value}%`);
@@ -86,10 +66,9 @@ class UserController {
 
   async get({ request, response }) {
     try {
-      let data = await User.query()
-        .with("rules")
-        .with("userFiles")
-        .where("id", request.input("id"))
+      let data = await Program.query()
+        .with("programFiles")
+        .where("id", request.input("program_id"))
         .first();
 
       if (!data) {
@@ -108,17 +87,13 @@ class UserController {
   async create({ request, response }) {
     try {
       let fileName;
-
       // Upload image
-      let inputImage = request.file("image", {
-        size: "2mb",
-        extnames: ["png", "jpg", "jpeg"],
-      });
+      let inputImage = request.file("image");
 
       if (inputImage) {
         fileName = `${RandomString.generate()}.${inputImage.subtype}`;
 
-        await inputImage.move(Helpers.resourcesPath("uploads/users"), {
+        await inputImage.move(Helpers.resourcesPath("uploads/programs"), {
           name: fileName,
         });
 
@@ -127,36 +102,26 @@ class UserController {
         }
       }
 
-      // Insert to users table
-      let user = await User.create({
-        rule_id: request.input("rule_id"),
+      // Insert to programs table
+      let program = await Program.create({
         name: request.input("name"),
-        email: request.input("email"),
-        nip: request.input("nip"),
-        password: await Hash.make(request.input("password")),
-        job: request.input("job"),
-        district: request.input("district"),
-        sub_district: request.input("sub_district"),
-        gender: request.input("gender"),
-        bio: request.input("bio"),
+        description: request.input("description"),
       });
 
       if (inputImage) {
-        await UserFile.create({
-          user_id: user.id,
-          type: "profile_picture",
+        await ProgramFile.create({
+          program_id: program.id,
           name: fileName,
           mime: inputImage.subtype,
-          path: Helpers.resourcesPath("uploads/users"),
+          path: Helpers.resourcesPath("uploads/programs"),
           url: "/",
         });
       }
 
       // Get data created
-      let data = await User.query()
-        .with("rules")
-        .with("userFiles")
-        .where("id", user.id)
+      let data = await Program.query()
+        .with("programFiles")
+        .where("id", program.id)
         .first();
 
       return response.send(data);
@@ -168,67 +133,61 @@ class UserController {
 
   async edit({ request, response }) {
     try {
+      let fileName;
+
       // Upload image
       let inputImage = request.file("image", {
-        size: "2mb",
+        size: "5mb",
         extnames: ["png", "jpg", "jpeg"],
       });
 
       if (inputImage) {
-        let findImage = await UserFile.query()
-          .where("user_id", request.input("id"))
-          .andWhere("type", "profile_picture")
+        let findImage = await ProgramFile.query()
+          .where("program_id", request.input("program_id"))
           .first();
 
         // Delete image and data if exists
         if (findImage) {
           removeFile(
-            path.join(Helpers.resourcesPath("uploads/users"), findImage.name)
+            path.join(Helpers.resourcesPath("uploads/programs"), findImage.name)
           );
 
-          await UserFile.query().where("id", findImage.id).delete();
+          await ProgramFile.query().where("id", findImage.id).delete();
         }
 
-        let fileName = `${RandomString.generate()}.${inputImage.subtype}`;
+        fileName = `${RandomString.generate()}.${inputImage.subtype}`;
 
-        await inputImage.move(Helpers.resourcesPath("uploads/users"), {
+        await inputImage.move(Helpers.resourcesPath("uploads/programs"), {
           name: fileName,
         });
 
         if (!inputImage.moved()) {
           return response.status(422).send(inputImage.errors());
         }
+      }
 
-        await UserFile.create({
-          user_id: request.input("id"),
-          type: "profile_picture",
+      // Insert to programs table
+      await Program.query()
+        .where("id", request.input("program_id"))
+        .update({
+          name: request.input("name"),
+          description: request.input("description"),
+        });
+
+      if (inputImage) {
+        await ProgramFile.create({
+          program_id: request.input("program_id"),
           name: fileName,
           mime: inputImage.subtype,
-          path: Helpers.resourcesPath("uploads/users"),
+          path: Helpers.resourcesPath("uploads/programs"),
           url: "/",
         });
       }
 
-      // Insert to users table
-      await User.query()
-        .where("id", request.input("id"))
-        .update({
-          rule_id: request.input("rule_id"),
-          name: request.input("email"),
-          nip: request.input("nip"),
-          password: await Hash.make(request.input("password")),
-          job: request.input("job"),
-          district: request.input("district"),
-          sub_district: request.input("sub_district"),
-          gender: request.input("gender"),
-          bio: request.input("bio"),
-        });
-
       // Get data created
-      let data = await User.query()
-        .with("rules")
-        .with("userFiles")
-        .where("id", request.input("id"))
+      let data = await Program.query()
+        .with("programFiles")
+        .where("id", request.input("program_id"))
         .first();
 
       return response.send(data);
@@ -240,15 +199,14 @@ class UserController {
 
   async dump({ request, response }) {
     try {
-      await User.query().where("id", request.input("id")).update({
+      await Program.query().where("id", request.input("program_id")).update({
         deleted_at: Moment.now(),
       });
 
       // Get data created
-      let data = await User.query()
-        .with("rules")
-        .with("userFiles")
-        .where("id", request.input("id"))
+      let data = await Program.query()
+        .with("programFiles")
+        .where("id", request.input("program_id"))
         .first();
 
       return response.send(data);
@@ -260,15 +218,14 @@ class UserController {
 
   async restore({ request, response }) {
     try {
-      await User.query().where("id", request.input("id")).update({
+      await Program.query().where("id", request.input("program_id")).update({
         deleted_at: null,
       });
 
       // Get data created
-      let data = await User.query()
-        .with("rules")
-        .with("userFiles")
-        .where("id", request.input("id"))
+      let data = await Program.query()
+        .with("programFiles")
+        .where("id", request.input("program_id"))
         .first();
 
       return response.send(data);
@@ -277,6 +234,33 @@ class UserController {
       return response.status(500).send(error);
     }
   }
+
+  async delete({ request, response }) {
+    try {
+      let findImage = await ProgramFile.query()
+        .where("program_id", request.input("program_id"))
+        .fetch();
+
+      let convert = findImage.toJSON();
+
+      convert.forEach((value) => {
+        removeFile(path.join(value.path, value.name));
+      });
+
+      await ProgramFile.query()
+        .where("program_id", request.input("program_id"))
+        .delete();
+
+      await Program.query().where("id", request.input("program_id")).delete();
+
+      return response.send({
+        message: "deleted",
+      });
+    } catch (error) {
+      console.log(error);
+      return response.status(500).send(error);
+    }
+  }
 }
 
-module.exports = UserController;
+module.exports = ProgramController;

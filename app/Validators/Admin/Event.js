@@ -1,6 +1,6 @@
 "use strict";
 
-class SuperadminEvent {
+class AdminEvent {
   get rules() {
     const method = this.ctx.request.method();
     const uri = this.ctx.request.url();
@@ -85,4 +85,4 @@ class SuperadminEvent {
   }
 }
 
-module.exports = SuperadminEvent;
+module.exports = AdminEvent;

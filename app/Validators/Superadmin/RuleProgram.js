@@ -1,58 +1,58 @@
 "use strict";
 
 class SuperadminRuleProgram {
-   get rules() {
-      const method = this.ctx.request.method();
-      const uri = this.ctx.request.url();
+  get rules() {
+    const method = this.ctx.request.method();
+    const uri = this.ctx.request.url();
 
-      let rules = {
-         rule_id: "required|number",
-         program_id: "required|number",
-      };
+    let rules = {
+      rule_id: "required|number",
+      program_id: "required|number",
+    };
 
-      switch (method) {
-         case "GET":
-            rules = null;
-            rules = {
-               rule_id: "required|number",
-            };
-            break;
+    switch (method) {
+      case "GET":
+        rules = null;
+        rules = {
+          rule_id: "required|number",
+        };
+        break;
 
-         case "POST":
-            rules = rules;
-            break;
+      case "POST":
+        rules = rules;
+        break;
 
-         case "PUT":
-            rules = null;
-            rules = {
-               id: "required|number",
-               rule_id: "required|number",
-               program_id: "required|number",
-            };
-            break;
+      case "PUT":
+        rules = null;
+        rules = {
+          id: "required|number",
+          rule_id: "required|number",
+          program_id: "required|number",
+        };
+        break;
 
-         case "DELETE":
-            rules = null;
-            rules = {
-               id: "required|number",
-            };
-            break;
+      case "DELETE":
+        rules = null;
+        rules = {
+          id: "required|number",
+        };
+        break;
 
-         default:
-            rules = rules;
-            break;
-      }
+      default:
+        rules = rules;
+        break;
+    }
 
-      return rules;
-   }
+    return rules;
+  }
 
-   get validateAll() {
-      return true;
-   }
+  get validateAll() {
+    return true;
+  }
 
-   async fails(errorMessages) {
-      return this.ctx.response.send(errorMessages);
-   }
+  async fails(errorMessages) {
+    return this.ctx.response.send(errorMessages);
+  }
 }
 
 module.exports = SuperadminRuleProgram;

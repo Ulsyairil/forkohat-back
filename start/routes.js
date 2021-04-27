@@ -84,8 +84,8 @@ Route.group(function () {
 	Route.delete("faq/topic", "Superadmin/FaqTopicController.delete").validator("Superadmin/FaqTopic");
 
 	// User route
-	Route.post("users", "Superadmin/UserController.index").validator("Superadmin/User")
-	Route.get("user", "Superadmin/UserController.get").validator("Superadmin/User")
+	Route.post("users", "Superadmin/UserController.index")
+	Route.get("user", "Superadmin/UserController.get").validator("Superadmin/User");
 	Route.post("user", "Superadmin/UserController.create").validator("Superadmin/User");
 	Route.put("user", "Superadmin/UserController.edit").validator("Superadmin/User");
 	Route.put("user/dump", "Superadmin/UserController.dump").validator("Superadmin/User")
@@ -129,6 +129,99 @@ Route.group(function () {
 	.prefix("api/v1/superadmin")
 	.middleware(["jwt"]);
 
-Route.group(function () {}).prefix("api/v1/admin");
+Route.group(function () {
+	// Event routes
+	Route.post("events", "Admin/EventController.index");
+	Route.get("event", "Admin/EventController.get").validator("Admin/Event");
+	Route.post("event", "Admin/EventController.create").validator("Admin/Event");
+	Route.put("event", "Admin/EventController.edit").validator("Admin/Event");
+	Route.put("event/dump", "Admin/EventController.dump").validator("Admin/Event");
+	Route.put("event/restore", "Admin/EventController.restore").validator("Admin/Event");
+	Route.delete("event", "Admin/EventController.delete").validator("Admin/Event");
+	Route.delete("event/file", "Admin/EventController.deleteFile").validator("Admin/Event");
+
+	// Rule routes
+	Route.post("rules", "Admin/RuleController.index");
+	Route.get("rule", "Admin/RuleController.get").validator("Admin/Rule");
+	Route.post("rule", "Admin/RuleController.create").validator("Admin/Rule");
+	Route.put("rule", "Admin/RuleController.edit").validator("Admin/Rule");
+	Route.put("rule/dump", "Admin/RuleController.dump").validator("Admin/Rule");
+	Route.put("rule/restore", "Admin/RuleController.restore").validator("Admin/Rule");
+
+	// Program route
+	Route.post("programs", "Admin/ProgramController.index");
+	Route.get("program", "Admin/ProgramController.get").validator("Admin/Program");
+	Route.post("program", "Admin/ProgramController.create").validator("Admin/Program");
+	Route.put("program", "Admin/ProgramController.edit").validator("Admin/Program");
+	Route.put("program/dump", "Admin/ProgramController.dump").validator("Admin/Program");
+	Route.put("program/restore", "Admin/ProgramController.restore").validator("Admin/Program");
+	Route.delete("program", "Admin/ProgramController.delete").validator("Admin/Program");
+
+	// Program rules route
+	Route.get("rule/program", "Admin/ProgramRuledController.index").validator("Admin/RuleProgram");
+	Route.post("rule/program", "Admin/ProgramRuledController.create").validator("Admin/RuleProgram");
+	Route.put("rule/program", "Admin/ProgramRuledController.edit").validator("Admin/RuleProgram");
+	Route.delete("rule/program", "Admin/ProgramRuledController.delete").validator("Admin/RuleProgram");
+
+	// FAQ route
+	Route.post("faqs", "Admin/FaqController.index");
+	Route.get("faq", "Admin/FaqController.get").validator("Admin/Faq");
+	Route.post("faq", "Admin/FaqController.create").validator("Admin/Faq");
+	Route.put("faq", "Admin/FaqController.edit").validator("Admin/Faq");
+	Route.put("faq/dump", "Admin/FaqController.dump").validator("Admin/Faq");
+	Route.put("faq/restore", "Admin/FaqController.restore").validator("Admin/Faq");
+	Route.delete("faq", "Admin/FaqController.delete").validator("Admin/Faq");
+
+	// FAQ topic route
+	Route.get("faq/topics", "Admin/FaqTopicController.index").validator("Admin/FaqTopic");
+	Route.post("faq/topic", "Admin/FaqTopicController.create").validator("Admin/FaqTopic");
+	Route.put("faq/topic", "Admin/FaqTopicController.edit").validator("Admin/FaqTopic");
+	Route.put("faq/topic/dump", "Admin/FaqTopicController.dump").validator("Admin/FaqTopic");
+	Route.put("faq/topic/restore", "Admin/FaqTopicController.restore").validator("Admin/FaqTopic");
+	Route.delete("faq/topic", "Admin/FaqTopicController.delete").validator("Admin/FaqTopic");
+
+	// User route
+	Route.post("users", "Admin/UserController.index")
+	Route.get("user", "Admin/UserController.get").validator("Admin/User");
+	Route.post("user", "Admin/UserController.create").validator("Admin/User");
+	Route.put("user", "Admin/UserController.edit").validator("Admin/User");
+	Route.put("user/dump", "Admin/UserController.dump").validator("Admin/User")
+	Route.put("user/restore", "Admin/UserController.restore").validator("Admin/User")
+
+	// News route
+	Route.post("news", "Admin/NewsController.index");
+	Route.get("news", "Admin/NewsController.get").validator("Admin/News");
+	Route.post("news/add", "Admin/NewsController.create").validator("Admin/News");
+	Route.put("news", "Admin/NewsController.edit").validator("Admin/News");
+	Route.put("news/dump", "Admin/NewsController.dump").validator("Admin/News")
+	Route.put("news/restore", "Admin/NewsController.restore").validator("Admin/News")
+	Route.delete("news", "Admin/NewsController.delete").validator("Admin/News")
+	Route.delete("news/file", "Admin/NewsController.deleteFile").validator("Admin/News")
+
+	// Order route
+	Route.post("orders", "Admin/OrderController.index");
+	Route.get("order", "Admin/OrderController.get").validator("Admin/Order");
+	Route.post("order", "Admin/OrderController.create").validator("Admin/Order");
+	Route.put("order", "Admin/OrderController.edit").validator("Admin/Order");
+	Route.put("order/dump", "Admin/OrderController.dump").validator("Admin/Order");
+	Route.put("order/restore", "Admin/OrderController.restore").validator("Admin/Order");
+
+	// Order stuff route
+	Route.get("order/stuffs", "Admin/OrderStuffController.index").validator("Admin/OrderStuff");
+	Route.get("order/stuff", "Admin/OrderStuffController.get").validator("Admin/OrderStuff");
+	Route.post("order/stuff", "Admin/OrderStuffController.create").validator("Admin/OrderStuff");
+	Route.put("order/stuff", "Admin/OrderStuffController.edit").validator("Admin/OrderStuff");
+	Route.put("order/stuff/dump", "Admin/OrderStuffController.dump").validator("Admin/OrderStuff");
+	Route.put("order/stuff/restore", "Admin/OrderStuffController.restore").validator("Admin/OrderStuff");
+
+	// Order stuff file route
+	Route.get("order/stuff/files", "Admin/OrderFileController.index").validator("Admin/OrderFile");
+	Route.post("order/stuff/file", "Admin/OrderFileController.create").validator("Admin/OrderFile");
+	Route.post("order/stuff/file/check", "Admin/OrderFileController.checkImageRequest").validator("Admin/OrderFile");
+	Route.put("order/stuff/file", "Admin/OrderFileController.edit").validator("Admin/OrderFile");
+	Route.put("order/stuff/file/dump", "Admin/OrderFileController.dump").validator("Admin/OrderFile");
+	Route.put("order/stuff/file/restore", "Admin/OrderFileController.restore").validator("Admin/OrderFile");
+	Route.delete("order/stuff/file", "Admin/OrderFileController.delete").validator("Admin/OrderFile");
+}).prefix("api/v1/admin");
 
 Route.group(function () {}).prefix("api/v1/employee");

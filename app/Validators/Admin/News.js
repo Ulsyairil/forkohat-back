@@ -1,15 +1,14 @@
 "use strict";
 
-class SuperadminEvent {
+class AdminNews {
   get rules() {
     const method = this.ctx.request.method();
     const uri = this.ctx.request.url();
 
     let rules = {
-      name: "required|string",
+      title: "required|string|max:254",
       content: "required|string",
-      registration_date: "date",
-      expired_date: "date",
+      date: "required|date",
       image: "required|file|file_ext:png,jpg,jpeg|file_size:5mb",
     };
 
@@ -17,7 +16,7 @@ class SuperadminEvent {
       case "GET":
         rules = null;
         rules = {
-          event_id: "required|number",
+          id: "required|number",
         };
         break;
 
@@ -26,41 +25,40 @@ class SuperadminEvent {
         break;
 
       case "PUT":
-        if (uri == "/api/v1/superadmin/event") {
+        if (uri == "/api/v1/superadmin/news") {
           rules = null;
           rules = {
-            event_id: "required|number",
-            name: "required|string",
+            id: "required|number",
+            title: "required|string|max:254",
             content: "required|string",
-            registration_date: "date",
-            expired_date: "date",
+            date: "required|date",
           };
         }
 
-        if (uri == "/api/v1/superadmin/event/dump") {
+        if (uri == "/api/v1/superadmin/news/dump") {
           rules = null;
           rules = {
-            event_id: "required|number",
+            id: "required|number",
           };
         }
 
-        if (uri == "/api/v1/superadmin/event/restore") {
+        if (uri == "/api/v1/superadmin/news/restore") {
           rules = null;
           rules = {
-            event_id: "required|number",
+            id: "required|number",
           };
         }
         break;
 
       case "DELETE":
-        if (uri == "/api/v1/superadmin/event") {
+        if (uri == "/api/v1/superadmin/news") {
           rules = null;
           rules = {
-            event_id: "required|number",
+            id: "required|number",
           };
         }
 
-        if (uri == "/api/v1/superadmin/event/file") {
+        if (uri == "/api/v1/superadmin/news/file") {
           rules = null;
           rules = {
             file_id: "required|number",
@@ -85,4 +83,4 @@ class SuperadminEvent {
   }
 }
 
-module.exports = SuperadminEvent;
+module.exports = AdminNews;

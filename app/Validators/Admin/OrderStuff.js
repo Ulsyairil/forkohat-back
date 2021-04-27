@@ -1,22 +1,31 @@
 "use strict";
 
-class SuperadminProgram {
+class AdminOrderStuff {
   get rules() {
     const method = this.ctx.request.method();
     const uri = this.ctx.request.url();
 
     let rules = {
+      order_id: "required|number",
       name: "required|string",
       description: "required|string",
-      image: "required|file|file_ext:png,jpg,jpeg|file_size:5mb",
     };
 
     switch (method) {
       case "GET":
-        rules = null;
-        rules = {
-          program_id: "required|number",
-        };
+        if (uri == "/api/v1/superadmin/order/stuffs") {
+          rules = null;
+          rules = {
+            order_id: "required|number",
+          };
+        }
+
+        if (uri == "/api/v1/superadmin/order/stuff") {
+          rules = null;
+          rules = {
+            id: "required|number",
+          };
+        }
         break;
 
       case "POST":
@@ -24,35 +33,29 @@ class SuperadminProgram {
         break;
 
       case "PUT":
-        if (uri == "/api/v1/superadmin/rule") {
+        if (uri == "/api/v1/superadmin/order/stuff") {
           rules = null;
           rules = {
-            program_id: "required|number",
+            id: "required|number",
+            order_id: "required|number",
             name: "required|string",
             description: "required|string",
           };
         }
 
-        if (uri == "/api/v1/superadmin/rule/dump") {
+        if (uri == "/api/v1/superadmin/order/stuff/dump") {
           rules = null;
           rules = {
-            program_id: "required|number",
+            id: "required|number",
           };
         }
 
-        if (uri == "/api/v1/superadmin/rule/restore") {
+        if (uri == "/api/v1/superadmin/order/stuff/restore") {
           rules = null;
           rules = {
-            program_id: "required|number",
+            id: "required|number",
           };
         }
-        break;
-
-      case "DELETE":
-        rules = null;
-        rules = {
-          program_id: "required|number",
-        };
         break;
 
       default:
@@ -72,4 +75,4 @@ class SuperadminProgram {
   }
 }
 
-module.exports = SuperadminProgram;
+module.exports = AdminOrderStuff;

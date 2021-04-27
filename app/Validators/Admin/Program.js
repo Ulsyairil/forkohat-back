@@ -1,15 +1,13 @@
 "use strict";
 
-class SuperadminEvent {
+class AdminProgram {
   get rules() {
     const method = this.ctx.request.method();
     const uri = this.ctx.request.url();
 
     let rules = {
       name: "required|string",
-      content: "required|string",
-      registration_date: "date",
-      expired_date: "date",
+      description: "required|string",
       image: "required|file|file_ext:png,jpg,jpeg|file_size:5mb",
     };
 
@@ -17,7 +15,7 @@ class SuperadminEvent {
       case "GET":
         rules = null;
         rules = {
-          event_id: "required|number",
+          program_id: "required|number",
         };
         break;
 
@@ -26,46 +24,35 @@ class SuperadminEvent {
         break;
 
       case "PUT":
-        if (uri == "/api/v1/superadmin/event") {
+        if (uri == "/api/v1/superadmin/rule") {
           rules = null;
           rules = {
-            event_id: "required|number",
+            program_id: "required|number",
             name: "required|string",
-            content: "required|string",
-            registration_date: "date",
-            expired_date: "date",
+            description: "required|string",
           };
         }
 
-        if (uri == "/api/v1/superadmin/event/dump") {
+        if (uri == "/api/v1/superadmin/rule/dump") {
           rules = null;
           rules = {
-            event_id: "required|number",
+            program_id: "required|number",
           };
         }
 
-        if (uri == "/api/v1/superadmin/event/restore") {
+        if (uri == "/api/v1/superadmin/rule/restore") {
           rules = null;
           rules = {
-            event_id: "required|number",
+            program_id: "required|number",
           };
         }
         break;
 
       case "DELETE":
-        if (uri == "/api/v1/superadmin/event") {
-          rules = null;
-          rules = {
-            event_id: "required|number",
-          };
-        }
-
-        if (uri == "/api/v1/superadmin/event/file") {
-          rules = null;
-          rules = {
-            file_id: "required|number",
-          };
-        }
+        rules = null;
+        rules = {
+          program_id: "required|number",
+        };
         break;
 
       default:
@@ -85,4 +72,4 @@ class SuperadminEvent {
   }
 }
 
-module.exports = SuperadminEvent;
+module.exports = AdminProgram;

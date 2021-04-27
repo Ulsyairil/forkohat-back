@@ -1,6 +1,6 @@
 "use strict";
 
-class SuperadminUser {
+class AdminUser {
   get rules() {
     const method = this.ctx.request.method();
     const uri = this.ctx.request.url();
@@ -87,4 +87,4 @@ class SuperadminUser {
   }
 }
 
-module.exports = SuperadminUser;
+module.exports = AdminUser;
