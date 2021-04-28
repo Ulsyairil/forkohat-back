@@ -30,6 +30,8 @@ Route.group(() => {
 	Route.get("user", "AuthController.checkUser").middleware(["jwt"]);
 	Route.post("refresh", "AuthController.refreshToken").middleware(["jwt"]);
 	Route.post("logout", "AuthController.logout").middleware(["jwt"]);
+
+	Route.get("file/:mime/:filename", "FileController.index");
 }).prefix("api/v1");
 
 Route.group(function () {
@@ -127,7 +129,7 @@ Route.group(function () {
 	Route.delete("order/stuff/file", "Superadmin/OrderFileController.delete").validator("Superadmin/OrderFile");
 })
 	.prefix("api/v1/superadmin")
-	.middleware(["jwt"]);
+	.middleware(["jwt:superadmin"]);
 
 Route.group(function () {
 	// Event routes
@@ -222,6 +224,47 @@ Route.group(function () {
 	Route.put("order/stuff/file/dump", "Admin/OrderFileController.dump").validator("Admin/OrderFile");
 	Route.put("order/stuff/file/restore", "Admin/OrderFileController.restore").validator("Admin/OrderFile");
 	Route.delete("order/stuff/file", "Admin/OrderFileController.delete").validator("Admin/OrderFile");
-}).prefix("api/v1/admin");
+})
+	.prefix("api/v1/admin")
+	.middleware(["jwt:admin"]);
 
-Route.group(function () {}).prefix("api/v1/employee");
+Route.group(function () {
+	// Event routes
+	Route.post("events", "Employee/EventController.index");
+	Route.get("event", "Employee/EventController.get").validator("Employee/Event");
+	Route.post("event", "Employee/EventController.create").validator("Employee/Event");
+	Route.put("event", "Employee/EventController.edit").validator("Employee/Event");
+	Route.put("event/dump", "Employee/EventController.dump").validator("Employee/Event");
+	Route.put("event/restore", "Employee/EventController.restore").validator("Employee/Event");
+	Route.delete("event", "Employee/EventController.delete").validator("Employee/Event");
+	Route.delete("event/file", "Employee/EventController.deleteFile").validator("Employee/Event");
+
+	// News route
+	Route.post("news", "Employee/NewsController.index");
+	Route.get("news", "Employee/NewsController.get").validator("Employee/News");
+	Route.post("news/add", "Employee/NewsController.create").validator("Employee/News");
+	Route.put("news", "Employee/NewsController.edit").validator("Employee/News");
+	Route.put("news/dump", "Employee/NewsController.dump").validator("Employee/News")
+	Route.put("news/restore", "Employee/NewsController.restore").validator("Employee/News")
+	Route.delete("news", "Employee/NewsController.delete").validator("Employee/News")
+	Route.delete("news/file", "Employee/NewsController.deleteFile").validator("Employee/News")
+
+	// Order stuff route
+	Route.get("order/stuffs", "Employee/OrderStuffController.index");
+	Route.get("order/stuff", "Employee/OrderStuffController.get").validator("Employee/OrderStuff");
+	Route.post("order/stuff", "Employee/OrderStuffController.create").validator("Employee/OrderStuff");
+	Route.put("order/stuff", "Employee/OrderStuffController.edit").validator("Employee/OrderStuff");
+	Route.put("order/stuff/dump", "Employee/OrderStuffController.dump").validator("Employee/OrderStuff");
+	Route.put("order/stuff/restore", "Employee/OrderStuffController.restore").validator("Employee/OrderStuff");
+
+	// Order stuff file route
+	Route.get("order/stuff/files", "Employee/OrderFileController.index").validator("Employee/OrderFile");
+	Route.post("order/stuff/file", "Employee/OrderFileController.create").validator("Employee/OrderFile");
+	Route.post("order/stuff/file/check", "Employee/OrderFileController.checkImageRequest").validator("Employee/OrderFile");
+	Route.put("order/stuff/file", "Employee/OrderFileController.edit").validator("Employee/OrderFile");
+	Route.put("order/stuff/file/dump", "Employee/OrderFileController.dump").validator("Employee/OrderFile");
+	Route.put("order/stuff/file/restore", "Employee/OrderFileController.restore").validator("Employee/OrderFile");
+	Route.delete("order/stuff/file", "Employee/OrderFileController.delete").validator("Employee/OrderFile");
+})
+	.prefix("api/v1/employee")
+	.middleware(["jwt"]);

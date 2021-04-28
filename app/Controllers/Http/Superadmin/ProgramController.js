@@ -114,7 +114,7 @@ class ProgramController {
           name: fileName,
           mime: inputImage.subtype,
           path: Helpers.resourcesPath("uploads/programs"),
-          url: "/",
+          url: `/api/v1/file/${inputImage.subtype}/${fileName}`,
         });
       }
 
@@ -180,7 +180,7 @@ class ProgramController {
           name: fileName,
           mime: inputImage.subtype,
           path: Helpers.resourcesPath("uploads/programs"),
-          url: "/",
+          url: `/api/v1/file/${inputImage.subtype}/${fileName}`,
         });
       }
 

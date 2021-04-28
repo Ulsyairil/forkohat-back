@@ -64,6 +64,10 @@ class User extends Model {
     return this.hasMany("App/Models/Rule", "rule_id", "id");
   }
 
+  programRuled() {
+    return this.hasMany("App/Models/ProgramRuled", "rule_id", "id");
+  }
+
   userFiles() {
     return this.hasMany("App/Models/UserFile", "id", "user_id");
   }

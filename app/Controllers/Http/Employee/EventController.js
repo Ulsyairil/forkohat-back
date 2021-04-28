@@ -4,29 +4,41 @@ const Helpers = use("Helpers");
 const fs = use("fs");
 const path = use("path");
 const removeFile = Helpers.promisify(fs.unlink);
-const News = use("App/Models/News");
-const NewsFile = use("App/Models/NewsFile");
+const Event = use("App/Models/Event");
+const EventFile = use("App/Models/EventFile");
 const RandomString = use("randomstring");
 const Moment = use("moment");
 const { validateAll } = use("Validator");
 
-class NewsController {
-  async index({ request, response }) {
+class EventController {
+  async index({ auth, request, response }) {
     try {
-      let queryTotalData = await News.query().count("* as total");
+      let user = await auth.getUser();
+
+      let queryTotalData = await Event.query()
+        .where("author_id", user.id)
+        .count("* as total");
 
       let totalData = queryTotalData[0].total;
       console.log(totalData);
 
-      let queryTotalFilteredData = News.query().with("users");
+      let queryTotalFilteredData = Event.query()
+        .with("users")
+        .where("author_id", user.id);
 
       if (request.input("search").value != "") {
         queryTotalFilteredData
           .with("users", (builder) => {
             builder.where("name", "like", `%${request.input("search").value}%`);
           })
-          .where("title", "like", `%${request.input("search").value}%`)
+          .where("name", "like", `%${request.input("search").value}%`)
           .orWhere("content", "like", `%${request.input("search").value}%`)
+          .orWhere(
+            "registration_date",
+            "like",
+            `%${request.input("search").value}%`
+          )
+          .orWhere("expired_date", "like", `%${request.input("search").value}%`)
           .orWhere("created_at", "like", `%${request.input("search").value}%`)
           .orWhere("updated_at", "like", `%${request.input("search").value}%`)
           .orWhere("deleted_at", "like", `%${request.input("search").value}%`);
@@ -35,15 +47,21 @@ class NewsController {
       let count = await queryTotalFilteredData.count("* as total");
       let totalFiltered = count[0].total;
 
-      let getData = News.query().with("users");
+      let getData = Event.query().with("users").where("author_id", user.id);
 
       if (request.input("search").value != "") {
         getData
           .with("users", (builder) => {
             builder.where("name", "like", `%${request.input("search").value}%`);
           })
-          .where("title", "like", `%${request.input("search").value}%`)
+          .where("name", "like", `%${request.input("search").value}%`)
           .orWhere("content", "like", `%${request.input("search").value}%`)
+          .orWhere(
+            "registration_date",
+            "like",
+            `%${request.input("search").value}%`
+          )
+          .orWhere("expired_date", "like", `%${request.input("search").value}%`)
           .orWhere("created_at", "like", `%${request.input("search").value}%`)
           .orWhere("updated_at", "like", `%${request.input("search").value}%`)
           .orWhere("deleted_at", "like", `%${request.input("search").value}%`);
@@ -70,12 +88,15 @@ class NewsController {
     }
   }
 
-  async get({ request, response }) {
+  async get({ auth, request, response }) {
     try {
-      let data = await News.query()
+      let user = await auth.getUser();
+
+      let data = await Event.query()
         .with("users")
-        .with("newsFiles")
-        .where("id", request.input("id"))
+        .with("eventFiles")
+        .where("id", request.input("event_id"))
+        .where("author_id", user.id)
         .first();
 
       if (!data) {
@@ -98,14 +119,13 @@ class NewsController {
 
       // Upload multi file
       const validationFile = {
-        size: "5mb",
-        extnames: ["png", "jpg", "jpeg"],
+        size: "2mb",
       };
       let inputFiles = request.file("files", validationFile);
 
       if (inputFiles) {
         await inputFiles.moveAll(
-          Helpers.resourcesPath("uploads/news"),
+          Helpers.resourcesPath("uploads/events"),
           (file) => {
             return {
               name: `${RandomString.generate()}.${file.subtype}`,
@@ -119,7 +139,10 @@ class NewsController {
           await Promise.all(
             movedFiles.map((file) => {
               return removeFile(
-                path.join(Helpers.resourcesPath("uploads/news"), file.fileName)
+                path.join(
+                  Helpers.resourcesPath("uploads/events"),
+                  file.fileName
+                )
               );
             })
           );
@@ -134,7 +157,7 @@ class NewsController {
       if (inputImage) {
         fileName = `${RandomString.generate()}.${inputImage.subtype}`;
 
-        await inputImage.move(Helpers.resourcesPath("uploads/news"), {
+        await inputImage.move(Helpers.resourcesPath("uploads/events"), {
           name: fileName,
         });
 
@@ -143,43 +166,44 @@ class NewsController {
         }
       }
 
-      // Insert to news table
-      let news = await News.create({
+      // Insert to events table
+      let event = await Event.create({
         author_id: user.id,
-        title: request.input("title"),
+        name: request.input("name"),
         content: request.input("content"),
-        date: request.input("date"),
+        registration_date: request.input("registration_date"),
+        expired_date: request.input("expired_date"),
       });
 
       if (inputFiles) {
         movedFiles.forEach(async (value) => {
-          await NewsFile.create({
-            news_id: news.id,
+          await EventFile.create({
+            event_id: event.id,
             type: "files",
             name: value.fileName,
             mime: value.subtype,
-            path: Helpers.resourcesPath("uploads/news"),
+            path: Helpers.resourcesPath("uploads/events"),
             url: `/api/v1/file/${value.subtype}/${value.fileName}`,
           });
         });
       }
 
       if (inputImage) {
-        await NewsFile.create({
-          news_id: news.id,
+        await EventFile.create({
+          event_id: event.id,
           type: "banner",
           name: fileName,
           mime: inputImage.subtype,
-          path: Helpers.resourcesPath("uploads/news"),
+          path: Helpers.resourcesPath("uploads/events"),
           url: `/api/v1/file/${inputImage.subtype}/${fileName}`,
         });
       }
 
       // Get data created
-      let data = await News.query()
+      let data = await Event.query()
         .with("users")
-        .with("newsFiles")
-        .where("id", news.id)
+        .with("eventFiles")
+        .where("id", event.id)
         .first();
 
       return response.send(data);
@@ -195,13 +219,12 @@ class NewsController {
 
       // Upload multi file
       let inputFiles = request.file("files", {
-        size: "5mb",
-        extnames: ["png", "jpg", "jpeg"],
+        size: "2mb",
       });
 
       if (inputFiles) {
         await inputFiles.moveAll(
-          Helpers.resourcesPath("uploads/news"),
+          Helpers.resourcesPath("uploads/events"),
           (file) => {
             return {
               name: `${RandomString.generate()}.${file.subtype}`,
@@ -215,7 +238,10 @@ class NewsController {
           await Promise.all(
             movedFiles.map((file) => {
               return removeFile(
-                path.join(Helpers.resourcesPath("uploads/news"), file.fileName)
+                path.join(
+                  Helpers.resourcesPath("uploads/events"),
+                  file.fileName
+                )
               );
             })
           );
@@ -231,23 +257,23 @@ class NewsController {
       });
 
       if (inputImage) {
-        let findImage = await NewsFile.query()
-          .where("news_id", request.input("id"))
+        let findImage = await EventFile.query()
+          .where("event_id", request.input("event_id"))
           .andWhere("type", "banner")
           .first();
 
         // Delete image and data if exists
         if (findImage) {
           removeFile(
-            path.join(Helpers.resourcesPath("uploads/news"), findImage.name)
+            path.join(Helpers.resourcesPath("uploads/events"), findImage.name)
           );
 
-          await NewsFile.query().where("id", findImage.id).delete();
+          await EventFile.query().where("id", findImage.id).delete();
         }
 
         fileName = `${RandomString.generate()}.${inputImage.subtype}`;
 
-        await inputImage.move(Helpers.resourcesPath("uploads/news"), {
+        await inputImage.move(Helpers.resourcesPath("uploads/events"), {
           name: fileName,
         });
 
@@ -256,44 +282,45 @@ class NewsController {
         }
       }
 
-      // Update news table
-      await News.query()
-        .where("id", request.input("id"))
+      // Update events table
+      await Event.query()
+        .where("id", request.input("event_id"))
         .update({
-          title: request.input("title"),
+          name: request.input("name"),
           content: request.input("content"),
-          date: request.input("date"),
+          registration_date: request.input("registration_date"),
+          expired_date: request.input("expired_date"),
         });
 
       if (inputFiles) {
         movedFiles.forEach(async (value) => {
-          await NewsFile.create({
-            news_id: request.input("id"),
+          await EventFile.create({
+            event_id: request.input("event_id"),
             type: "files",
             name: value.fileName,
             mime: value.subtype,
-            path: Helpers.resourcesPath("uploads/news"),
+            path: Helpers.resourcesPath("uploads/events"),
             url: `/api/v1/file/${value.subtype}/${value.fileName}`,
           });
         });
       }
 
       if (inputImage) {
-        await NewsFile.create({
-          news_id: request.input("id"),
+        await EventFile.create({
+          event_id: request.input("event_id"),
           type: "banner",
           name: fileName,
           mime: inputImage.subtype,
-          path: Helpers.resourcesPath("uploads/news"),
+          path: Helpers.resourcesPath("uploads/events"),
           url: `/api/v1/file/${inputImage.subtype}/${fileName}`,
         });
       }
 
       // Get data created
-      let data = await News.query()
+      let data = await Event.query()
         .with("users")
-        .with("newsFiles")
-        .where("id", request.input("id"))
+        .with("eventFiles")
+        .where("id", request.input("event_id"))
         .first();
 
       return response.send(data);
@@ -305,15 +332,15 @@ class NewsController {
 
   async dump({ request, response }) {
     try {
-      await News.query().where("id", request.input("id")).update({
+      await Event.query().where("id", request.input("event_id")).update({
         deleted_at: Moment.now(),
       });
 
       // Get data created
-      let data = await News.query()
+      let data = await Event.query()
         .with("users")
-        .with("newsFiles")
-        .where("id", request.input("id"))
+        .with("eventFiles")
+        .where("id", request.input("event_id"))
         .first();
 
       return response.send(data);
@@ -325,15 +352,15 @@ class NewsController {
 
   async restore({ request, response }) {
     try {
-      await News.query().where("id", request.input("id")).update({
+      await Event.query().where("id", request.input("event_id")).update({
         deleted_at: null,
       });
 
       // Get data created
-      let data = await News.query()
+      let data = await Event.query()
         .with("users")
-        .with("newsFiles")
-        .where("id", request.input("id"))
+        .with("eventFiles")
+        .where("id", request.input("event_id"))
         .first();
 
       return response.send(data);
@@ -345,8 +372,8 @@ class NewsController {
 
   async delete({ request, response }) {
     try {
-      let findImage = await NewsFile.query()
-        .where("news_id", request.input("id"))
+      let findImage = await EventFile.query()
+        .where("event_id", request.input("event_id"))
         .fetch();
 
       let convert = findImage.toJSON();
@@ -355,8 +382,10 @@ class NewsController {
         removeFile(path.join(value.path, value.name));
       });
 
-      await NewsFile.query().where("news_id", request.input("id")).delete();
-      await News.query().where("id", request.input("id")).delete();
+      await EventFile.query()
+        .where("event_id", request.input("event_id"))
+        .delete();
+      await Event.query().where("id", request.input("event_id")).delete();
 
       return response.send({
         message: "deleted",
@@ -369,7 +398,7 @@ class NewsController {
 
   async deleteFile({ request, response }) {
     try {
-      let findFile = await NewsFile.query()
+      let findFile = await EventFile.query()
         .where("id", request.input("file_id"))
         .first();
 
@@ -381,7 +410,7 @@ class NewsController {
 
       removeFile(path.join(findFile.path, findFile.name));
 
-      await NewsFile.query().where("id", request.input("file_id")).delete();
+      await EventFile.query().where("id", request.input("file_id")).delete();
 
       return response.send({
         message: "file deleted",
@@ -393,4 +422,4 @@ class NewsController {
   }
 }
 
-module.exports = NewsController;
+module.exports = EventController;

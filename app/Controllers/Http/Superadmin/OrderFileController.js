@@ -64,7 +64,7 @@ class OrderFileController {
         name: fileName,
         mime: inputImage.subtype,
         path: Helpers.resourcesPath("uploads/orders"),
-        url: "/",
+        url: `/api/v1/file/${inputImage.subtype}/${fileName}`,
       });
 
       return response.send(create);
@@ -109,7 +109,7 @@ class OrderFileController {
             page: request.input("page"),
             name: fileName,
             mime: inputImage.subtype,
-            url: "/",
+            url: `/api/v1/file/${inputImage.subtype}/${fileName}`,
           });
       }
 

@@ -133,7 +133,7 @@ class UserController {
         name: request.input("name"),
         email: request.input("email"),
         nip: request.input("nip"),
-        password: await Hash.make(request.input("password")),
+        password: request.input("password"),
         job: request.input("job"),
         district: request.input("district"),
         sub_district: request.input("sub_district"),
@@ -148,7 +148,7 @@ class UserController {
           name: fileName,
           mime: inputImage.subtype,
           path: Helpers.resourcesPath("uploads/users"),
-          url: "/",
+          url: `/api/v1/file/${inputImage.subtype}/${fileName}`,
         });
       }
 
@@ -205,7 +205,7 @@ class UserController {
           name: fileName,
           mime: inputImage.subtype,
           path: Helpers.resourcesPath("uploads/users"),
-          url: "/",
+          url: `/api/v1/file/${inputImage.subtype}/${fileName}`,
         });
       }
 

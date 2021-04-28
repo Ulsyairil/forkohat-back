@@ -174,7 +174,7 @@ class EventController {
             name: value.fileName,
             mime: value.subtype,
             path: Helpers.resourcesPath("uploads/events"),
-            url: "/",
+            url: `/api/v1/file/${value.subtype}/${value.fileName}`,
           });
         });
       }
@@ -186,7 +186,7 @@ class EventController {
           name: fileName,
           mime: inputImage.subtype,
           path: Helpers.resourcesPath("uploads/events"),
-          url: "/",
+          url: `/api/v1/file/${inputImage.subtype}/${fileName}`,
         });
       }
 
@@ -291,7 +291,7 @@ class EventController {
             name: value.fileName,
             mime: value.subtype,
             path: Helpers.resourcesPath("uploads/events"),
-            url: "/",
+            url: `/api/v1/file/${value.subtype}/${value.fileName}`,
           });
         });
       }
@@ -303,7 +303,7 @@ class EventController {
           name: fileName,
           mime: inputImage.subtype,
           path: Helpers.resourcesPath("uploads/events"),
-          url: "/",
+          url: `/api/v1/file/${inputImage.subtype}/${fileName}`,
         });
       }
 

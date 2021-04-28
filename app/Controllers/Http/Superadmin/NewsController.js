@@ -159,7 +159,7 @@ class NewsController {
             name: value.fileName,
             mime: value.subtype,
             path: Helpers.resourcesPath("uploads/news"),
-            url: "/",
+            url: `/api/v1/file/${value.subtype}/${value.fileName}`,
           });
         });
       }
@@ -171,7 +171,7 @@ class NewsController {
           name: fileName,
           mime: inputImage.subtype,
           path: Helpers.resourcesPath("uploads/news"),
-          url: "/",
+          url: `/api/v1/file/${inputImage.subtype}/${fileName}`,
         });
       }
 
@@ -273,7 +273,7 @@ class NewsController {
             name: value.fileName,
             mime: value.subtype,
             path: Helpers.resourcesPath("uploads/news"),
-            url: "/",
+            url: `/api/v1/file/${value.subtype}/${value.fileName}`,
           });
         });
       }
@@ -285,7 +285,7 @@ class NewsController {
           name: fileName,
           mime: inputImage.subtype,
           path: Helpers.resourcesPath("uploads/news"),
-          url: "/",
+          url: `/api/v1/file/${inputImage.subtype}/${fileName}`,
         });
       }
 

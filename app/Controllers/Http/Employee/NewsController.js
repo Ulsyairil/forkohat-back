@@ -11,14 +11,20 @@ const Moment = use("moment");
 const { validateAll } = use("Validator");
 
 class NewsController {
-  async index({ request, response }) {
+  async index({ auth, request, response }) {
     try {
-      let queryTotalData = await News.query().count("* as total");
+      let user = await auth.getUser();
+
+      let queryTotalData = await News.query()
+        .where("author_id", user.id)
+        .count("* as total");
 
       let totalData = queryTotalData[0].total;
       console.log(totalData);
 
-      let queryTotalFilteredData = News.query().with("users");
+      let queryTotalFilteredData = News.query()
+        .with("users")
+        .where("author_id", user.id);
 
       if (request.input("search").value != "") {
         queryTotalFilteredData
@@ -35,7 +41,7 @@ class NewsController {
       let count = await queryTotalFilteredData.count("* as total");
       let totalFiltered = count[0].total;
 
-      let getData = News.query().with("users");
+      let getData = News.query().with("users").where("author_id", user.id);
 
       if (request.input("search").value != "") {
         getData
@@ -70,12 +76,15 @@ class NewsController {
     }
   }
 
-  async get({ request, response }) {
+  async get({ auth, request, response }) {
     try {
+      let user = await auth.getUser();
+
       let data = await News.query()
         .with("users")
         .with("newsFiles")
         .where("id", request.input("id"))
+        .where("author_id", user.id)
         .first();
 
       if (!data) {
