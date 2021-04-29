@@ -1,14 +1,14 @@
-"use strict";
+'use strict';
 
-const Helpers = use("Helpers");
-const fs = use("fs");
-const path = use("path");
+const Helpers = use('Helpers');
+const fs = use('fs');
+const path = use('path');
 const removeFile = Helpers.promisify(fs.unlink);
-const Event = use("App/Models/Event");
-const EventFile = use("App/Models/EventFile");
-const RandomString = use("randomstring");
-const Moment = use("moment");
-const { validateAll } = use("Validator");
+const Event = use('App/Models/Event');
+const EventFile = use('App/Models/EventFile');
+const RandomString = use('randomstring');
+const Moment = use('moment');
+const { validateAll } = use('Validator');
 
 class EventController {
   async index({ auth, request, response }) {
@@ -16,68 +16,68 @@ class EventController {
       let user = await auth.getUser();
 
       let queryTotalData = await Event.query()
-        .where("author_id", user.id)
-        .count("* as total");
+        .where('author_id', user.id)
+        .count('* as total');
 
       let totalData = queryTotalData[0].total;
       console.log(totalData);
 
       let queryTotalFilteredData = Event.query()
-        .with("users")
-        .where("author_id", user.id);
+        .with('users')
+        .where('author_id', user.id);
 
-      if (request.input("search").value != "") {
+      if (request.input('search').value != '') {
         queryTotalFilteredData
-          .with("users", (builder) => {
-            builder.where("name", "like", `%${request.input("search").value}%`);
+          .with('users', (builder) => {
+            builder.where('name', 'like', `%${request.input('search').value}%`);
           })
-          .where("name", "like", `%${request.input("search").value}%`)
-          .orWhere("content", "like", `%${request.input("search").value}%`)
+          .where('name', 'like', `%${request.input('search').value}%`)
+          .orWhere('content', 'like', `%${request.input('search').value}%`)
           .orWhere(
-            "registration_date",
-            "like",
-            `%${request.input("search").value}%`
+            'registration_date',
+            'like',
+            `%${request.input('search').value}%`
           )
-          .orWhere("expired_date", "like", `%${request.input("search").value}%`)
-          .orWhere("created_at", "like", `%${request.input("search").value}%`)
-          .orWhere("updated_at", "like", `%${request.input("search").value}%`)
-          .orWhere("deleted_at", "like", `%${request.input("search").value}%`);
+          .orWhere('expired_date', 'like', `%${request.input('search').value}%`)
+          .orWhere('created_at', 'like', `%${request.input('search').value}%`)
+          .orWhere('updated_at', 'like', `%${request.input('search').value}%`)
+          .orWhere('deleted_at', 'like', `%${request.input('search').value}%`);
       }
 
-      let count = await queryTotalFilteredData.count("* as total");
+      let count = await queryTotalFilteredData.count('* as total');
       let totalFiltered = count[0].total;
 
-      let getData = Event.query().with("users").where("author_id", user.id);
+      let getData = Event.query().with('users').where('author_id', user.id);
 
-      if (request.input("search").value != "") {
+      if (request.input('search').value != '') {
         getData
-          .with("users", (builder) => {
-            builder.where("name", "like", `%${request.input("search").value}%`);
+          .with('users', (builder) => {
+            builder.where('name', 'like', `%${request.input('search').value}%`);
           })
-          .where("name", "like", `%${request.input("search").value}%`)
-          .orWhere("content", "like", `%${request.input("search").value}%`)
+          .where('name', 'like', `%${request.input('search').value}%`)
+          .orWhere('content', 'like', `%${request.input('search').value}%`)
           .orWhere(
-            "registration_date",
-            "like",
-            `%${request.input("search").value}%`
+            'registration_date',
+            'like',
+            `%${request.input('search').value}%`
           )
-          .orWhere("expired_date", "like", `%${request.input("search").value}%`)
-          .orWhere("created_at", "like", `%${request.input("search").value}%`)
-          .orWhere("updated_at", "like", `%${request.input("search").value}%`)
-          .orWhere("deleted_at", "like", `%${request.input("search").value}%`);
+          .orWhere('expired_date', 'like', `%${request.input('search').value}%`)
+          .orWhere('created_at', 'like', `%${request.input('search').value}%`)
+          .orWhere('updated_at', 'like', `%${request.input('search').value}%`)
+          .orWhere('deleted_at', 'like', `%${request.input('search').value}%`);
       }
 
-      request.input("order").forEach((value) => {
+      request.input('order').forEach((value) => {
         getData.orderBy(value.column, value.dir);
       });
 
-      getData.offset(request.input("start")).limit(request.input("length"));
+      getData.offset(request.input('start')).limit(request.input('length'));
 
       let data = await getData.fetch();
       console.log(data);
 
       return response.send({
-        draw: Number(request.input("draw")),
+        draw: Number(request.input('draw')),
         recordsTotal: totalData,
         recordsFiltered: totalFiltered,
         data: data,
@@ -93,15 +93,15 @@ class EventController {
       let user = await auth.getUser();
 
       let data = await Event.query()
-        .with("users")
-        .with("eventFiles")
-        .where("id", request.input("event_id"))
-        .where("author_id", user.id)
+        .with('users')
+        .with('eventFiles')
+        .where('id', request.input('event_id'))
+        .where('author_id', user.id)
         .first();
 
       if (!data) {
         return response.status(404).send({
-          message: "not found",
+          message: 'not found',
         });
       }
 
@@ -119,13 +119,13 @@ class EventController {
 
       // Upload multi file
       const validationFile = {
-        size: "2mb",
+        size: '2mb',
       };
-      let inputFiles = request.file("files", validationFile);
+      let inputFiles = request.file('files', validationFile);
 
       if (inputFiles) {
         await inputFiles.moveAll(
-          Helpers.resourcesPath("uploads/events"),
+          Helpers.resourcesPath('uploads/events'),
           (file) => {
             return {
               name: `${RandomString.generate()}.${file.subtype}`,
@@ -140,7 +140,7 @@ class EventController {
             movedFiles.map((file) => {
               return removeFile(
                 path.join(
-                  Helpers.resourcesPath("uploads/events"),
+                  Helpers.resourcesPath('uploads/events'),
                   file.fileName
                 )
               );
@@ -152,12 +152,12 @@ class EventController {
       }
 
       // Upload image
-      let inputImage = request.file("image");
+      let inputImage = request.file('image');
 
       if (inputImage) {
         fileName = `${RandomString.generate()}.${inputImage.subtype}`;
 
-        await inputImage.move(Helpers.resourcesPath("uploads/events"), {
+        await inputImage.move(Helpers.resourcesPath('uploads/events'), {
           name: fileName,
         });
 
@@ -169,20 +169,20 @@ class EventController {
       // Insert to events table
       let event = await Event.create({
         author_id: user.id,
-        name: request.input("name"),
-        content: request.input("content"),
-        registration_date: request.input("registration_date"),
-        expired_date: request.input("expired_date"),
+        name: request.input('name'),
+        content: request.input('content'),
+        registration_date: request.input('registration_date'),
+        expired_date: request.input('expired_date'),
       });
 
       if (inputFiles) {
         movedFiles.forEach(async (value) => {
           await EventFile.create({
             event_id: event.id,
-            type: "files",
+            type: 'files',
             name: value.fileName,
             mime: value.subtype,
-            path: Helpers.resourcesPath("uploads/events"),
+            path: Helpers.resourcesPath('uploads/events'),
             url: `/api/v1/file/${value.subtype}/${value.fileName}`,
           });
         });
@@ -191,19 +191,19 @@ class EventController {
       if (inputImage) {
         await EventFile.create({
           event_id: event.id,
-          type: "banner",
+          type: 'banner',
           name: fileName,
           mime: inputImage.subtype,
-          path: Helpers.resourcesPath("uploads/events"),
+          path: Helpers.resourcesPath('uploads/events'),
           url: `/api/v1/file/${inputImage.subtype}/${fileName}`,
         });
       }
 
       // Get data created
       let data = await Event.query()
-        .with("users")
-        .with("eventFiles")
-        .where("id", event.id)
+        .with('users')
+        .with('eventFiles')
+        .where('id', event.id)
         .first();
 
       return response.send(data);
@@ -218,13 +218,13 @@ class EventController {
       let movedFiles, fileName;
 
       // Upload multi file
-      let inputFiles = request.file("files", {
-        size: "2mb",
+      let inputFiles = request.file('files', {
+        size: '2mb',
       });
 
       if (inputFiles) {
         await inputFiles.moveAll(
-          Helpers.resourcesPath("uploads/events"),
+          Helpers.resourcesPath('uploads/events'),
           (file) => {
             return {
               name: `${RandomString.generate()}.${file.subtype}`,
@@ -239,7 +239,7 @@ class EventController {
             movedFiles.map((file) => {
               return removeFile(
                 path.join(
-                  Helpers.resourcesPath("uploads/events"),
+                  Helpers.resourcesPath('uploads/events'),
                   file.fileName
                 )
               );
@@ -251,29 +251,29 @@ class EventController {
       }
 
       // Upload image
-      let inputImage = request.file("image", {
-        size: "5mb",
-        extnames: ["png", "jpg", "jpeg"],
+      let inputImage = request.file('image', {
+        size: '5mb',
+        extnames: ['png', 'jpg', 'jpeg'],
       });
 
       if (inputImage) {
         let findImage = await EventFile.query()
-          .where("event_id", request.input("event_id"))
-          .andWhere("type", "banner")
+          .where('event_id', request.input('event_id'))
+          .andWhere('type', 'banner')
           .first();
 
         // Delete image and data if exists
         if (findImage) {
           removeFile(
-            path.join(Helpers.resourcesPath("uploads/events"), findImage.name)
+            path.join(Helpers.resourcesPath('uploads/events'), findImage.name)
           );
 
-          await EventFile.query().where("id", findImage.id).delete();
+          await EventFile.query().where('id', findImage.id).delete();
         }
 
         fileName = `${RandomString.generate()}.${inputImage.subtype}`;
 
-        await inputImage.move(Helpers.resourcesPath("uploads/events"), {
+        await inputImage.move(Helpers.resourcesPath('uploads/events'), {
           name: fileName,
         });
 
@@ -284,22 +284,22 @@ class EventController {
 
       // Update events table
       await Event.query()
-        .where("id", request.input("event_id"))
+        .where('id', request.input('event_id'))
         .update({
-          name: request.input("name"),
-          content: request.input("content"),
-          registration_date: request.input("registration_date"),
-          expired_date: request.input("expired_date"),
+          name: request.input('name'),
+          content: request.input('content'),
+          registration_date: request.input('registration_date'),
+          expired_date: request.input('expired_date'),
         });
 
       if (inputFiles) {
         movedFiles.forEach(async (value) => {
           await EventFile.create({
-            event_id: request.input("event_id"),
-            type: "files",
+            event_id: request.input('event_id'),
+            type: 'files',
             name: value.fileName,
             mime: value.subtype,
-            path: Helpers.resourcesPath("uploads/events"),
+            path: Helpers.resourcesPath('uploads/events'),
             url: `/api/v1/file/${value.subtype}/${value.fileName}`,
           });
         });
@@ -307,20 +307,20 @@ class EventController {
 
       if (inputImage) {
         await EventFile.create({
-          event_id: request.input("event_id"),
-          type: "banner",
+          event_id: request.input('event_id'),
+          type: 'banner',
           name: fileName,
           mime: inputImage.subtype,
-          path: Helpers.resourcesPath("uploads/events"),
+          path: Helpers.resourcesPath('uploads/events'),
           url: `/api/v1/file/${inputImage.subtype}/${fileName}`,
         });
       }
 
       // Get data created
       let data = await Event.query()
-        .with("users")
-        .with("eventFiles")
-        .where("id", request.input("event_id"))
+        .with('users')
+        .with('eventFiles')
+        .where('id', request.input('event_id'))
         .first();
 
       return response.send(data);
@@ -332,15 +332,15 @@ class EventController {
 
   async dump({ request, response }) {
     try {
-      await Event.query().where("id", request.input("event_id")).update({
+      await Event.query().where('id', request.input('event_id')).update({
         deleted_at: Moment.now(),
       });
 
       // Get data created
       let data = await Event.query()
-        .with("users")
-        .with("eventFiles")
-        .where("id", request.input("event_id"))
+        .with('users')
+        .with('eventFiles')
+        .where('id', request.input('event_id'))
         .first();
 
       return response.send(data);
@@ -352,15 +352,15 @@ class EventController {
 
   async restore({ request, response }) {
     try {
-      await Event.query().where("id", request.input("event_id")).update({
+      await Event.query().where('id', request.input('event_id')).update({
         deleted_at: null,
       });
 
       // Get data created
       let data = await Event.query()
-        .with("users")
-        .with("eventFiles")
-        .where("id", request.input("event_id"))
+        .with('users')
+        .with('eventFiles')
+        .where('id', request.input('event_id'))
         .first();
 
       return response.send(data);
@@ -373,7 +373,7 @@ class EventController {
   async delete({ request, response }) {
     try {
       let findImage = await EventFile.query()
-        .where("event_id", request.input("event_id"))
+        .where('event_id', request.input('event_id'))
         .fetch();
 
       let convert = findImage.toJSON();
@@ -383,12 +383,12 @@ class EventController {
       });
 
       await EventFile.query()
-        .where("event_id", request.input("event_id"))
+        .where('event_id', request.input('event_id'))
         .delete();
-      await Event.query().where("id", request.input("event_id")).delete();
+      await Event.query().where('id', request.input('event_id')).delete();
 
       return response.send({
-        message: "deleted",
+        message: 'deleted',
       });
     } catch (error) {
       console.log(error);
@@ -399,21 +399,21 @@ class EventController {
   async deleteFile({ request, response }) {
     try {
       let findFile = await EventFile.query()
-        .where("id", request.input("file_id"))
+        .where('id', request.input('file_id'))
         .first();
 
       if (!findFile) {
         return response.status(404).send({
-          message: "file not found",
+          message: 'file not found',
         });
       }
 
       removeFile(path.join(findFile.path, findFile.name));
 
-      await EventFile.query().where("id", request.input("file_id")).delete();
+      await EventFile.query().where('id', request.input('file_id')).delete();
 
       return response.send({
-        message: "file deleted",
+        message: 'file deleted',
       });
     } catch (error) {
       console.log(error);

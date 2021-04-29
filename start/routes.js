@@ -16,6 +16,10 @@
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route = use("Route");
 
+Route.get('/', function({view}) {
+	return view.render('welcome');
+})
+
 Route.group(() => {
 	Route.get("province", "IndonesianAreaController.getProvince");
 	Route.get("province/detail", "IndonesianAreaController.detailProvince");
@@ -28,6 +32,9 @@ Route.group(() => {
 
 	Route.post("login", "AuthController.login");
 	Route.get("user", "AuthController.checkUser").middleware(["jwt"]);
+	Route.get("user/profile", "ProfileController.index").middleware(["jwt"]);
+	Route.put("user/profile/edit", "ProfileController.edit").middleware(["jwt"]).validator("Auth/Profile");
+	Route.put("user/profile/image/edit", "ProfileController.changeImage").middleware(["jwt"]).validator("Auth/Profile");
 	Route.post("refresh", "AuthController.refreshToken").middleware(["jwt"]);
 	Route.post("logout", "AuthController.logout").middleware(["jwt"]);
 

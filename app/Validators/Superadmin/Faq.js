@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 class SuperadminFaq {
   get rules() {
@@ -6,49 +6,49 @@ class SuperadminFaq {
     const uri = this.ctx.request.url();
 
     let rules = {
-      name: "required|string",
+      name: 'required|string',
     };
 
     switch (method) {
-      case "GET":
+      case 'GET':
         rules = null;
         rules = {
-          faq_id: "required|number",
+          faq_id: 'required|number',
         };
         break;
 
-      case "POST":
+      case 'POST':
         rules = rules;
         break;
 
-      case "PUT":
-        if (uri == "/api/v1/superadmin/faq") {
+      case 'PUT':
+        if (uri == '/api/v1/superadmin/faq') {
           rules = null;
           rules = {
-            faq_id: "required|number",
-            name: "required|string",
+            faq_id: 'required|number',
+            name: 'required|string',
           };
         }
 
-        if (uri == "/api/v1/superadmin/faq/dump") {
+        if (uri == '/api/v1/superadmin/faq/dump') {
           rules = null;
           rules = {
-            faq_id: "required|number",
+            faq_id: 'required|number',
           };
         }
 
-        if (uri == "/api/v1/superadmin/faq/restore") {
+        if (uri == '/api/v1/superadmin/faq/restore') {
           rules = null;
           rules = {
-            faq_id: "required|number",
+            faq_id: 'required|number',
           };
         }
         break;
 
-      case "DELETE":
+      case 'DELETE':
         rules = null;
         rules = {
-          faq_id: "required|number",
+          faq_id: 'required|number',
         };
         break;
 

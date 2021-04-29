@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 class AdminUser {
   get rules() {
@@ -6,67 +6,67 @@ class AdminUser {
     const uri = this.ctx.request.url();
 
     let rules = {
-      rule_id: "required|number",
-      name: "required|string|max:254|unique:users,name",
-      email: "required|string|max:254|unique:users,email",
-      nip: "string|max:18|unique:users,nip",
-      password: "required|string",
-      job: "required|string|max:254",
-      district: "required|number",
-      sub_district: "number",
-      gender: "required|in:male,female,secret",
-      bio: "string",
+      rule_id: 'required|number',
+      name: 'required|string|max:254|unique:users,name',
+      email: 'required|string|max:254|unique:users,email',
+      nip: 'string|max:18|unique:users,nip',
+      password: 'required|string',
+      job: 'required|string|max:254',
+      district: 'required|number',
+      sub_district: 'number',
+      gender: 'required|in:male,female,secret',
+      bio: 'string',
     };
 
     switch (method) {
-      case "GET":
+      case 'GET':
         rules = null;
         rules = {
-          id: "required|number",
+          id: 'required|number',
         };
         break;
 
-      case "POST":
+      case 'POST':
         rules = rules;
         break;
 
-      case "PUT":
-        if (uri == "/api/v1/superadmin/user") {
+      case 'PUT':
+        if (uri == '/api/v1/superadmin/user') {
           rules = null;
           rules = {
-            id: "required|number",
-            rule_id: "required|number",
-            name: "required|string|max:254",
-            email: "required|string|max:254",
-            nip: "string|max:18",
-            password: "required|string",
-            job: "required|string|max:254",
-            district: "required|number",
-            sub_district: "number",
-            gender: "required|in:male,female,secret",
-            bio: "string",
+            id: 'required|number',
+            rule_id: 'required|number',
+            name: 'required|string|max:254',
+            email: 'required|string|max:254',
+            nip: 'string|max:18',
+            password: 'required|string',
+            job: 'required|string|max:254',
+            district: 'required|number',
+            sub_district: 'number',
+            gender: 'required|in:male,female,secret',
+            bio: 'string',
           };
         }
 
-        if (uri == "/api/v1/superadmin/user/dump") {
+        if (uri == '/api/v1/superadmin/user/dump') {
           rules = null;
           rules = {
-            id: "required|number",
+            id: 'required|number',
           };
         }
 
-        if (uri == "/api/v1/superadmin/user/restore") {
+        if (uri == '/api/v1/superadmin/user/restore') {
           rules = null;
           rules = {
-            id: "required|number",
+            id: 'required|number',
           };
         }
         break;
 
-      case "DELETE":
+      case 'DELETE':
         rules = null;
         rules = {
-          id: "required|number",
+          id: 'required|number',
         };
         break;
 

@@ -1,17 +1,17 @@
-"use strict";
+'use strict';
 
-const { validateAll } = use("Validator");
-const Hash = use("Hash");
-const User = use("App/Models/User");
+const { validateAll } = use('Validator');
+const Hash = use('Hash');
+const User = use('App/Models/User');
 
 class AuthController {
   async login({ auth, request, response }) {
     try {
       const rules = {
-        select: "required|in:nip,email",
-        email: "required_when:select,email|email",
-        nip: "required_when:select,nip|string",
-        password: "required|string",
+        select: 'required|in:nip,email',
+        email: 'required_when:select,email|email',
+        nip: 'required_when:select,nip|string',
+        password: 'required|string',
       };
 
       const validation = await validateAll(request.all(), rules);
@@ -22,26 +22,26 @@ class AuthController {
 
       let check;
 
-      if (request.input("select") == "email") {
+      if (request.input('select') == 'email') {
         check = await User.query()
-          .with("programRuled")
-          .where("email", request.input("email"))
+          .with('programRuled')
+          .where('email', request.input('email'))
           .first();
       }
 
-      if (request.input("select") == "nip") {
-        check = await User.where("nip", request.input("nip")).first();
+      if (request.input('select') == 'nip') {
+        check = await User.where('nip', request.input('nip')).first();
       }
 
       if (check == null) {
         let message;
 
-        if (request.input("select") == "email") {
-          message = "email not exists";
+        if (request.input('select') == 'email') {
+          message = 'email not exists';
         }
 
-        if (request.input("select") == "nip") {
-          message = "nip not exists";
+        if (request.input('select') == 'nip') {
+          message = 'nip not exists';
         }
 
         return response.status(401).send({
@@ -50,7 +50,7 @@ class AuthController {
       }
 
       const isSame = await Hash.verify(
-        request.input("password"),
+        request.input('password'),
         check.password
       );
 
@@ -58,7 +58,7 @@ class AuthController {
 
       if (!isSame) {
         return response.status(401).send({
-          message: "wrong password",
+          message: 'wrong password',
         });
       }
 
@@ -84,7 +84,7 @@ class AuthController {
   async refreshToken({ auth, request, response }) {
     try {
       const rules = {
-        refresh_token: "required|string",
+        refresh_token: 'required|string',
       };
 
       const validation = await validateAll(request.all(), rules);
@@ -94,7 +94,7 @@ class AuthController {
       }
 
       const refresh_token = await auth.generateForRefreshToken(
-        request.input("refresh_token"),
+        request.input('refresh_token'),
         true
       );
 
@@ -108,7 +108,7 @@ class AuthController {
   async logout({ auth, request, response }) {
     try {
       const rules = {
-        refresh_token: "required|string",
+        refresh_token: 'required|string',
       };
 
       const validation = await validateAll(request.all(), rules);
@@ -118,11 +118,11 @@ class AuthController {
       }
 
       await auth
-        .authenticator("jwt")
-        .revokeTokens([request.input("refresh_token")], true);
+        .authenticator('jwt')
+        .revokeTokens([request.input('refresh_token')], true);
 
       return response.send({
-        message: "logout success",
+        message: 'logout success',
       });
     } catch (error) {
       console.log(error);

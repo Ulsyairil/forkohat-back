@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 class SuperadminRuleProgram {
   get rules() {
@@ -6,35 +6,35 @@ class SuperadminRuleProgram {
     const uri = this.ctx.request.url();
 
     let rules = {
-      rule_id: "required|number",
-      program_id: "required|number",
+      rule_id: 'required|number',
+      program_id: 'required|number',
     };
 
     switch (method) {
-      case "GET":
+      case 'GET':
         rules = null;
         rules = {
-          rule_id: "required|number",
+          rule_id: 'required|number',
         };
         break;
 
-      case "POST":
+      case 'POST':
         rules = rules;
         break;
 
-      case "PUT":
+      case 'PUT':
         rules = null;
         rules = {
-          id: "required|number",
-          rule_id: "required|number",
-          program_id: "required|number",
+          id: 'required|number',
+          rule_id: 'required|number',
+          program_id: 'required|number',
         };
         break;
 
-      case "DELETE":
+      case 'DELETE':
         rules = null;
         rules = {
-          id: "required|number",
+          id: 'required|number',
         };
         break;
 

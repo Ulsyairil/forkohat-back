@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 class SuperadminOrderFile {
   get rules() {
@@ -6,59 +6,59 @@ class SuperadminOrderFile {
     const uri = this.ctx.request.url();
 
     let rules = {
-      order_stuff_id: "required|number",
-      page: "required|number",
-      image: "required|file|file_ext:png,jpg,jpeg|file_size:5mb",
+      order_stuff_id: 'required|number',
+      page: 'required|number',
+      image: 'required|file|file_ext:png,jpg,jpeg|file_size:5mb',
     };
 
     switch (method) {
-      case "GET":
+      case 'GET':
         rules = null;
         rules = {
-          order_stuff_id: "required|number",
+          order_stuff_id: 'required|number',
         };
         break;
 
-      case "POST":
-        if (uri == "/api/v1/superadmin/order/stuff/file") {
+      case 'POST':
+        if (uri == '/api/v1/superadmin/order/stuff/file') {
           rules = rules;
         }
 
-        if (uri == "/api/v1/superadmin/order/stuff/file/check") {
+        if (uri == '/api/v1/superadmin/order/stuff/file/check') {
           rules = null;
           rules = {
-            image: "required|file|file_ext:png,jpg,jpeg|file_size:5mb",
+            image: 'required|file|file_ext:png,jpg,jpeg|file_size:5mb',
           };
         }
         break;
 
-      case "PUT":
-        if (uri == "/api/v1/superadmin/order/stuff/file") {
+      case 'PUT':
+        if (uri == '/api/v1/superadmin/order/stuff/file') {
           rules = null;
           rules = {
-            page: "required|number",
+            page: 'required|number',
           };
         }
 
-        if (uri == "/api/v1/superadmin/order/stuff/file/dump") {
+        if (uri == '/api/v1/superadmin/order/stuff/file/dump') {
           rules = null;
           rules = {
-            id: "required|number",
+            id: 'required|number',
           };
         }
 
-        if (uri == "/api/v1/superadmin/order/stuff/file/restore") {
+        if (uri == '/api/v1/superadmin/order/stuff/file/restore') {
           rules = null;
           rules = {
-            id: "required|number",
+            id: 'required|number',
           };
         }
         break;
 
-      case "DELETE":
+      case 'DELETE':
         rules = null;
         rules = {
-          id: "required|number",
+          id: 'required|number',
         };
         break;
 

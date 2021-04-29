@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 class AdminProgram {
   get rules() {
@@ -6,52 +6,52 @@ class AdminProgram {
     const uri = this.ctx.request.url();
 
     let rules = {
-      name: "required|string",
-      description: "required|string",
-      image: "required|file|file_ext:png,jpg,jpeg|file_size:5mb",
+      name: 'required|string',
+      description: 'required|string',
+      image: 'required|file|file_ext:png,jpg,jpeg|file_size:5mb',
     };
 
     switch (method) {
-      case "GET":
+      case 'GET':
         rules = null;
         rules = {
-          program_id: "required|number",
+          program_id: 'required|number',
         };
         break;
 
-      case "POST":
+      case 'POST':
         rules = rules;
         break;
 
-      case "PUT":
-        if (uri == "/api/v1/superadmin/rule") {
+      case 'PUT':
+        if (uri == '/api/v1/superadmin/rule') {
           rules = null;
           rules = {
-            program_id: "required|number",
-            name: "required|string",
-            description: "required|string",
+            program_id: 'required|number',
+            name: 'required|string',
+            description: 'required|string',
           };
         }
 
-        if (uri == "/api/v1/superadmin/rule/dump") {
+        if (uri == '/api/v1/superadmin/rule/dump') {
           rules = null;
           rules = {
-            program_id: "required|number",
+            program_id: 'required|number',
           };
         }
 
-        if (uri == "/api/v1/superadmin/rule/restore") {
+        if (uri == '/api/v1/superadmin/rule/restore') {
           rules = null;
           rules = {
-            program_id: "required|number",
+            program_id: 'required|number',
           };
         }
         break;
 
-      case "DELETE":
+      case 'DELETE':
         rules = null;
         rules = {
-          program_id: "required|number",
+          program_id: 'required|number',
         };
         break;
 

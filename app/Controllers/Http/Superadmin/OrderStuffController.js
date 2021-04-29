@@ -1,16 +1,16 @@
-"use strict";
+'use strict';
 
-const Helpers = use("Helpers");
-const OrderStuff = use("App/Models/OrderStuff");
-const RandomString = use("randomstring");
-const Moment = use("moment");
-const { validateAll } = use("Validator");
+const Helpers = use('Helpers');
+const OrderStuff = use('App/Models/OrderStuff');
+const RandomString = use('randomstring');
+const Moment = use('moment');
+const { validateAll } = use('Validator');
 
 class OrderStuffController {
   async index({ request, response }) {
     try {
       let data = await OrderStuff.query()
-        .where("order_id", request.input("order_id"))
+        .where('order_id', request.input('order_id'))
         .fetch();
 
       return response.send(data);
@@ -23,13 +23,13 @@ class OrderStuffController {
   async get({ request, response }) {
     try {
       let data = await OrderStuff.query()
-        .with("orders")
-        .where("id", request.input("id"))
+        .with('orders')
+        .where('id', request.input('id'))
         .first();
 
       if (!data) {
         return response.send({
-          message: "not found",
+          message: 'not found',
         });
       }
 
@@ -43,9 +43,9 @@ class OrderStuffController {
   async create({ request, response }) {
     try {
       let create = await OrderStuff.create({
-        order_id: request.input("order_id"),
-        name: request.input("name"),
-        description: request.input("description"),
+        order_id: request.input('order_id'),
+        name: request.input('name'),
+        description: request.input('description'),
       });
 
       return response.send(create);
@@ -57,25 +57,25 @@ class OrderStuffController {
 
   async edit({ request, response }) {
     try {
-      let find = await OrderStuff.find(request.input("id"));
+      let find = await OrderStuff.find(request.input('id'));
 
       if (!find) {
         return response.status(404).send({
-          message: "not found",
+          message: 'not found',
         });
       }
 
       await OrderStuff.query()
-        .where("id", request.input("id"))
+        .where('id', request.input('id'))
         .update({
-          order_id: request.input("order_id"),
-          name: request.input("name"),
-          description: request.input("description"),
+          order_id: request.input('order_id'),
+          name: request.input('name'),
+          description: request.input('description'),
         });
 
       let data = await OrderStuff.query()
-        .with("orders")
-        .where("id", request.input("id"))
+        .with('orders')
+        .where('id', request.input('id'))
         .first();
 
       return response.send(data);
@@ -87,21 +87,21 @@ class OrderStuffController {
 
   async dump({ request, response }) {
     try {
-      let find = await OrderStuff.find(request.input("id"));
+      let find = await OrderStuff.find(request.input('id'));
 
       if (!find) {
         return response.status(404).send({
-          message: "not found",
+          message: 'not found',
         });
       }
 
-      await OrderStuff.query().where("id", request.input("id")).update({
+      await OrderStuff.query().where('id', request.input('id')).update({
         deleted_at: Moment.now(),
       });
 
       let data = await OrderStuff.query()
-        .with("orders")
-        .where("id", request.input("id"))
+        .with('orders')
+        .where('id', request.input('id'))
         .first();
 
       return response.send(data);
@@ -113,21 +113,21 @@ class OrderStuffController {
 
   async restore({ request, response }) {
     try {
-      let find = await OrderStuff.find(request.input("id"));
+      let find = await OrderStuff.find(request.input('id'));
 
       if (!find) {
         return response.status(404).send({
-          message: "not found",
+          message: 'not found',
         });
       }
 
-      await OrderStuff.query().where("id", request.input("id")).update({
+      await OrderStuff.query().where('id', request.input('id')).update({
         deleted_at: null,
       });
 
       let data = await OrderStuff.query()
-        .with("orders")
-        .where("id", request.input("id"))
+        .with('orders')
+        .where('id', request.input('id'))
         .first();
 
       return response.send(data);

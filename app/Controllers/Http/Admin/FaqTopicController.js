@@ -1,14 +1,14 @@
-"use strict";
+'use strict';
 
-const FaqTopic = use("App/Models/FaqTopic");
-const Moment = use("moment");
-const { validateAll } = use("Validator");
+const FaqTopic = use('App/Models/FaqTopic');
+const Moment = use('moment');
+const { validateAll } = use('Validator');
 
 class FaqTopicController {
   async index({ request, response }) {
     try {
       let data = await FaqTopic.query()
-        .where("faq_id", request.input("faq_id"))
+        .where('faq_id', request.input('faq_id'))
         .fetch();
 
       return response.send(data);
@@ -21,9 +21,9 @@ class FaqTopicController {
   async create({ request, response }) {
     try {
       let create = await FaqTopic.create({
-        faq_id: request.input("faq_id"),
-        title: request.input("title"),
-        description: request.input("description"),
+        faq_id: request.input('faq_id'),
+        title: request.input('title'),
+        description: request.input('description'),
       });
 
       return response.send(create);
@@ -36,20 +36,20 @@ class FaqTopicController {
   async edit({ request, response }) {
     try {
       await FaqTopic.query()
-        .where("id", request.input("id"))
+        .where('id', request.input('id'))
         .update({
-          faq_id: request.input("faq_id"),
-          title: request.input("title"),
-          description: request.input("description"),
+          faq_id: request.input('faq_id'),
+          title: request.input('title'),
+          description: request.input('description'),
         });
 
       let data = await FaqTopic.query()
-        .where("id", request.input("id"))
+        .where('id', request.input('id'))
         .first();
 
       if (!data) {
         return response.status(404).send({
-          message: "not found",
+          message: 'not found',
         });
       }
 
@@ -63,18 +63,18 @@ class FaqTopicController {
   async dump({ request, response }) {
     try {
       let update = await FaqTopic.query()
-        .where("id", request.input("id"))
+        .where('id', request.input('id'))
         .update({
           deleted_at: Moment.now(),
         });
 
       let data = await FaqTopic.query()
-        .where("id", request.input("id"))
+        .where('id', request.input('id'))
         .first();
 
       if (!data) {
         return response.status(404).send({
-          message: "not found",
+          message: 'not found',
         });
       }
 
@@ -88,18 +88,18 @@ class FaqTopicController {
   async restore({ request, response }) {
     try {
       let update = await FaqTopic.query()
-        .where("id", request.input("id"))
+        .where('id', request.input('id'))
         .update({
           deleted_at: null,
         });
 
       let data = await FaqTopic.query()
-        .where("id", request.input("id"))
+        .where('id', request.input('id'))
         .first();
 
       if (!data) {
         return response.status(404).send({
-          message: "not found",
+          message: 'not found',
         });
       }
 
@@ -113,19 +113,19 @@ class FaqTopicController {
   async delete({ request, response }) {
     try {
       let data = await FaqTopic.query()
-        .where("id", request.input("id"))
+        .where('id', request.input('id'))
         .first();
 
       if (!data) {
         return response.status(404).send({
-          message: "not found",
+          message: 'not found',
         });
       }
 
-      await FaqTopic.query().where("id", request.input("id")).delete();
+      await FaqTopic.query().where('id', request.input('id')).delete();
 
       return response.send({
-        message: "deleted",
+        message: 'deleted',
       });
     } catch (error) {
       console.log(error);

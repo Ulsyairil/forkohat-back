@@ -1,8 +1,8 @@
-"use strict";
+'use strict';
 
-const Rule = use("App/Models/Rule");
-const Moment = use("moment");
-const { validateAll } = use("Validator");
+const Rule = use('App/Models/Rule');
+const Moment = use('moment');
+const { validateAll } = use('Validator');
 
 class RuleController {
   async index({ auth, request, response }) {
@@ -10,46 +10,46 @@ class RuleController {
       let user = await auth.getUser();
 
       let queryTotalData = await Rule.query()
-        .whereNot("id", user.rule_id)
-        .count("* as total");
+        .whereNot('id', user.rule_id)
+        .count('* as total');
 
       let totalData = queryTotalData[0].total;
       console.log(totalData);
 
-      let queryTotalFilteredData = Rule.query().whereNot("id", user.rule_id);
+      let queryTotalFilteredData = Rule.query().whereNot('id', user.rule_id);
 
-      if (request.input("search").value != "") {
+      if (request.input('search').value != '') {
         queryTotalFilteredData
-          .where("rule", "like", `%${request.input("search").value}%`)
-          .orWhere("created_at", "like", `%${request.input("search").value}%`)
-          .orWhere("updated_at", "like", `%${request.input("search").value}%`)
-          .orWhere("deleted_at", "like", `%${request.input("search").value}%`);
+          .where('rule', 'like', `%${request.input('search').value}%`)
+          .orWhere('created_at', 'like', `%${request.input('search').value}%`)
+          .orWhere('updated_at', 'like', `%${request.input('search').value}%`)
+          .orWhere('deleted_at', 'like', `%${request.input('search').value}%`);
       }
 
-      let count = await queryTotalFilteredData.count("* as total");
+      let count = await queryTotalFilteredData.count('* as total');
       let totalFiltered = count[0].total;
 
-      let getData = Rule.query().whereNot("id", user.rule_id);
+      let getData = Rule.query().whereNot('id', user.rule_id);
 
-      if (request.input("search").value != "") {
+      if (request.input('search').value != '') {
         getData
-          .where("rule", "like", `%${request.input("search").value}%`)
-          .orWhere("created_at", "like", `%${request.input("search").value}%`)
-          .orWhere("updated_at", "like", `%${request.input("search").value}%`)
-          .orWhere("deleted_at", "like", `%${request.input("search").value}%`);
+          .where('rule', 'like', `%${request.input('search').value}%`)
+          .orWhere('created_at', 'like', `%${request.input('search').value}%`)
+          .orWhere('updated_at', 'like', `%${request.input('search').value}%`)
+          .orWhere('deleted_at', 'like', `%${request.input('search').value}%`);
       }
 
-      request.input("order").forEach((value) => {
+      request.input('order').forEach((value) => {
         getData.orderBy(value.column, value.dir);
       });
 
-      getData.offset(request.input("start")).limit(request.input("length"));
+      getData.offset(request.input('start')).limit(request.input('length'));
 
       let data = await getData.fetch();
       console.log(data);
 
       return response.send({
-        draw: Number(request.input("draw")),
+        draw: Number(request.input('draw')),
         recordsTotal: totalData,
         recordsFiltered: totalFiltered,
         data: data,
@@ -62,11 +62,11 @@ class RuleController {
 
   async get({ request, response }) {
     try {
-      let data = await Rule.find(request.input("rule_id"));
+      let data = await Rule.find(request.input('rule_id'));
 
       if (!data) {
         return response.status(404).send({
-          message: "not found",
+          message: 'not found',
         });
       }
 
@@ -80,7 +80,7 @@ class RuleController {
   async create({ request, response }) {
     try {
       let rule = await Rule.create({
-        rule: request.input("rule"),
+        rule: request.input('rule'),
       });
 
       return response.send(rule);
@@ -93,12 +93,12 @@ class RuleController {
   async edit({ request, response }) {
     try {
       await Rule.query()
-        .where("id", request.input("rule_id"))
+        .where('id', request.input('rule_id'))
         .update({
-          rule: request.input("rule"),
+          rule: request.input('rule'),
         });
 
-      let data = await Rule.find(request.input("rule_id"));
+      let data = await Rule.find(request.input('rule_id'));
 
       return response.send(data);
     } catch (error) {
@@ -109,11 +109,11 @@ class RuleController {
 
   async dump({ request, response }) {
     try {
-      await Rule.query().where("id", request.input("rule_id")).update({
+      await Rule.query().where('id', request.input('rule_id')).update({
         deleted_at: Moment.now(),
       });
 
-      let data = await Rule.find(request.input("rule_id"));
+      let data = await Rule.find(request.input('rule_id'));
 
       return response.send(data);
     } catch (error) {
@@ -124,11 +124,11 @@ class RuleController {
 
   async restore({ request, response }) {
     try {
-      await Rule.query().where("id", request.input("rule_id")).update({
+      await Rule.query().where('id', request.input('rule_id')).update({
         deleted_at: null,
       });
 
-      let data = await Rule.find(request.input("rule_id"));
+      let data = await Rule.find(request.input('rule_id'));
 
       return response.send(data);
     } catch (error) {

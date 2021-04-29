@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 class Example {
   get rules() {
@@ -12,19 +12,19 @@ class Example {
     };
 
     switch (method) {
-      case "GET":
+      case 'GET':
         // Set rule here
         break;
 
-      case "POST":
+      case 'POST':
         // Set rule here
         break;
 
-      case "PUT" || "PATCH":
+      case 'PUT' || 'PATCH':
         // Set rule here
         break;
 
-      case "DELETE":
+      case 'DELETE':
         // Set rule here
         break;
 

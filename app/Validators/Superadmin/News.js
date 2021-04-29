@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 class SuperadminNews {
   get rules() {
@@ -6,62 +6,62 @@ class SuperadminNews {
     const uri = this.ctx.request.url();
 
     let rules = {
-      title: "required|string|max:254",
-      content: "required|string",
-      date: "required|date",
-      image: "required|file|file_ext:png,jpg,jpeg|file_size:5mb",
+      title: 'required|string|max:254',
+      content: 'required|string',
+      date: 'required|date',
+      image: 'required|file|file_ext:png,jpg,jpeg|file_size:5mb',
     };
 
     switch (method) {
-      case "GET":
+      case 'GET':
         rules = null;
         rules = {
-          id: "required|number",
+          id: 'required|number',
         };
         break;
 
-      case "POST":
+      case 'POST':
         rules = rules;
         break;
 
-      case "PUT":
-        if (uri == "/api/v1/superadmin/news") {
+      case 'PUT':
+        if (uri == '/api/v1/superadmin/news') {
           rules = null;
           rules = {
-            id: "required|number",
-            title: "required|string|max:254",
-            content: "required|string",
-            date: "required|date",
+            id: 'required|number',
+            title: 'required|string|max:254',
+            content: 'required|string',
+            date: 'required|date',
           };
         }
 
-        if (uri == "/api/v1/superadmin/news/dump") {
+        if (uri == '/api/v1/superadmin/news/dump') {
           rules = null;
           rules = {
-            id: "required|number",
+            id: 'required|number',
           };
         }
 
-        if (uri == "/api/v1/superadmin/news/restore") {
+        if (uri == '/api/v1/superadmin/news/restore') {
           rules = null;
           rules = {
-            id: "required|number",
+            id: 'required|number',
           };
         }
         break;
 
-      case "DELETE":
-        if (uri == "/api/v1/superadmin/news") {
+      case 'DELETE':
+        if (uri == '/api/v1/superadmin/news') {
           rules = null;
           rules = {
-            id: "required|number",
+            id: 'required|number',
           };
         }
 
-        if (uri == "/api/v1/superadmin/news/file") {
+        if (uri == '/api/v1/superadmin/news/file') {
           rules = null;
           rules = {
-            file_id: "required|number",
+            file_id: 'required|number',
           };
         }
         break;

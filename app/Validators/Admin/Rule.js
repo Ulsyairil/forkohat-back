@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 class AdminRule {
   get rules() {
@@ -6,49 +6,49 @@ class AdminRule {
     const uri = this.ctx.request.url();
 
     let rules = {
-      rule: "required|string",
+      rule: 'required|string',
     };
 
     switch (method) {
-      case "GET":
+      case 'GET':
         rules = null;
         rules = {
-          rule_id: "required|number",
+          rule_id: 'required|number',
         };
         break;
 
-      case "POST":
+      case 'POST':
         rules = rules;
         break;
 
-      case "PUT":
-        if (uri == "/api/v1/superadmin/rule") {
+      case 'PUT':
+        if (uri == '/api/v1/superadmin/rule') {
           rules = null;
           rules = {
-            rule_id: "required|number",
-            rule: "required|string",
+            rule_id: 'required|number',
+            rule: 'required|string',
           };
         }
 
-        if (uri == "/api/v1/superadmin/rule/dump") {
+        if (uri == '/api/v1/superadmin/rule/dump') {
           rules = null;
           rules = {
-            rule_id: "required|number",
+            rule_id: 'required|number',
           };
         }
 
-        if (uri == "/api/v1/superadmin/rule/restore") {
+        if (uri == '/api/v1/superadmin/rule/restore') {
           rules = null;
           rules = {
-            rule_id: "required|number",
+            rule_id: 'required|number',
           };
         }
         break;
 
-      case "DELETE":
+      case 'DELETE':
         rules = null;
         rules = {
-          rule_id: "required|number",
+          rule_id: 'required|number',
         };
         break;
 

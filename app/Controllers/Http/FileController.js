@@ -1,20 +1,20 @@
-"use strict";
+'use strict';
 
-const Userfile = use("App/Models/UserFile");
-const ProgramFile = use("App/Models/ProgramFile");
-const OrderFile = use("App/Models/OrderFile");
-const NewsFile = use("App/Models/NewsFile");
-const EventFile = use("App/Models/EventFile");
-const Helpers = use("Helpers");
+const Userfile = use('App/Models/UserFile');
+const ProgramFile = use('App/Models/ProgramFile');
+const OrderFile = use('App/Models/OrderFile');
+const NewsFile = use('App/Models/NewsFile');
+const EventFile = use('App/Models/EventFile');
+const Helpers = use('Helpers');
 
 class FileController {
   async index({ params, request, response }) {
     try {
       // User file
       let findUserFile = await Userfile.query()
-        .where("mime", params.mime)
-        .where("name", params.filename)
-        .whereNull("deleted_at")
+        .where('mime', params.mime)
+        .where('name', params.filename)
+        .whereNull('deleted_at')
         .first();
 
       if (findUserFile) {
@@ -25,9 +25,9 @@ class FileController {
 
       // Program file
       let findProgramFile = await ProgramFile.query()
-        .where("mime", params.mime)
-        .where("name", params.filename)
-        .whereNull("deleted_at")
+        .where('mime', params.mime)
+        .where('name', params.filename)
+        .whereNull('deleted_at')
         .first();
 
       if (findProgramFile) {
@@ -38,9 +38,9 @@ class FileController {
 
       // Order file
       let findOrderFile = await OrderFile.query()
-        .where("mime", params.mime)
-        .where("name", params.filename)
-        .whereNull("deleted_at")
+        .where('mime', params.mime)
+        .where('name', params.filename)
+        .whereNull('deleted_at')
         .first();
 
       if (findOrderFile) {
@@ -51,9 +51,9 @@ class FileController {
 
       // News file
       let findNewsFile = await NewsFile.query()
-        .where("mime", params.mime)
-        .where("name", params.filename)
-        .whereNull("deleted_at")
+        .where('mime', params.mime)
+        .where('name', params.filename)
+        .whereNull('deleted_at')
         .first();
 
       if (findNewsFile) {
@@ -64,9 +64,9 @@ class FileController {
 
       // Event file
       let findEventFile = await EventFile.query()
-        .where("mime", params.mime)
-        .andWhere("name", params.filename)
-        .whereNull("deleted_at")
+        .where('mime', params.mime)
+        .andWhere('name', params.filename)
+        .whereNull('deleted_at')
         .first();
 
       if (findEventFile) {
@@ -76,7 +76,7 @@ class FileController {
       }
 
       return response.status(404).send({
-        message: "not found",
+        message: 'not found',
       });
     } catch (error) {
       console.log(error);
