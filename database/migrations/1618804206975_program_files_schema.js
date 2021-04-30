@@ -1,31 +1,32 @@
-"use strict";
+'use strict';
 
 /** @type {import('@adonisjs/lucid/src/Schema')} */
-const Schema = use("Schema");
+const Schema = use('Schema');
 
 class ProgramFilesSchema extends Schema {
   up() {
-    this.create("program_files", (table) => {
+    this.create('program_files', (table) => {
+      table.engine('InnoDB');
       table.bigIncrements();
       table
-        .bigInteger("program_id")
+        .bigInteger('program_id')
         .notNullable()
         .unsigned()
-        .references("id")
-        .inTable("programs")
+        .references('id')
+        .inTable('programs')
         .onDelete('cascade')
         .unique();
-      table.string("name", 254).notNullable();
-      table.string("mime", 5).notNullable();
-      table.text("path").notNullable();
-      table.text("url").notNullable();
+      table.string('name', 254).notNullable();
+      table.string('mime', 5).notNullable();
+      table.text('path').notNullable();
+      table.text('url').notNullable();
       table.timestamps();
-      table.timestamp("deleted_at", { precision: 6 }).nullable();
+      table.timestamp('deleted_at', { precision: 6 }).nullable();
     });
   }
 
   down() {
-    this.drop("program_files");
+    this.drop('program_files');
   }
 }
 

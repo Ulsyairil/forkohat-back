@@ -1,28 +1,29 @@
-"use strict";
+'use strict';
 
 /** @type {import('@adonisjs/lucid/src/Schema')} */
-const Schema = use("Schema");
+const Schema = use('Schema');
 
 class FaqTopicSchema extends Schema {
   up() {
-    this.create("faq_topics", (table) => {
+    this.create('faq_topics', (table) => {
+      table.engine('InnoDB');
       table.bigIncrements();
       table
-        .bigInteger("faq_id")
+        .bigInteger('faq_id')
         .notNullable()
         .unsigned()
-        .references("id")
-        .inTable("faqs")
+        .references('id')
+        .inTable('faqs')
         .onDelete('cascade');
-      table.string("title", 254).notNullable();
-      table.text("description").nullable();
+      table.string('title', 254).notNullable();
+      table.text('description').nullable();
       table.timestamps();
-      table.timestamp("deleted_at", { precision: 6 }).nullable();
+      table.timestamp('deleted_at', { precision: 6 }).nullable();
     });
   }
 
   down() {
-    this.drop("faq_topics");
+    this.drop('faq_topics');
   }
 }
 

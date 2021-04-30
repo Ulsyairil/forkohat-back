@@ -1,20 +1,21 @@
-"use strict";
+'use strict';
 
 /** @type {import('@adonisjs/lucid/src/Schema')} */
-const Schema = use("Schema");
+const Schema = use('Schema');
 
 class FaqSchema extends Schema {
   up() {
-    this.create("faqs", (table) => {
+    this.create('faqs', (table) => {
+      table.engine('InnoDB');
       table.bigIncrements();
-      table.string("name").notNullable();
+      table.string('name').notNullable();
       table.timestamps();
-      table.timestamp("deleted_at", { precision: 6 }).nullable();
+      table.timestamp('deleted_at', { precision: 6 }).nullable();
     });
   }
 
   down() {
-    this.drop("faqs");
+    this.drop('faqs');
   }
 }
 

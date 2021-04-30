@@ -1,6 +1,6 @@
 'use strict';
 
-const axios = use('Axios');
+const axios = use('axios');
 const { validate } = use('Validator');
 
 class IndonesianAreaController {
