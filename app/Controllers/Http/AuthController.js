@@ -24,13 +24,18 @@ class AuthController {
 
       if (request.input('select') == 'email') {
         check = await User.query()
-          .with('programRuled')
+          .with('rules')
           .where('email', request.input('email'))
+          .whereNull('deleted_at')
           .first();
       }
 
       if (request.input('select') == 'nip') {
-        check = await User.where('nip', request.input('nip')).first();
+        check = await User.query()
+          .with('rules')
+          .where('nip', request.input('nip'))
+          .whereNull('deleted_at')
+          .first();
       }
 
       if (check == null) {
@@ -64,7 +69,10 @@ class AuthController {
 
       let generate = await auth.withRefreshToken().generate(check);
 
-      return response.send(generate);
+      return response.send({
+        token: generate,
+        rule: check.$relations.rules.toJSON()[0],
+      });
     } catch (error) {
       console.log(error);
       return response.status(500).send(error);
@@ -73,8 +81,14 @@ class AuthController {
 
   async checkUser({ auth, request, response }) {
     try {
-      let get_user = await auth.getUser();
-      return response.send(get_user);
+      let auth_user = await auth.getUser();
+      let data = await User.query()
+        .with('rules')
+        .where('id', auth_user.id)
+        .whereNull('deleted_at')
+        .first();
+
+      return response.send(data);
     } catch (error) {
       console.log(error);
       return response.status(500).send(error);
@@ -93,12 +107,22 @@ class AuthController {
         return response.status(422).send(validation.messages());
       }
 
+      let auth_user = await auth.getUser();
+      let data = await User.query()
+        .with('rules')
+        .where('id', auth_user.id)
+        .whereNull('deleted_at')
+        .first();
+
       const refresh_token = await auth.generateForRefreshToken(
         request.input('refresh_token'),
         true
       );
 
-      return response.send(refresh_token);
+      return response.send({
+        token: refresh_token,
+        rule: data.$relations.rules.toJSON()[0],
+      });
     } catch (error) {
       console.log(error);
       return response.status(500).send(error);
