@@ -5,9 +5,9 @@ const fs = use('fs');
 const path = use('path');
 const removeFile = Helpers.promisify(fs.unlink);
 const OrderFile = use('App/Models/OrderFile');
-const RandomString = use('randomstring');
-const Moment = use('moment');
-const { validateAll } = use('Validator');
+const RandomString = require('randomstring');
+const Moment = require('moment');
+const voca = require('voca');
 
 class OrderFileController {
   async index({ request, response }) {
@@ -47,8 +47,13 @@ class OrderFileController {
   async create({ request, response }) {
     try {
       let inputImage = request.file('image');
+      let random = RandomString.generate({
+        capitalization: 'lowercase',
+      });
 
-      let fileName = `${RandomString.generate()}.${inputImage.subtype}`;
+      let fileName = `${voca.snakeCase(
+        inputImage.clientName.split('.').slice(0, -1).join('.')
+      )}_${random}.${inputImage.extname}`;
 
       await inputImage.move(Helpers.resourcesPath('uploads/orders'), {
         name: fileName,
@@ -62,9 +67,9 @@ class OrderFileController {
         order_stuff_id: request.input('order_stuff_id'),
         page: request.input('page'),
         name: fileName,
-        mime: inputImage.subtype,
+        mime: inputImage.extname,
         path: Helpers.resourcesPath('uploads/orders'),
-        url: `/api/v1/file/${inputImage.subtype}/${fileName}`,
+        url: `/api/v1/file/${inputImage.extname}/${fileName}`,
       });
 
       return response.send(create);
@@ -76,6 +81,10 @@ class OrderFileController {
 
   async edit({ request, response }) {
     try {
+      let random = RandomString.generate({
+        capitalization: 'lowercase',
+      });
+
       let inputImage = request.file('image', {
         size: '5mb',
         extnames: ['png', 'jpg', 'jpeg'],
@@ -93,7 +102,9 @@ class OrderFileController {
           );
         }
 
-        let fileName = `${RandomString.generate()}.${inputImage.subtype}`;
+        let fileName = `${voca.snakeCase(
+          inputImage.clientName.split('.').slice(0, -1).join('.')
+        )}_${random}.${inputImage.extname}`;
 
         await inputImage.move(Helpers.resourcesPath('uploads/orders'), {
           name: fileName,
@@ -108,8 +119,8 @@ class OrderFileController {
           .update({
             page: request.input('page'),
             name: fileName,
-            mime: inputImage.subtype,
-            url: `/api/v1/file/${inputImage.subtype}/${fileName}`,
+            mime: inputImage.extname,
+            url: `/api/v1/file/${inputImage.extname}/${fileName}`,
           });
       }
 

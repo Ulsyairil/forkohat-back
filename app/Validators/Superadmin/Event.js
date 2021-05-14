@@ -22,7 +22,9 @@ class SuperadminEvent {
         break;
 
       case 'POST':
-        rules = rules;
+        if (uri == '/api/v1/superadmin/event') {
+          rules = rules;
+        }
         break;
 
       case 'PUT':
@@ -66,10 +68,6 @@ class SuperadminEvent {
             file_id: 'required|number',
           };
         }
-        break;
-
-      default:
-        rules = rules;
         break;
     }
 

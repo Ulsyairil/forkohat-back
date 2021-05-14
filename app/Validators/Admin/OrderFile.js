@@ -20,11 +20,11 @@ class AdminOrderFile {
         break;
 
       case 'POST':
-        if (uri == '/api/v1/superadmin/order/stuff/file') {
+        if (uri == '/api/v1/admin/order/stuff/file') {
           rules = rules;
         }
 
-        if (uri == '/api/v1/superadmin/order/stuff/file/check') {
+        if (uri == '/api/v1/admin/order/stuff/file/check') {
           rules = null;
           rules = {
             image: 'required|file|file_ext:png,jpg,jpeg|file_size:5mb',
@@ -33,21 +33,21 @@ class AdminOrderFile {
         break;
 
       case 'PUT':
-        if (uri == '/api/v1/superadmin/order/stuff/file') {
+        if (uri == '/api/v1/admin/order/stuff/file') {
           rules = null;
           rules = {
             page: 'required|number',
           };
         }
 
-        if (uri == '/api/v1/superadmin/order/stuff/file/dump') {
+        if (uri == '/api/v1/admin/order/stuff/file/dump') {
           rules = null;
           rules = {
             id: 'required|number',
           };
         }
 
-        if (uri == '/api/v1/superadmin/order/stuff/file/restore') {
+        if (uri == '/api/v1/admin/order/stuff/file/restore') {
           rules = null;
           rules = {
             id: 'required|number',
@@ -60,10 +60,6 @@ class AdminOrderFile {
         rules = {
           id: 'required|number',
         };
-        break;
-
-      default:
-        rules = rules;
         break;
     }
 

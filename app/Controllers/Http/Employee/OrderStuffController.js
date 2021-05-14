@@ -1,11 +1,8 @@
 'use strict';
 
-const Helpers = use('Helpers');
 const Order = use('App/Models/Order');
 const ProgramRuled = use('App/Models/ProgramRuled');
-const RandomString = use('randomstring');
-const Moment = use('moment');
-const { validateAll } = use('Validator');
+const Moment = require('moment');
 
 class OrderStuffController {
   async index({ auth, request, response }) {

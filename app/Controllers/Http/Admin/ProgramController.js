@@ -6,58 +6,17 @@ const path = use('path');
 const removeFile = Helpers.promisify(fs.unlink);
 const Program = use('App/Models/Program');
 const ProgramFile = use('App/Models/ProgramFile');
-const RandomString = use('randomstring');
-const Moment = use('moment');
-const { validateAll } = use('Validator');
+const RandomString = require('randomstring');
+const Moment = require('moment');
+const voca = require('voca');
 
 class ProgramController {
   async index({ request, response }) {
     try {
-      let queryTotalData = await Program.query().count('* as total');
-
-      let totalData = queryTotalData[0].total;
-      console.log(totalData);
-
-      let queryTotalFilteredData = Program.query();
-
-      if (request.input('search').value != '') {
-        queryTotalFilteredData
-          .where('name', 'like', `%${request.input('search').value}%`)
-          .orWhere('description', 'like', `%${request.input('search').value}%`)
-          .orWhere('created_at', 'like', `%${request.input('search').value}%`)
-          .orWhere('updated_at', 'like', `%${request.input('search').value}%`)
-          .orWhere('deleted_at', 'like', `%${request.input('search').value}%`);
-      }
-
-      let count = await queryTotalFilteredData.count('* as total');
-      let totalFiltered = count[0].total;
-
-      let getData = Program.query().with('programFiles');
-
-      if (request.input('search').value != '') {
-        getData
-          .where('name', 'like', `%${request.input('search').value}%`)
-          .orWhere('description', 'like', `%${request.input('search').value}%`)
-          .orWhere('created_at', 'like', `%${request.input('search').value}%`)
-          .orWhere('updated_at', 'like', `%${request.input('search').value}%`)
-          .orWhere('deleted_at', 'like', `%${request.input('search').value}%`);
-      }
-
-      request.input('order').forEach((value) => {
-        getData.orderBy(value.column, value.dir);
-      });
-
-      getData.offset(request.input('start')).limit(request.input('length'));
-
-      let data = await getData.fetch();
+      let data = await Program.query().orderBy('id', 'desc').fetch();
       console.log(data);
 
-      return response.send({
-        draw: Number(request.input('draw')),
-        recordsTotal: totalData,
-        recordsFiltered: totalFiltered,
-        data: data,
-      });
+      return response.send(data);
     } catch (error) {
       console.log(error);
       return response.status(500).send(error);
@@ -87,11 +46,17 @@ class ProgramController {
   async create({ request, response }) {
     try {
       let fileName;
+      let random = RandomString.generate({
+        capitalization: 'lowercase',
+      });
+
       // Upload image
       let inputImage = request.file('image');
 
       if (inputImage) {
-        fileName = `${RandomString.generate()}.${inputImage.subtype}`;
+        fileName = `${voca.snakeCase(
+          inputImage.clientName.split('.').slice(0, -1).join('.')
+        )}_${random}.${inputImage.extname}`;
 
         await inputImage.move(Helpers.resourcesPath('uploads/programs'), {
           name: fileName,
@@ -112,9 +77,9 @@ class ProgramController {
         await ProgramFile.create({
           program_id: program.id,
           name: fileName,
-          mime: inputImage.subtype,
+          mime: inputImage.extname,
           path: Helpers.resourcesPath('uploads/programs'),
-          url: `/api/v1/file/${inputImage.subtype}/${fileName}`,
+          url: `/api/v1/file/${inputImage.extname}/${fileName}`,
         });
       }
 
@@ -134,6 +99,9 @@ class ProgramController {
   async edit({ request, response }) {
     try {
       let fileName;
+      let random = RandomString.generate({
+        capitalization: 'lowercase',
+      });
 
       // Upload image
       let inputImage = request.file('image', {
@@ -155,7 +123,9 @@ class ProgramController {
           await ProgramFile.query().where('id', findImage.id).delete();
         }
 
-        fileName = `${RandomString.generate()}.${inputImage.subtype}`;
+        fileName = `${voca.snakeCase(
+          inputImage.clientName.split('.').slice(0, -1).join('.')
+        )}_${random}.${inputImage.extname}`;
 
         await inputImage.move(Helpers.resourcesPath('uploads/programs'), {
           name: fileName,
@@ -178,9 +148,9 @@ class ProgramController {
         await ProgramFile.create({
           program_id: request.input('program_id'),
           name: fileName,
-          mime: inputImage.subtype,
+          mime: inputImage.extname,
           path: Helpers.resourcesPath('uploads/programs'),
-          url: `/api/v1/file/${inputImage.subtype}/${fileName}`,
+          url: `/api/v1/file/${inputImage.extname}/${fileName}`,
         });
       }
 

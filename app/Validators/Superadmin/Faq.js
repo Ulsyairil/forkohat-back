@@ -18,7 +18,9 @@ class SuperadminFaq {
         break;
 
       case 'POST':
-        rules = rules;
+        if (uri == '/api/v1/superadmin/faq') {
+          rules = rules;
+        }
         break;
 
       case 'PUT':
@@ -50,10 +52,6 @@ class SuperadminFaq {
         rules = {
           faq_id: 'required|number',
         };
-        break;
-
-      default:
-        rules = rules;
         break;
     }
 

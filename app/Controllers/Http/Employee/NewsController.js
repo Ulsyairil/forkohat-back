@@ -6,70 +6,21 @@ const path = use('path');
 const removeFile = Helpers.promisify(fs.unlink);
 const News = use('App/Models/News');
 const NewsFile = use('App/Models/NewsFile');
-const RandomString = use('randomstring');
-const Moment = use('moment');
-const { validateAll } = use('Validator');
+const RandomString = require('randomstring');
+const Moment = require('moment');
+const voca = require('voca');
 
 class NewsController {
   async index({ auth, request, response }) {
     try {
       let user = await auth.getUser();
-
-      let queryTotalData = await News.query()
+      let data = await News.query()
         .where('author_id', user.id)
-        .count('* as total');
-
-      let totalData = queryTotalData[0].total;
-      console.log(totalData);
-
-      let queryTotalFilteredData = News.query()
-        .with('users')
-        .where('author_id', user.id);
-
-      if (request.input('search').value != '') {
-        queryTotalFilteredData
-          .with('users', (builder) => {
-            builder.where('name', 'like', `%${request.input('search').value}%`);
-          })
-          .where('title', 'like', `%${request.input('search').value}%`)
-          .orWhere('content', 'like', `%${request.input('search').value}%`)
-          .orWhere('created_at', 'like', `%${request.input('search').value}%`)
-          .orWhere('updated_at', 'like', `%${request.input('search').value}%`)
-          .orWhere('deleted_at', 'like', `%${request.input('search').value}%`);
-      }
-
-      let count = await queryTotalFilteredData.count('* as total');
-      let totalFiltered = count[0].total;
-
-      let getData = News.query().with('users').where('author_id', user.id);
-
-      if (request.input('search').value != '') {
-        getData
-          .with('users', (builder) => {
-            builder.where('name', 'like', `%${request.input('search').value}%`);
-          })
-          .where('title', 'like', `%${request.input('search').value}%`)
-          .orWhere('content', 'like', `%${request.input('search').value}%`)
-          .orWhere('created_at', 'like', `%${request.input('search').value}%`)
-          .orWhere('updated_at', 'like', `%${request.input('search').value}%`)
-          .orWhere('deleted_at', 'like', `%${request.input('search').value}%`);
-      }
-
-      request.input('order').forEach((value) => {
-        getData.orderBy(value.column, value.dir);
-      });
-
-      getData.offset(request.input('start')).limit(request.input('length'));
-
-      let data = await getData.fetch();
+        .orderBy('id', 'desc')
+        .fetch();
       console.log(data);
 
-      return response.send({
-        draw: Number(request.input('draw')),
-        recordsTotal: totalData,
-        recordsFiltered: totalFiltered,
-        data: data,
-      });
+      return response.send(data);
     } catch (error) {
       console.log(error);
       return response.status(500).send(error);
@@ -79,7 +30,6 @@ class NewsController {
   async get({ auth, request, response }) {
     try {
       let user = await auth.getUser();
-
       let data = await News.query()
         .with('users')
         .with('newsFiles')
@@ -104,6 +54,9 @@ class NewsController {
     try {
       let fileName, movedFiles;
       let user = await auth.getUser();
+      let random = RandomString.generate({
+        capitalization: 'lowercase',
+      });
 
       // Upload multi file
       const validationFile = {
@@ -116,8 +69,12 @@ class NewsController {
         await inputFiles.moveAll(
           Helpers.resourcesPath('uploads/news'),
           (file) => {
+            let filename = `${voca.snakeCase(
+              file.clientName.split('.').slice(0, -1).join('.')
+            )}_${random}.${file.extname}`;
+
             return {
-              name: `${RandomString.generate()}.${file.subtype}`,
+              name: filename,
             };
           }
         );
@@ -141,7 +98,9 @@ class NewsController {
       let inputImage = request.file('image');
 
       if (inputImage) {
-        fileName = `${RandomString.generate()}.${inputImage.subtype}`;
+        fileName = `${voca.snakeCase(
+          inputImage.clientName.split('.').slice(0, -1).join('.')
+        )}_${random}.${inputImage.extname}`;
 
         await inputImage.move(Helpers.resourcesPath('uploads/news'), {
           name: fileName,
@@ -166,9 +125,9 @@ class NewsController {
             news_id: news.id,
             type: 'files',
             name: value.fileName,
-            mime: value.subtype,
+            mime: value.extname,
             path: Helpers.resourcesPath('uploads/news'),
-            url: `/api/v1/file/${value.subtype}/${value.fileName}`,
+            url: `/api/v1/file/${value.extname}/${value.fileName}`,
           });
         });
       }
@@ -178,9 +137,9 @@ class NewsController {
           news_id: news.id,
           type: 'banner',
           name: fileName,
-          mime: inputImage.subtype,
+          mime: inputImage.extname,
           path: Helpers.resourcesPath('uploads/news'),
-          url: `/api/v1/file/${inputImage.subtype}/${fileName}`,
+          url: `/api/v1/file/${inputImage.extname}/${fileName}`,
         });
       }
 
@@ -201,6 +160,9 @@ class NewsController {
   async edit({ request, response }) {
     try {
       let movedFiles, fileName;
+      let random = RandomString.generate({
+        capitalization: 'lowercase',
+      });
 
       // Upload multi file
       let inputFiles = request.file('files', {
@@ -212,8 +174,12 @@ class NewsController {
         await inputFiles.moveAll(
           Helpers.resourcesPath('uploads/news'),
           (file) => {
+            let filename = `${voca.snakeCase(
+              file.clientName.split('.').slice(0, -1).join('.')
+            )}_${random}.${file.extname}`;
+
             return {
-              name: `${RandomString.generate()}.${file.subtype}`,
+              name: filename,
             };
           }
         );
@@ -254,7 +220,9 @@ class NewsController {
           await NewsFile.query().where('id', findImage.id).delete();
         }
 
-        fileName = `${RandomString.generate()}.${inputImage.subtype}`;
+        fileName = `${voca.snakeCase(
+          inputImage.clientName.split('.').slice(0, -1).join('.')
+        )}_${random}.${inputImage.extname}`;
 
         await inputImage.move(Helpers.resourcesPath('uploads/news'), {
           name: fileName,
@@ -280,9 +248,9 @@ class NewsController {
             news_id: request.input('id'),
             type: 'files',
             name: value.fileName,
-            mime: value.subtype,
+            mime: value.extname,
             path: Helpers.resourcesPath('uploads/news'),
-            url: `/api/v1/file/${value.subtype}/${value.fileName}`,
+            url: `/api/v1/file/${value.extname}/${value.fileName}`,
           });
         });
       }
@@ -292,9 +260,9 @@ class NewsController {
           news_id: request.input('id'),
           type: 'banner',
           name: fileName,
-          mime: inputImage.subtype,
+          mime: inputImage.extname,
           path: Helpers.resourcesPath('uploads/news'),
-          url: `/api/v1/file/${inputImage.subtype}/${fileName}`,
+          url: `/api/v1/file/${inputImage.extname}/${fileName}`,
         });
       }
 

@@ -71,7 +71,7 @@ class AuthController {
 
       return response.send({
         token: generate,
-        rule: check.$relations.rules.toJSON()[0],
+        data: check,
       });
     } catch (error) {
       console.log(error);
@@ -81,23 +81,8 @@ class AuthController {
 
   async checkUser({ auth, request, response }) {
     try {
-      let auth_user = await auth.getUser();
-      let data = await User.query()
-        .with('rules')
-        .where('id', auth_user.id)
-        .whereNull('deleted_at')
-        .first();
-
-      return response.send(data);
-    } catch (error) {
-      console.log(error);
-      return response.status(500).send(error);
-    }
-  }
-
-  async refreshToken({ auth, request, response }) {
-    try {
       const rules = {
+        refresh: 'required|boolean',
         refresh_token: 'required|string',
       };
 
@@ -107,6 +92,14 @@ class AuthController {
         return response.status(422).send(validation.messages());
       }
 
+      let check = await auth.check();
+
+      if (!check) {
+        return response.status(401).send({
+          message: 'Unauthorized',
+        });
+      }
+
       let auth_user = await auth.getUser();
       let data = await User.query()
         .with('rules')
@@ -114,14 +107,18 @@ class AuthController {
         .whereNull('deleted_at')
         .first();
 
-      const refresh_token = await auth.generateForRefreshToken(
-        request.input('refresh_token'),
-        true
-      );
+      let refresh_token = null;
+
+      if (request.input('refresh') == true) {
+        refresh_token = await auth.generateForRefreshToken(
+          request.input('refresh_token'),
+          true
+        );
+      }
 
       return response.send({
         token: refresh_token,
-        rule: data.$relations.rules.toJSON()[0],
+        data: data,
       });
     } catch (error) {
       console.log(error);

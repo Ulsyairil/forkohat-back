@@ -57,10 +57,6 @@ class SuperadminOrderStuff {
           };
         }
         break;
-
-      default:
-        rules = rules;
-        break;
     }
 
     return rules;

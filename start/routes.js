@@ -31,11 +31,10 @@ Route.group(() => {
 	Route.get("sub-district/detail", "IndonesianAreaController.detailSubDistrict");
 
 	Route.post("login", "AuthController.login");
-	Route.get("user", "AuthController.checkUser").middleware(["jwt"]);
+	Route.post("user/token", "AuthController.checkUser").middleware(["jwt"]);
 	Route.get("user/profile", "ProfileController.index").middleware(["jwt"]);
 	Route.put("user/profile/edit", "ProfileController.edit").middleware(["jwt"]).validator("Auth/Profile");
 	Route.put("user/profile/image/edit", "ProfileController.changeImage").middleware(["jwt"]).validator("Auth/Profile");
-	Route.post("refresh", "AuthController.refreshToken").middleware(["jwt"]);
 	Route.post("logout", "AuthController.logout").middleware(["jwt"]);
 
 	Route.get("file/:mime/:filename", "FileController.index");

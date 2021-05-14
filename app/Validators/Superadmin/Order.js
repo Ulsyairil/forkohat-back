@@ -20,7 +20,9 @@ class SuperadminOrder {
         break;
 
       case 'POST':
-        rules = rules;
+        if (uri == '/api/v1/superadmin/order') {
+          rules = rules;
+        }
         break;
 
       case 'PUT':
@@ -51,10 +53,6 @@ class SuperadminOrder {
 
       case 'DELETE':
         // Set rule here
-        break;
-
-      default:
-        rules = rules;
         break;
     }
 

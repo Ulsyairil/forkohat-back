@@ -1,8 +1,7 @@
 'use strict';
 
 const FaqTopic = use('App/Models/FaqTopic');
-const Moment = use('moment');
-const { validateAll } = use('Validator');
+const Moment = require('moment');
 
 class FaqTopicController {
   async index({ request, response }) {

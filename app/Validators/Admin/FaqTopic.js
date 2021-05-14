@@ -20,11 +20,13 @@ class AdminFaqTopic {
         break;
 
       case 'POST':
-        rules = rules;
+        if (uri == '/api/v1/admin/faq/topic') {
+          rules = rules;
+        }
         break;
 
       case 'PUT':
-        if (uri == '/api/v1/superadmin/faq/topic') {
+        if (uri == '/api/v1/admin/faq/topic') {
           rules = null;
           rules = {
             id: 'required|number',
@@ -34,14 +36,14 @@ class AdminFaqTopic {
           };
         }
 
-        if (uri == '/api/v1/superadmin/faq/topic/dump') {
+        if (uri == '/api/v1/admin/faq/topic/dump') {
           rules = null;
           rules = {
             id: 'required|number',
           };
         }
 
-        if (uri == '/api/v1/superadmin/faq/topic/restore') {
+        if (uri == '/api/v1/admin/faq/topic/restore') {
           rules = null;
           rules = {
             id: 'required|number',
@@ -54,10 +56,6 @@ class AdminFaqTopic {
         rules = {
           id: 'required|number',
         };
-        break;
-
-      default:
-        rules = rules;
         break;
     }
 

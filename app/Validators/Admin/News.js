@@ -21,11 +21,13 @@ class AdminNews {
         break;
 
       case 'POST':
-        rules = rules;
+        if (uri == '/api/v1/admin/news/add') {
+          rules = rules;
+        }
         break;
 
       case 'PUT':
-        if (uri == '/api/v1/superadmin/news') {
+        if (uri == '/api/v1/admin/news') {
           rules = null;
           rules = {
             id: 'required|number',
@@ -35,14 +37,14 @@ class AdminNews {
           };
         }
 
-        if (uri == '/api/v1/superadmin/news/dump') {
+        if (uri == '/api/v1/admin/news/dump') {
           rules = null;
           rules = {
             id: 'required|number',
           };
         }
 
-        if (uri == '/api/v1/superadmin/news/restore') {
+        if (uri == '/api/v1/admin/news/restore') {
           rules = null;
           rules = {
             id: 'required|number',
@@ -51,23 +53,19 @@ class AdminNews {
         break;
 
       case 'DELETE':
-        if (uri == '/api/v1/superadmin/news') {
+        if (uri == '/api/v1/admin/news') {
           rules = null;
           rules = {
             id: 'required|number',
           };
         }
 
-        if (uri == '/api/v1/superadmin/news/file') {
+        if (uri == '/api/v1/admin/news/file') {
           rules = null;
           rules = {
             file_id: 'required|number',
           };
         }
-        break;
-
-      default:
-        rules = rules;
         break;
     }
 

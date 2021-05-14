@@ -61,10 +61,6 @@ class SuperadminOrderFile {
           id: 'required|number',
         };
         break;
-
-      default:
-        rules = rules;
-        break;
     }
 
     return rules;

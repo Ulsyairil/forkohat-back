@@ -18,11 +18,13 @@ class AdminRule {
         break;
 
       case 'POST':
-        rules = rules;
+        if (uri == '/api/v1/admin/rule') {
+          rules = rules;
+        }
         break;
 
       case 'PUT':
-        if (uri == '/api/v1/superadmin/rule') {
+        if (uri == '/api/v1/admin/rule') {
           rules = null;
           rules = {
             rule_id: 'required|number',
@@ -30,14 +32,14 @@ class AdminRule {
           };
         }
 
-        if (uri == '/api/v1/superadmin/rule/dump') {
+        if (uri == '/api/v1/admin/rule/dump') {
           rules = null;
           rules = {
             rule_id: 'required|number',
           };
         }
 
-        if (uri == '/api/v1/superadmin/rule/restore') {
+        if (uri == '/api/v1/admin/rule/restore') {
           rules = null;
           rules = {
             rule_id: 'required|number',
@@ -50,10 +52,6 @@ class AdminRule {
         rules = {
           rule_id: 'required|number',
         };
-        break;
-
-      default:
-        rules = rules;
         break;
     }
 

@@ -21,7 +21,9 @@ class SuperadminNews {
         break;
 
       case 'POST':
-        rules = rules;
+        if (uri == '/api/v1/superadmin/news/add') {
+          rules = rules;
+        }
         break;
 
       case 'PUT':

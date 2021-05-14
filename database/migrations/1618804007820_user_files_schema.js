@@ -18,7 +18,7 @@ class UserFilesSchema extends Schema {
         .unique();
       table.enu('type', ['profile_picture', 'files']).notNullable();
       table.string('name', 254).notNullable();
-      table.string('mime', 5).notNullable();
+      table.string('mime', 254).notNullable();
       table.text('path').notNullable();
       table.text('url').notNullable();
       table.timestamps();

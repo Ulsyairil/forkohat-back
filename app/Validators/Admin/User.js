@@ -27,11 +27,13 @@ class AdminUser {
         break;
 
       case 'POST':
-        rules = rules;
+        if (uri == '/api/v1/admin/user') {
+          rules = rules;
+        }
         break;
 
       case 'PUT':
-        if (uri == '/api/v1/superadmin/user') {
+        if (uri == '/api/v1/admin/user') {
           rules = null;
           rules = {
             id: 'required|number',
@@ -48,14 +50,14 @@ class AdminUser {
           };
         }
 
-        if (uri == '/api/v1/superadmin/user/dump') {
+        if (uri == '/api/v1/admin/user/dump') {
           rules = null;
           rules = {
             id: 'required|number',
           };
         }
 
-        if (uri == '/api/v1/superadmin/user/restore') {
+        if (uri == '/api/v1/admin/user/restore') {
           rules = null;
           rules = {
             id: 'required|number',

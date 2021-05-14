@@ -1,8 +1,6 @@
 'use strict';
 
 const ProgramRuled = use('App/Models/ProgramRuled');
-const Moment = use('moment');
-const { validateAll } = use('Validator');
 
 class ProgramRuledController {
   async index({ request, response }) {

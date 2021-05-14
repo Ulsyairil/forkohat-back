@@ -1,65 +1,15 @@
 'use strict';
 
-const Helpers = use('Helpers');
 const Order = use('App/Models/Order');
-const RandomString = use('randomstring');
-const Moment = use('moment');
-const { validateAll } = use('Validator');
+const Moment = require('moment');
 
 class OrderController {
   async index({ request, response }) {
     try {
-      let queryTotalData = await Order.query().count('* as total');
-
-      let totalData = queryTotalData[0].total;
-      console.log(totalData);
-
-      let queryTotalFilteredData = Order.query().with('programs');
-
-      if (request.input('search').value != '') {
-        queryTotalFilteredData
-          .with('programs', (builder) => {
-            builder.where('name', 'like', `%${request.input('search').value}%`);
-          })
-          .where('name', 'like', `%${request.input('search').value}%`)
-          .orWhere('description', 'like', `%${request.input('search').value}%`)
-          .orWhere('created_at', 'like', `%${request.input('search').value}%`)
-          .orWhere('updated_at', 'like', `%${request.input('search').value}%`)
-          .orWhere('deleted_at', 'like', `%${request.input('search').value}%`);
-      }
-
-      let count = await queryTotalFilteredData.count('* as total');
-      let totalFiltered = count[0].total;
-
-      let getData = Order.query().with('programs');
-
-      if (request.input('search').value != '') {
-        getData
-          .with('programs', (builder) => {
-            builder.where('name', 'like', `%${request.input('search').value}%`);
-          })
-          .where('name', 'like', `%${request.input('search').value}%`)
-          .orWhere('description', 'like', `%${request.input('search').value}%`)
-          .orWhere('created_at', 'like', `%${request.input('search').value}%`)
-          .orWhere('updated_at', 'like', `%${request.input('search').value}%`)
-          .orWhere('deleted_at', 'like', `%${request.input('search').value}%`);
-      }
-
-      request.input('order').forEach((value) => {
-        getData.orderBy(value.column, value.dir);
-      });
-
-      getData.offset(request.input('start')).limit(request.input('length'));
-
-      let data = await getData.fetch();
+      let data = await Order.query().orderBy('id', 'desc').fetch();
       console.log(data);
 
-      return response.send({
-        draw: Number(request.input('draw')),
-        recordsTotal: totalData,
-        recordsFiltered: totalFiltered,
-        data: data,
-      });
+      return response.send(data);
     } catch (error) {
       console.log(error);
       return response.status(500).send(error);

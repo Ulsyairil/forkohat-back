@@ -20,11 +20,13 @@ class AdminOrder {
         break;
 
       case 'POST':
-        rules = rules;
+        if (uri == '/api/v1/admin/order') {
+          rules = rules;
+        }
         break;
 
       case 'PUT':
-        if (uri == '/api/v1/superadmin/order') {
+        if (uri == '/api/v1/admin/order') {
           rules = null;
           rules = {
             id: 'required|number',
@@ -34,14 +36,14 @@ class AdminOrder {
           };
         }
 
-        if (uri == '/api/v1/superadmin/order/dump') {
+        if (uri == '/api/v1/admin/order/dump') {
           rules = null;
           rules = {
             id: 'required|number',
           };
         }
 
-        if (uri == '/api/v1/superadmin/order/restore') {
+        if (uri == '/api/v1/admin/order/restore') {
           rules = null;
           rules = {
             id: 'required|number',
@@ -51,10 +53,6 @@ class AdminOrder {
 
       case 'DELETE':
         // Set rule here
-        break;
-
-      default:
-        rules = rules;
         break;
     }
 

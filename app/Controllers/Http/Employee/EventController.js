@@ -6,82 +6,21 @@ const path = use('path');
 const removeFile = Helpers.promisify(fs.unlink);
 const Event = use('App/Models/Event');
 const EventFile = use('App/Models/EventFile');
-const RandomString = use('randomstring');
-const Moment = use('moment');
-const { validateAll } = use('Validator');
+const RandomString = require('randomstring');
+const Moment = require('moment');
+const voca = require('voca');
 
 class EventController {
   async index({ auth, request, response }) {
     try {
       let user = await auth.getUser();
-
-      let queryTotalData = await Event.query()
+      let data = await Event.query()
         .where('author_id', user.id)
-        .count('* as total');
-
-      let totalData = queryTotalData[0].total;
-      console.log(totalData);
-
-      let queryTotalFilteredData = Event.query()
-        .with('users')
-        .where('author_id', user.id);
-
-      if (request.input('search').value != '') {
-        queryTotalFilteredData
-          .with('users', (builder) => {
-            builder.where('name', 'like', `%${request.input('search').value}%`);
-          })
-          .where('name', 'like', `%${request.input('search').value}%`)
-          .orWhere('content', 'like', `%${request.input('search').value}%`)
-          .orWhere(
-            'registration_date',
-            'like',
-            `%${request.input('search').value}%`
-          )
-          .orWhere('expired_date', 'like', `%${request.input('search').value}%`)
-          .orWhere('created_at', 'like', `%${request.input('search').value}%`)
-          .orWhere('updated_at', 'like', `%${request.input('search').value}%`)
-          .orWhere('deleted_at', 'like', `%${request.input('search').value}%`);
-      }
-
-      let count = await queryTotalFilteredData.count('* as total');
-      let totalFiltered = count[0].total;
-
-      let getData = Event.query().with('users').where('author_id', user.id);
-
-      if (request.input('search').value != '') {
-        getData
-          .with('users', (builder) => {
-            builder.where('name', 'like', `%${request.input('search').value}%`);
-          })
-          .where('name', 'like', `%${request.input('search').value}%`)
-          .orWhere('content', 'like', `%${request.input('search').value}%`)
-          .orWhere(
-            'registration_date',
-            'like',
-            `%${request.input('search').value}%`
-          )
-          .orWhere('expired_date', 'like', `%${request.input('search').value}%`)
-          .orWhere('created_at', 'like', `%${request.input('search').value}%`)
-          .orWhere('updated_at', 'like', `%${request.input('search').value}%`)
-          .orWhere('deleted_at', 'like', `%${request.input('search').value}%`);
-      }
-
-      request.input('order').forEach((value) => {
-        getData.orderBy(value.column, value.dir);
-      });
-
-      getData.offset(request.input('start')).limit(request.input('length'));
-
-      let data = await getData.fetch();
+        .orderBy('id', 'desc')
+        .fetch();
       console.log(data);
 
-      return response.send({
-        draw: Number(request.input('draw')),
-        recordsTotal: totalData,
-        recordsFiltered: totalFiltered,
-        data: data,
-      });
+      return response.send(data);
     } catch (error) {
       console.log(error);
       return response.status(500).send(error);
@@ -91,7 +30,6 @@ class EventController {
   async get({ auth, request, response }) {
     try {
       let user = await auth.getUser();
-
       let data = await Event.query()
         .with('users')
         .with('eventFiles')
@@ -116,6 +54,9 @@ class EventController {
     try {
       let fileName, movedFiles;
       let user = await auth.getUser();
+      let random = RandomString.generate({
+        capitalization: 'lowercase',
+      });
 
       // Upload multi file
       const validationFile = {
@@ -127,8 +68,12 @@ class EventController {
         await inputFiles.moveAll(
           Helpers.resourcesPath('uploads/events'),
           (file) => {
+            let filename = `${voca.snakeCase(
+              file.clientName.split('.').slice(0, -1).join('.')
+            )}_${random}.${file.extname}`;
+
             return {
-              name: `${RandomString.generate()}.${file.subtype}`,
+              name: filename,
             };
           }
         );
@@ -155,7 +100,9 @@ class EventController {
       let inputImage = request.file('image');
 
       if (inputImage) {
-        fileName = `${RandomString.generate()}.${inputImage.subtype}`;
+        fileName = `${voca.snakeCase(
+          inputImage.clientName.split('.').slice(0, -1).join('.')
+        )}_${random}.${inputImage.extname}`;
 
         await inputImage.move(Helpers.resourcesPath('uploads/events'), {
           name: fileName,
@@ -181,9 +128,9 @@ class EventController {
             event_id: event.id,
             type: 'files',
             name: value.fileName,
-            mime: value.subtype,
+            mime: value.extname,
             path: Helpers.resourcesPath('uploads/events'),
-            url: `/api/v1/file/${value.subtype}/${value.fileName}`,
+            url: `/api/v1/file/${value.extname}/${value.fileName}`,
           });
         });
       }
@@ -193,9 +140,9 @@ class EventController {
           event_id: event.id,
           type: 'banner',
           name: fileName,
-          mime: inputImage.subtype,
+          mime: inputImage.extname,
           path: Helpers.resourcesPath('uploads/events'),
-          url: `/api/v1/file/${inputImage.subtype}/${fileName}`,
+          url: `/api/v1/file/${inputImage.extname}/${fileName}`,
         });
       }
 
@@ -216,6 +163,9 @@ class EventController {
   async edit({ request, response }) {
     try {
       let movedFiles, fileName;
+      let random = RandomString.generate({
+        capitalization: 'lowercase',
+      });
 
       // Upload multi file
       let inputFiles = request.file('files', {
@@ -226,8 +176,12 @@ class EventController {
         await inputFiles.moveAll(
           Helpers.resourcesPath('uploads/events'),
           (file) => {
+            let filename = `${voca.snakeCase(
+              file.clientName.split('.').slice(0, -1).join('.')
+            )}_${random}.${file.extname}`;
+
             return {
-              name: `${RandomString.generate()}.${file.subtype}`,
+              name: filename,
             };
           }
         );
@@ -271,7 +225,9 @@ class EventController {
           await EventFile.query().where('id', findImage.id).delete();
         }
 
-        fileName = `${RandomString.generate()}.${inputImage.subtype}`;
+        fileName = `${voca.snakeCase(
+          inputImage.clientName.split('.').slice(0, -1).join('.')
+        )}_${random}.${inputImage.extname}`;
 
         await inputImage.move(Helpers.resourcesPath('uploads/events'), {
           name: fileName,
@@ -298,9 +254,9 @@ class EventController {
             event_id: request.input('event_id'),
             type: 'files',
             name: value.fileName,
-            mime: value.subtype,
+            mime: value.extname,
             path: Helpers.resourcesPath('uploads/events'),
-            url: `/api/v1/file/${value.subtype}/${value.fileName}`,
+            url: `/api/v1/file/${value.extname}/${value.fileName}`,
           });
         });
       }
@@ -310,9 +266,9 @@ class EventController {
           event_id: request.input('event_id'),
           type: 'banner',
           name: fileName,
-          mime: inputImage.subtype,
+          mime: inputImage.extname,
           path: Helpers.resourcesPath('uploads/events'),
-          url: `/api/v1/file/${inputImage.subtype}/${fileName}`,
+          url: `/api/v1/file/${inputImage.extname}/${fileName}`,
         });
       }
 

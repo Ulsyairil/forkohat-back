@@ -6,8 +6,7 @@ const path = use('path');
 const removeFile = Helpers.promisify(fs.unlink);
 const User = use('App/Models/User');
 const UserFile = use('App/Models/UserFile');
-const RandomString = use('randomstring');
-const Moment = use('moment');
+const RandomString = require('randomstring');
 const Hash = use('Hash');
 const Voca = require('voca');
 
@@ -15,7 +14,6 @@ class ProfileController {
   async index({ auth, request, response }) {
     try {
       let user = await auth.getUser();
-
       let data = await User.query()
         .with('rules')
         .with('programRuled')
@@ -65,7 +63,6 @@ class ProfileController {
   async changeImage({ auth, request, response }) {
     try {
       let user = await auth.getUser();
-
       let inputImage = request.file('image', {
         size: '2mb',
         extnames: ['png', 'jpg', 'jpeg'],
@@ -85,7 +82,9 @@ class ProfileController {
         await UserFile.query().where('id', findImage.id).delete();
       }
 
-      let fileName = `${RandomString.generate()}.${inputImage.subtype}`;
+      fileName = `${Voca.snakeCase(
+        inputImage.clientName.split('.').slice(0, -1).join('.')
+      )}_${random}.${inputImage.extname}`;
 
       await inputImage.move(Helpers.resourcesPath('uploads/users'), {
         name: fileName,
@@ -99,9 +98,9 @@ class ProfileController {
         user_id: user.id,
         type: 'profile_picture',
         name: fileName,
-        mime: inputImage.subtype,
+        mime: inputImage.extname,
         path: Helpers.resourcesPath('uploads/users'),
-        url: `/api/v1/file/${inputImage.subtype}/${fileName}`,
+        url: `/api/v1/file/${inputImage.extname}/${fileName}`,
       });
 
       return response.send(create);

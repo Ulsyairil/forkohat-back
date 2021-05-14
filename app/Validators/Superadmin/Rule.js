@@ -18,7 +18,9 @@ class SuperadminRule {
         break;
 
       case 'POST':
-        rules = rules;
+        if (uri == '/api/v1/superadmin/rule') {
+          rules = rules;
+        }
         break;
 
       case 'PUT':
@@ -50,10 +52,6 @@ class SuperadminRule {
         rules = {
           rule_id: 'required|number',
         };
-        break;
-
-      default:
-        rules = rules;
         break;
     }
 

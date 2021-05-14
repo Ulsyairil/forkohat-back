@@ -6,78 +6,23 @@ const path = use('path');
 const removeFile = Helpers.promisify(fs.unlink);
 const User = use('App/Models/User');
 const UserFile = use('App/Models/UserFile');
-const RandomString = use('randomstring');
-const Moment = use('moment');
+const RandomString = require('randomstring');
+const Moment = require('moment');
 const Hash = use('Hash');
-const { validateAll } = use('Validator');
+const voca = require('voca');
 
 class UserController {
   async index({ auth, request, response }) {
     try {
       let user = await auth.getUser();
-
-      let queryTotalData = await User.query()
+      let data = await User.query()
         .with('rules')
         .whereNot('id', user.id)
-        .count('* as total');
-
-      let totalData = queryTotalData[0].total;
-      console.log(totalData);
-
-      let queryTotalFilteredData = User.query()
-        .with('rules')
-        .whereNot('id', user.id);
-
-      if (request.input('search').value != '') {
-        queryTotalFilteredData
-          .with('rules', (builder) => {
-            builder.where('rule', 'like', `%${request.input('search').value}%`);
-          })
-          .where('name', 'like', `%${request.input('search').value}%`)
-          .orWhere('email', 'like', `%${request.input('search').value}%`)
-          .orWhere('nip', 'like', `%${request.input('search').value}%`)
-          .orWhere('job', 'like', `%${request.input('search').value}%`)
-          .orWhere('gender', 'like', `%${request.input('search').value}%`)
-          .orWhere('created_at', 'like', `%${request.input('search').value}%`)
-          .orWhere('updated_at', 'like', `%${request.input('search').value}%`)
-          .orWhere('deleted_at', 'like', `%${request.input('search').value}%`);
-      }
-
-      let count = await queryTotalFilteredData.count('* as total');
-      let totalFiltered = count[0].total;
-
-      let getData = User.query().with('rules').whereNot('id', user.id);
-
-      if (request.input('search').value != '') {
-        getData
-          .with('rules', (builder) => {
-            builder.where('rule', 'like', `%${request.input('search').value}%`);
-          })
-          .where('name', 'like', `%${request.input('search').value}%`)
-          .orWhere('email', 'like', `%${request.input('search').value}%`)
-          .orWhere('nip', 'like', `%${request.input('search').value}%`)
-          .orWhere('job', 'like', `%${request.input('search').value}%`)
-          .orWhere('gender', 'like', `%${request.input('search').value}%`)
-          .orWhere('created_at', 'like', `%${request.input('search').value}%`)
-          .orWhere('updated_at', 'like', `%${request.input('search').value}%`)
-          .orWhere('deleted_at', 'like', `%${request.input('search').value}%`);
-      }
-
-      request.input('order').forEach((value) => {
-        getData.orderBy(value.column, value.dir);
-      });
-
-      getData.offset(request.input('start')).limit(request.input('length'));
-
-      let data = await getData.fetch();
+        .orderBy('id', 'desc')
+        .fetch();
       console.log(data);
 
-      return response.send({
-        draw: Number(request.input('draw')),
-        recordsTotal: totalData,
-        recordsFiltered: totalFiltered,
-        data: data,
-      });
+      return response.send(data);
     } catch (error) {
       console.log(error);
       return response.status(500).send(error);
@@ -108,6 +53,9 @@ class UserController {
   async create({ request, response }) {
     try {
       let fileName;
+      let random = RandomString.generate({
+        capitalization: 'lowercase',
+      });
 
       // Upload image
       let inputImage = request.file('image', {
@@ -116,7 +64,9 @@ class UserController {
       });
 
       if (inputImage) {
-        fileName = `${RandomString.generate()}.${inputImage.subtype}`;
+        fileName = `${voca.snakeCase(
+          inputImage.clientName.split('.').slice(0, -1).join('.')
+        )}_${random}.${inputImage.extname}`;
 
         await inputImage.move(Helpers.resourcesPath('uploads/users'), {
           name: fileName,
@@ -146,9 +96,9 @@ class UserController {
           user_id: user.id,
           type: 'profile_picture',
           name: fileName,
-          mime: inputImage.subtype,
+          mime: inputImage.extname,
           path: Helpers.resourcesPath('uploads/users'),
-          url: `/api/v1/file/${inputImage.subtype}/${fileName}`,
+          url: `/api/v1/file/${inputImage.extname}/${fileName}`,
         });
       }
 
@@ -168,6 +118,10 @@ class UserController {
 
   async edit({ request, response }) {
     try {
+      let random = RandomString.generate({
+        capitalization: 'lowercase',
+      });
+
       // Upload image
       let inputImage = request.file('image', {
         size: '2mb',
@@ -189,7 +143,9 @@ class UserController {
           await UserFile.query().where('id', findImage.id).delete();
         }
 
-        let fileName = `${RandomString.generate()}.${inputImage.subtype}`;
+        let fileName = `${voca.snakeCase(
+          inputImage.clientName.split('.').slice(0, -1).join('.')
+        )}_${random}.${inputImage.extname}`;
 
         await inputImage.move(Helpers.resourcesPath('uploads/users'), {
           name: fileName,
@@ -203,9 +159,9 @@ class UserController {
           user_id: request.input('id'),
           type: 'profile_picture',
           name: fileName,
-          mime: inputImage.subtype,
+          mime: inputImage.extname,
           path: Helpers.resourcesPath('uploads/users'),
-          url: `/api/v1/file/${inputImage.subtype}/${fileName}`,
+          url: `/api/v1/file/${inputImage.extname}/${fileName}`,
         });
       }
 

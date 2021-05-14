@@ -2,55 +2,15 @@
 
 const Faq = use('App/Models/Faq');
 const FaqTopic = use('App/Models/FaqTopic');
-const Moment = use('moment');
-const { validateAll } = use('Validator');
+const Moment = require('moment');
 
 class FaqController {
   async index({ request, response }) {
     try {
-      let queryTotalData = await Faq.query().count('* as total');
-
-      let totalData = queryTotalData[0].total;
-      console.log(totalData);
-
-      let queryTotalFilteredData = Faq.query();
-
-      if (request.input('search').value != '') {
-        queryTotalFilteredData
-          .where('name', 'like', `%${request.input('search').value}%`)
-          .orWhere('created_at', 'like', `%${request.input('search').value}%`)
-          .orWhere('updated_at', 'like', `%${request.input('search').value}%`)
-          .orWhere('deleted_at', 'like', `%${request.input('search').value}%`);
-      }
-
-      let count = await queryTotalFilteredData.count('* as total');
-      let totalFiltered = count[0].total;
-
-      let getData = Faq.query();
-
-      if (request.input('search').value != '') {
-        getData
-          .where('name', 'like', `%${request.input('search').value}%`)
-          .orWhere('created_at', 'like', `%${request.input('search').value}%`)
-          .orWhere('updated_at', 'like', `%${request.input('search').value}%`)
-          .orWhere('deleted_at', 'like', `%${request.input('search').value}%`);
-      }
-
-      request.input('order').forEach((value) => {
-        getData.orderBy(value.column, value.dir);
-      });
-
-      getData.offset(request.input('start')).limit(request.input('length'));
-
-      let data = await getData.fetch();
+      let data = await Faq.query().orderBy('id', 'desc').fetch();
       console.log(data);
 
-      return response.send({
-        draw: Number(request.input('draw')),
-        recordsTotal: totalData,
-        recordsFiltered: totalFiltered,
-        data: data,
-      });
+      return response.send(data);
     } catch (error) {
       console.log(error);
       return response.status(500).send(error);

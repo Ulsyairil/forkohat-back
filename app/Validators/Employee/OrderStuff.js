@@ -13,14 +13,14 @@ class EmployeeOrderStuff {
 
     switch (method) {
       case 'GET':
-        if (uri == '/api/v1/superadmin/order/stuffs') {
+        if (uri == '/api/v1/employee/order/stuffs') {
           rules = null;
           rules = {
             order_id: 'required|number',
           };
         }
 
-        if (uri == '/api/v1/superadmin/order/stuff') {
+        if (uri == '/api/v1/employee/order/stuff') {
           rules = null;
           rules = {
             id: 'required|number',
@@ -33,7 +33,7 @@ class EmployeeOrderStuff {
         break;
 
       case 'PUT':
-        if (uri == '/api/v1/superadmin/order/stuff') {
+        if (uri == '/api/v1/employee/order/stuff') {
           rules = null;
           rules = {
             id: 'required|number',
@@ -43,14 +43,14 @@ class EmployeeOrderStuff {
           };
         }
 
-        if (uri == '/api/v1/superadmin/order/stuff/dump') {
+        if (uri == '/api/v1/employee/order/stuff/dump') {
           rules = null;
           rules = {
             id: 'required|number',
           };
         }
 
-        if (uri == '/api/v1/superadmin/order/stuff/restore') {
+        if (uri == '/api/v1/employee/order/stuff/restore') {
           rules = null;
           rules = {
             id: 'required|number',

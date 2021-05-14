@@ -22,11 +22,13 @@ class AdminEvent {
         break;
 
       case 'POST':
-        rules = rules;
+        if (uri == '/api/v1/admin/event') {
+          rules = rules;
+        }
         break;
 
       case 'PUT':
-        if (uri == '/api/v1/superadmin/event') {
+        if (uri == '/api/v1/admin/event') {
           rules = null;
           rules = {
             event_id: 'required|number',
@@ -37,14 +39,14 @@ class AdminEvent {
           };
         }
 
-        if (uri == '/api/v1/superadmin/event/dump') {
+        if (uri == '/api/v1/admin/event/dump') {
           rules = null;
           rules = {
             event_id: 'required|number',
           };
         }
 
-        if (uri == '/api/v1/superadmin/event/restore') {
+        if (uri == '/api/v1/admin/event/restore') {
           rules = null;
           rules = {
             event_id: 'required|number',
@@ -53,23 +55,19 @@ class AdminEvent {
         break;
 
       case 'DELETE':
-        if (uri == '/api/v1/superadmin/event') {
+        if (uri == '/api/v1/admin/event') {
           rules = null;
           rules = {
             event_id: 'required|number',
           };
         }
 
-        if (uri == '/api/v1/superadmin/event/file') {
+        if (uri == '/api/v1/admin/event/file') {
           rules = null;
           rules = {
             file_id: 'required|number',
           };
         }
-        break;
-
-      default:
-        rules = rules;
         break;
     }
 

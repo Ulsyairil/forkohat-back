@@ -20,11 +20,13 @@ class SuperadminProgram {
         break;
 
       case 'POST':
-        rules = rules;
+        if (uri == '/api/v1/superadmin/program') {
+          rules = rules;
+        }
         break;
 
       case 'PUT':
-        if (uri == '/api/v1/superadmin/rule') {
+        if (uri == '/api/v1/superadmin/program') {
           rules = null;
           rules = {
             program_id: 'required|number',
@@ -33,14 +35,14 @@ class SuperadminProgram {
           };
         }
 
-        if (uri == '/api/v1/superadmin/rule/dump') {
+        if (uri == '/api/v1/superadmin/program/dump') {
           rules = null;
           rules = {
             program_id: 'required|number',
           };
         }
 
-        if (uri == '/api/v1/superadmin/rule/restore') {
+        if (uri == '/api/v1/superadmin/program/restore') {
           rules = null;
           rules = {
             program_id: 'required|number',
@@ -53,10 +55,6 @@ class SuperadminProgram {
         rules = {
           program_id: 'required|number',
         };
-        break;
-
-      default:
-        rules = rules;
         break;
     }
 
