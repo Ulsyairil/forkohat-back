@@ -13,7 +13,7 @@ const voca = require('voca');
 class NewsController {
   async index({ request, response }) {
     try {
-      let data = await News.query().orderBy('id', 'desc').fetch();
+      let data = await News.query().with('users').orderBy('id', 'desc').fetch();
       console.log(data);
 
       return response.send(data);
@@ -110,7 +110,6 @@ class NewsController {
         author_id: user.id,
         title: request.input('title'),
         content: request.input('content'),
-        date: request.input('date'),
       });
 
       if (inputFiles) {
@@ -233,7 +232,6 @@ class NewsController {
         .update({
           title: request.input('title'),
           content: request.input('content'),
-          date: request.input('date'),
         });
 
       if (inputFiles) {

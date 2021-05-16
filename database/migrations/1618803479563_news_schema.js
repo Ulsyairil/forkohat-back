@@ -17,7 +17,6 @@ class NewsSchema extends Schema {
         .onDelete('cascade');
       table.string('title', 254).notNullable();
       table.text('content').notNullable();
-      table.date('date').notNullable();
       table.timestamps();
       table.timestamp('deleted_at', { precision: 6 }).nullable();
     });

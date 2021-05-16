@@ -15,6 +15,7 @@ class NewsController {
     try {
       let user = await auth.getUser();
       let data = await News.query()
+        .with('users')
         .where('author_id', user.id)
         .orderBy('id', 'desc')
         .fetch();
@@ -116,7 +117,6 @@ class NewsController {
         author_id: user.id,
         title: request.input('title'),
         content: request.input('content'),
-        date: request.input('date'),
       });
 
       if (inputFiles) {
@@ -239,7 +239,6 @@ class NewsController {
         .update({
           title: request.input('title'),
           content: request.input('content'),
-          date: request.input('date'),
         });
 
       if (inputFiles) {

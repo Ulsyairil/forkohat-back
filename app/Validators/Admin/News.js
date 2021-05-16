@@ -8,7 +8,6 @@ class AdminNews {
     let rules = {
       title: 'required|string|max:254',
       content: 'required|string',
-      date: 'required|date',
       image: 'required|file|file_ext:png,jpg,jpeg|file_size:5mb',
     };
 
@@ -33,7 +32,6 @@ class AdminNews {
             id: 'required|number',
             title: 'required|string|max:254',
             content: 'required|string',
-            date: 'required|date',
           };
         }
 
