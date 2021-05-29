@@ -32,6 +32,10 @@ class OrderStuff extends Model {
   orders() {
     return this.hasOne("App/Models/Order", "order_id", "id");
   }
+
+  orderStuffFiles() {
+    return this.hasMany("App/Models/OrderFile", "id", "order_stuff_id");
+  }
 }
 
 module.exports = OrderStuff;

@@ -20,6 +20,13 @@ class SuperadminOrder {
         break;
 
       case 'POST':
+        if (uri == '/api/v1/superadmin/orders') {
+          rules = null;
+          rules = {
+            program_id: 'required|number',
+          };
+        }
+
         if (uri == '/api/v1/superadmin/order') {
           rules = rules;
         }
