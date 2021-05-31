@@ -541,7 +541,8 @@ Route.group(function () {
   );
 
   // Order stuff route
-  Route.get("order/stuffs", "Employee/OrderStuffController.index");
+  Route.get("order", "Employee/OrderStuffController.showOrder");
+  Route.post("order/stuffs", "Employee/OrderStuffController.index");
   Route.get("order/stuff", "Employee/OrderStuffController.get").validator(
     "Employee/OrderStuff"
   );
