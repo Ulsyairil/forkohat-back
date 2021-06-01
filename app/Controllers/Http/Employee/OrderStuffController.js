@@ -40,8 +40,8 @@ class OrderStuffController {
 
       return response.send(data);
     } catch (error) {
-      console.log(error);
-      return response.status(500).send(error);
+      console.log(error.message);
+      return response.status(500).send(error.message);
     }
   }
 
@@ -67,8 +67,8 @@ class OrderStuffController {
 
       return response.send(data);
     } catch (error) {
-      console.log(error);
-      return response.status(500).send(error);
+      console.log(error.message);
+      return response.status(500).send(error.message);
     }
   }
 
@@ -87,8 +87,8 @@ class OrderStuffController {
 
       return response.send(data);
     } catch (error) {
-      console.log(error);
-      return response.status(500).send(error);
+      console.log(error.message);
+      return response.status(500).send(error.message);
     }
   }
 
@@ -102,8 +102,8 @@ class OrderStuffController {
 
       return response.send(create);
     } catch (error) {
-      console.log(error);
-      return response.status(500).send(error);
+      console.log(error.message);
+      return response.status(500).send(error.message);
     }
   }
 
@@ -132,8 +132,8 @@ class OrderStuffController {
 
       return response.send(data);
     } catch (error) {
-      console.log(error);
-      return response.status(500).send(error);
+      console.log(error.message);
+      return response.status(500).send(error.message);
     }
   }
 
@@ -158,8 +158,8 @@ class OrderStuffController {
 
       return response.send(data);
     } catch (error) {
-      console.log(error);
-      return response.status(500).send(error);
+      console.log(error.message);
+      return response.status(500).send(error.message);
     }
   }
 
@@ -184,8 +184,8 @@ class OrderStuffController {
 
       return response.send(data);
     } catch (error) {
-      console.log(error);
-      return response.status(500).send(error);
+      console.log(error.message);
+      return response.status(500).send(error.message);
     }
   }
 }

@@ -1,75 +1,75 @@
-'use strict';
+"use strict";
 
-const ProgramRuled = use('App/Models/ProgramRuled');
+const ProgramRuled = use("App/Models/ProgramRuled");
 
 class ProgramRuledController {
   async index({ request, response }) {
     try {
       let data = await ProgramRuled.query()
-        .with('rules')
-        .with('programs')
-        .where('rule_id', request.input('rule_id'))
+        .with("rules")
+        .with("programs")
+        .where("rule_id", request.input("rule_id"))
         .fetch();
 
       return response.send(data);
     } catch (error) {
-      console.log(error);
-      return response.status(500).send(error);
+      console.log(error.message);
+      return response.status(500).send(error.message);
     }
   }
 
   async create({ request, response }) {
     try {
       let ruled = await ProgramRuled.create({
-        rule_id: request.input('rule_id'),
-        program_id: request.input('program_id'),
+        rule_id: request.input("rule_id"),
+        program_id: request.input("program_id"),
       });
 
       let data = await ProgramRuled.query()
-        .with('rules')
-        .with('programs')
-        .where('id', ruled.id)
+        .with("rules")
+        .with("programs")
+        .where("id", ruled.id)
         .first();
 
       return response.send(data);
     } catch (error) {
-      console.log(error);
-      return response.status(500).send(error);
+      console.log(error.message);
+      return response.status(500).send(error.message);
     }
   }
 
   async edit({ request, response }) {
     try {
       await ProgramRuled.query()
-        .where('id', request.input('id'))
+        .where("id", request.input("id"))
         .update({
-          rule_id: request.input('rule_id'),
-          program_id: request.input('program_id'),
+          rule_id: request.input("rule_id"),
+          program_id: request.input("program_id"),
         });
 
       let data = await ProgramRuled.query()
-        .with('rules')
-        .with('programs')
-        .where('id', request.input('id'))
+        .with("rules")
+        .with("programs")
+        .where("id", request.input("id"))
         .first();
 
       return response.send(data);
     } catch (error) {
-      console.log(error);
-      return response.status(500).send(error);
+      console.log(error.message);
+      return response.status(500).send(error.message);
     }
   }
 
   async delete({ request, response }) {
     try {
-      await ProgramRuled.query().where('id', request.input('id')).delete();
+      await ProgramRuled.query().where("id", request.input("id")).delete();
 
       return response.send({
-        message: 'deleted',
+        message: "deleted",
       });
     } catch (error) {
-      console.log(error);
-      return response.status(500).send(error);
+      console.log(error.message);
+      return response.status(500).send(error.message);
     }
   }
 }

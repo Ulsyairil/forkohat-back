@@ -23,8 +23,8 @@ class ProgramController {
 
       return response.send(data.toJSON());
     } catch (error) {
-      console.log(error);
-      return response.status(500).send(error);
+      console.log(error.message);
+      return response.status(500).send(error.message);
     }
   }
 
@@ -45,8 +45,8 @@ class ProgramController {
 
       return response.send(data);
     } catch (error) {
-      console.log(error);
-      return response.status(500).send(error);
+      console.log(error.message);
+      return response.status(500).send(error.message);
     }
   }
 }
