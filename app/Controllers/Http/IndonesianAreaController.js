@@ -1,6 +1,6 @@
 "use strict";
 
-const axios = use("Axios");
+const axios = require("axios");
 const { validate } = use("Validator");
 
 class IndonesianAreaController {
@@ -13,7 +13,8 @@ class IndonesianAreaController {
 
       return response.send(province.data.provinsi);
     } catch (error) {
-      return response.status(500).send(error);
+      console.log(error.message);
+      return response.status(500).send(error.message);
     }
   }
 
@@ -38,7 +39,8 @@ class IndonesianAreaController {
 
       return response.send(province.data);
     } catch (error) {
-      return response.status(500).send(error);
+      console.log(error.message);
+      return response.status(500).send(error.message);
     }
   }
 
@@ -63,7 +65,8 @@ class IndonesianAreaController {
 
       return response.send(city.data.kota_kabupaten);
     } catch (error) {
-      return response.status(500).send(error);
+      console.log(error.message);
+      return response.status(500).send(error.message);
     }
   }
 
@@ -88,7 +91,8 @@ class IndonesianAreaController {
 
       return response.send(city.data);
     } catch (error) {
-      return response.status(500).send(error);
+      console.log(error.message);
+      return response.status(500).send(error.message);
     }
   }
 
@@ -113,7 +117,8 @@ class IndonesianAreaController {
 
       return response.send(district.data.kecamatan);
     } catch (error) {
-      return response.status(500).send(error);
+      console.log(error.message);
+      return response.status(500).send(error.message);
     }
   }
 
@@ -138,7 +143,8 @@ class IndonesianAreaController {
 
       return response.send(district.data);
     } catch (error) {
-      return response.status(500).send(error);
+      console.log(error.message);
+      return response.status(500).send(error.message);
     }
   }
 
@@ -163,7 +169,8 @@ class IndonesianAreaController {
 
       return response.send(sub_district.data.kelurahan);
     } catch (error) {
-      return response.status(500).send(error);
+      console.log(error.message);
+      return response.status(500).send(error.message);
     }
   }
 
@@ -188,7 +195,8 @@ class IndonesianAreaController {
 
       return response.send(sub_district.data);
     } catch (error) {
-      return response.status(500).send(error);
+      console.log(error.message);
+      return response.status(500).send(error.message);
     }
   }
 }

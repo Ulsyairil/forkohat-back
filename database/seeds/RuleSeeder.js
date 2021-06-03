@@ -23,10 +23,8 @@ class RuleSeeder {
       {
         rule: "Administration",
       },
-      {
-        rule: "Balikpapan Utara - Tatanan 1",
-      },
     ]);
+
     console.log(query);
   }
 }

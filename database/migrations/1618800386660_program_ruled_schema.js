@@ -1,30 +1,33 @@
-"use strict";
+'use strict';
 
 /** @type {import('@adonisjs/lucid/src/Schema')} */
-const Schema = use("Schema");
+const Schema = use('Schema');
 
 class ProgramRuledSchema extends Schema {
   up() {
-    this.create("program_ruled", (table) => {
-      table.increments();
+    this.create('program_ruled', (table) => {
+      table.engine('InnoDB');
+      table.bigIncrements();
       table
-        .integer("rule_id")
+        .bigInteger('rule_id')
         .notNullable()
         .unsigned()
-        .references("id")
-        .inTable("rules");
+        .references('id')
+        .inTable('rules')
+        .onDelete('cascade');
       table
-        .integer("program_id")
+        .bigInteger('program_id')
         .notNullable()
         .unsigned()
-        .references("id")
-        .inTable("programs");
+        .references('id')
+        .inTable('programs')
+        .onDelete('cascade');
       table.timestamps();
     });
   }
 
   down() {
-    this.drop("program_ruled");
+    this.drop('program_ruled');
   }
 }
 
