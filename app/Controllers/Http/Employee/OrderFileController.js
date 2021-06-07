@@ -14,8 +14,8 @@ class OrderFileController {
     try {
       let data = await OrderFile.query()
         .where("order_stuff_id", request.input("order_stuff_id"))
-        .orderBy("page", "asc")
-        .fetch();
+        .orderBy("id", "asc")
+        .first();
 
       return response.send(data);
     } catch (error) {
@@ -24,52 +24,31 @@ class OrderFileController {
     }
   }
 
-  async checkImageRequest({ request, response }) {
-    try {
-      let inputImage = request.file("image", {
-        size: "5mb",
-        extnames: ["png", "jpg", "jpeg"],
-      });
-
-      if (!inputImage) {
-        return response.status(422).send(inputImage.errors());
-      }
-
-      return response.send({
-        message: "success",
-      });
-    } catch (error) {
-      console.log(error.message);
-      return response.status(500).send(error.message);
-    }
-  }
-
   async create({ request, response }) {
     try {
-      let inputImage = request.file("image");
+      let inputFile = request.file("file");
       let random = RandomString.generate({
         capitalization: "lowercase",
       });
 
       let fileName = `${voca.snakeCase(
-        inputImage.clientName.split(".").slice(0, -1).join(".")
-      )}_${random}.${inputImage.extname}`;
+        inputFile.clientName.split(".").slice(0, -1).join(".")
+      )}_${random}.${inputFile.extname}`;
 
-      await inputImage.move(Helpers.resourcesPath("uploads/orders"), {
+      await inputFile.move(Helpers.resourcesPath("uploads/orders"), {
         name: fileName,
       });
 
-      if (!inputImage.moved()) {
-        return response.status(422).send(inputImage.errors());
+      if (!inputFile.moved()) {
+        return response.status(422).send(inputFile.errors());
       }
 
       let create = await OrderFile.create({
         order_stuff_id: request.input("order_stuff_id"),
-        page: request.input("page"),
         name: fileName,
-        mime: inputImage.extname,
+        mime: inputFile.extname,
         path: Helpers.resourcesPath("uploads/orders"),
-        url: `/api/v1/file/${inputImage.extname}/${fileName}`,
+        url: `/api/v1/file/${inputFile.extname}/${fileName}`,
       });
 
       return response.send(create);
@@ -85,52 +64,38 @@ class OrderFileController {
         capitalization: "lowercase",
       });
 
-      let inputImage = request.file("image", {
-        size: "5mb",
-        extnames: ["png", "jpg", "jpeg"],
+      let inputFile = request.file("file");
+
+      let findFile = await OrderFile.query()
+        .where("id", request.input("id"))
+        .first();
+
+      // Delete file and data if exists
+      if (findFile) {
+        removeFile(
+          path.join(Helpers.resourcesPath("uploads/orders"), findFile.name)
+        );
+      }
+
+      let fileName = `${voca.snakeCase(
+        inputFile.clientName.split(".").slice(0, -1).join(".")
+      )}_${random}.${inputFile.extname}`;
+
+      await inputFile.move(Helpers.resourcesPath("uploads/orders"), {
+        name: fileName,
       });
 
-      if (inputImage) {
-        let findImage = await OrderFile.query()
-          .where("id", request.input("id"))
-          .first();
+      if (!inputFile.moved()) {
+        return response.status(422).send(inputFile.errors());
+      }
 
-        // Delete image and data if exists
-        if (findImage) {
-          removeFile(
-            path.join(Helpers.resourcesPath("uploads/orders"), findImage.name)
-          );
-        }
-
-        let fileName = `${voca.snakeCase(
-          inputImage.clientName.split(".").slice(0, -1).join(".")
-        )}_${random}.${inputImage.extname}`;
-
-        await inputImage.move(Helpers.resourcesPath("uploads/orders"), {
+      await OrderFile.query()
+        .where("id", request.input("id"))
+        .update({
           name: fileName,
+          mime: inputFile.extname,
+          url: `/api/v1/file/${inputFile.extname}/${fileName}`,
         });
-
-        if (!inputImage.moved()) {
-          return response.status(422).send(inputImage.errors());
-        }
-
-        await OrderFile.query()
-          .where("id", request.input("id"))
-          .update({
-            page: request.input("page"),
-            name: fileName,
-            mime: inputImage.extname,
-            url: `/api/v1/file/${inputImage.extname}/${fileName}`,
-          });
-      }
-
-      if (!inputImage) {
-        await OrderFile.query()
-          .where("id", request.input("id"))
-          .update({
-            page: request.input("page"),
-          });
-      }
 
       let data = await OrderFile.query()
         .where("id", request.input("id"))
@@ -179,20 +144,22 @@ class OrderFileController {
 
   async delete({ request, response }) {
     try {
-      let findImage = await OrderFile.query()
+      let findFile = await OrderFile.query()
         .where("id", request.input("id"))
         .first();
 
-      // Delete image and data if exists
-      if (findImage) {
+      // Delete file and data if exists
+      if (findFile) {
         removeFile(
-          path.join(Helpers.resourcesPath("uploads/orders"), findImage.name)
+          path.join(Helpers.resourcesPath("uploads/orders"), findFile.name)
         );
       }
 
-      await OrderFile.query().where("id", findImage.id).delete();
+      await OrderFile.query().where("id", findFile.id).delete();
 
-      return response.send();
+      return response.send({
+        message: "deleted",
+      });
     } catch (error) {
       console.log(error.message);
       return response.status(500).send(error.message);
