@@ -2,6 +2,12 @@
 
 const Order = use("App/Models/Order");
 const Moment = require("moment");
+const OrderStuff = use("App/Models/OrderStuff");
+const Helpers = use("Helpers");
+const fs = use("fs");
+const path = use("path");
+const removeFile = Helpers.promisify(fs.unlink);
+const OrderFile = use("App/Models/OrderFile");
 
 class OrderController {
   async index({ request, response }) {
@@ -127,6 +133,51 @@ class OrderController {
         .first();
 
       return response.send(data);
+    } catch (error) {
+      console.log(error.message);
+      return response.status(500).send(error.message);
+    }
+  }
+
+  async delete({ request, response }) {
+    try {
+      let find = await Order.find(request.input("id"));
+
+      if (!find) {
+        return response.status(404).send({
+          message: "not found",
+        });
+      }
+
+      let queryFindOrderStuff = await OrderStuff.query()
+        .where("order_id", find.id)
+        .fetch();
+      let findOrderStuff = queryFindOrderStuff.toJSON();
+
+      findOrderStuff.forEach(async (value) => {
+        let queryFindOrderFile = await OrderFile.query()
+          .where("order_stuff_id", value.id)
+          .fetch();
+
+        let findOrderFile = queryFindOrderFile.toJSON();
+
+        findOrderFile.forEach((item) => {
+          if (findFile) {
+            removeFile(
+              path.join(Helpers.resourcesPath("uploads/orders"), item.name)
+            );
+          }
+        });
+
+        await OrderFile.query().where("order_stuff_id", value.id).delete();
+      });
+
+      await OrderStuff.query().where("order_id", find.id).delete();
+      await Order.query().where("id", request.input("id")).delete();
+
+      return response.send({
+        message: "deleted",
+      });
     } catch (error) {
       console.log(error.message);
       return response.status(500).send(error.message);

@@ -257,6 +257,9 @@ Route.group(function () {
   Route.put("order/restore", "Superadmin/OrderController.restore").validator(
     "Superadmin/Order"
   );
+  Route.delete("order", "Superadmin/OrderController.delete").validator(
+    "Superadmin/Order"
+  );
 
   // Order stuff route
   Route.get("order/stuffs", "Superadmin/OrderStuffController.index").validator(
@@ -278,6 +281,10 @@ Route.group(function () {
   Route.put(
     "order/stuff/restore",
     "Superadmin/OrderStuffController.restore"
+  ).validator("Superadmin/OrderStuff");
+  Route.delete(
+    "order/stuff",
+    "Superadmin/OrderStuffController.delete"
   ).validator("Superadmin/OrderStuff");
 
   // Order stuff file route
@@ -439,6 +446,9 @@ Route.group(function () {
   Route.put("order/restore", "Admin/OrderController.restore").validator(
     "Admin/Order"
   );
+  Route.delete("order", "Admin/OrderController.delete").validator(
+    "Admin/Order"
+  );
 
   // Order stuff route
   Route.get("order/stuffs", "Admin/OrderStuffController.index").validator(
@@ -460,6 +470,9 @@ Route.group(function () {
     "order/stuff/restore",
     "Admin/OrderStuffController.restore"
   ).validator("Admin/OrderStuff");
+  Route.delete("order/stuff", "Admin/OrderStuffController.delete").validator(
+    "Admin/OrderStuff"
+  );
 
   // Order stuff file route
   Route.get("order/stuff/files", "Admin/OrderFileController.index").validator(
@@ -551,6 +564,9 @@ Route.group(function () {
     "order/stuff/restore",
     "Employee/OrderStuffController.restore"
   ).validator("Employee/OrderStuff");
+  Route.delete("order/stuff", "Employee/OrderStuffController.delete").validator(
+    "Employee/OrderStuff"
+  );
 
   // Order stuff file route
   Route.get(
