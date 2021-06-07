@@ -5,12 +5,7 @@ const OrderStuff = use("App/Models/OrderStuff");
 class OrderStuffController {
   async index({ request, response }) {
     try {
-      let query = OrderStuff.query().with("orderStuffFiles", (builder) => {
-        builder
-          .where("page", 1)
-          .where("deleted_at", null)
-          .orderBy("page", "asc");
-      });
+      let query = OrderStuff.query().with("orderStuffFiles");
 
       console.log(request.input("search"));
 
@@ -37,9 +32,7 @@ class OrderStuffController {
   async get({ request, response }) {
     try {
       let data = await OrderStuff.query()
-        .with("orderStuffFiles", (builder) => {
-          builder.where("deleted_at", null).orderBy("page", "asc");
-        })
+        .with("orderStuffFiles")
         .where("id", request.input("id"))
         .where("deleted_at", null)
         .first();

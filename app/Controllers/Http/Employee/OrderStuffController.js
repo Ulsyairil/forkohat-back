@@ -23,7 +23,7 @@ class OrderStuffController {
       }
 
       let query = OrderStuff.query().with("orderStuffFiles", (builder) => {
-        builder.where("page", 1).where("deleted_at", null);
+        builder.where("deleted_at", null).orderBy("id", "desc");
       });
 
       if (request.input("search") != null) {

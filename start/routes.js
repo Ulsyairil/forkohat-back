@@ -289,10 +289,6 @@ Route.group(function () {
     "order/stuff/file",
     "Superadmin/OrderFileController.create"
   ).validator("Superadmin/OrderFile");
-  Route.post(
-    "order/stuff/file/check",
-    "Superadmin/OrderFileController.checkImageRequest"
-  ).validator("Superadmin/OrderFile");
   Route.put(
     "order/stuff/file",
     "Superadmin/OrderFileController.edit"
@@ -472,10 +468,6 @@ Route.group(function () {
   Route.post("order/stuff/file", "Admin/OrderFileController.create").validator(
     "Admin/OrderFile"
   );
-  Route.post(
-    "order/stuff/file/check",
-    "Admin/OrderFileController.checkImageRequest"
-  ).validator("Admin/OrderFile");
   Route.put("order/stuff/file", "Admin/OrderFileController.edit").validator(
     "Admin/OrderFile"
   );
@@ -568,10 +560,6 @@ Route.group(function () {
   Route.post(
     "order/stuff/file",
     "Employee/OrderFileController.create"
-  ).validator("Employee/OrderFile");
-  Route.post(
-    "order/stuff/file/check",
-    "Employee/OrderFileController.checkImageRequest"
   ).validator("Employee/OrderFile");
   Route.put("order/stuff/file", "Employee/OrderFileController.edit").validator(
     "Employee/OrderFile"
