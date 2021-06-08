@@ -156,11 +156,9 @@ class OrderStuffController {
       let findOrderFile = queryFindOrderFile.toJSON();
 
       findOrderFile.forEach((value) => {
-        if (findFile) {
-          removeFile(
-            path.join(Helpers.resourcesPath("uploads/orders"), value.name)
-          );
-        }
+        removeFile(
+          path.join(Helpers.resourcesPath("uploads/orders"), value.name)
+        );
       });
 
       await OrderFile.query().where("order_stuff_id", find.id).delete();
