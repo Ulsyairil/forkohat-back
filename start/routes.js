@@ -312,6 +312,31 @@ Route.group(function () {
     "order/stuff/file",
     "Superadmin/OrderFileController.delete"
   ).validator("Superadmin/OrderFile");
+
+  // Gallery route
+  Route.post("galleries", "Superadmin/GalleryController.index").validator(
+    "Superadmin/Gallery"
+  );
+  Route.post("gallery", "Superadmin/GalleryController.create").validator(
+    "Superadmin/Gallery"
+  );
+  Route.delete("gallery", "Superadmin/GalleryController.delete").validator(
+    "Superadmin/Gallery"
+  );
+
+  // Carousel route
+  Route.post(
+    "carousels",
+    "Superadmin/CarouselPictureController.index"
+  ).validator("Superadmin/Carousel");
+  Route.post(
+    "carousel",
+    "Superadmin/CarouselPictureController.create"
+  ).validator("Superadmin/Carousel");
+  Route.delete(
+    "carousel",
+    "Superadmin/CarouselPictureController.delete"
+  ).validator("Superadmin/Carousel");
 })
   .prefix("api/v1/superadmin")
   .middleware(["jwt:superadmin"]);
@@ -496,6 +521,28 @@ Route.group(function () {
     "order/stuff/file",
     "Admin/OrderFileController.delete"
   ).validator("Admin/OrderFile");
+
+  // Gallery route
+  Route.post("galleries", "Admin/GalleryController.index").validator(
+    "Admin/Gallery"
+  );
+  Route.post("gallery", "Admin/GalleryController.create").validator(
+    "Admin/Gallery"
+  );
+  Route.delete("gallery", "Admin/GalleryController.delete").validator(
+    "Admin/Gallery"
+  );
+
+  // Carousel route
+  Route.post("carousels", "Admin/CarouselPictureController.index").validator(
+    "Admin/Carousel"
+  );
+  Route.post("carousel", "Admin/CarouselPictureController.create").validator(
+    "Admin/Carousel"
+  );
+  Route.delete("carousel", "Admin/CarouselPictureController.delete").validator(
+    "Admin/Carousel"
+  );
 })
   .prefix("api/v1/admin")
   .middleware(["jwt:admin"]);

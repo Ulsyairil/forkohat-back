@@ -5,6 +5,8 @@ const ProgramFile = use("App/Models/ProgramFile");
 const OrderFile = use("App/Models/OrderFile");
 const NewsFile = use("App/Models/NewsFile");
 const EventFile = use("App/Models/EventFile");
+const Gallery = use("App/Models/Gallery");
+const CarouselPicture = use("App/Models/CarouselPicture");
 const Helpers = use("Helpers");
 
 class FileController {
@@ -72,6 +74,30 @@ class FileController {
       if (findEventFile) {
         return response.download(
           Helpers.resourcesPath(`uploads/events/${findEventFile.name}`)
+        );
+      }
+
+      // Gallery file
+      let findGallery = await Gallery.query()
+        .where("mime", params.mime)
+        .andWhere("name", params.filename)
+        .first();
+
+      if (findGallery) {
+        return response.download(
+          Helpers.resourcesPath(`uploads/gallery/${findGallery.name}`)
+        );
+      }
+
+      // CarouselPicture file
+      let findCarousel = await CarouselPicture.query()
+        .where("mime", params.mime)
+        .andWhere("name", params.filename)
+        .first();
+
+      if (findCarousel) {
+        return response.download(
+          Helpers.resourcesPath(`uploads/carousel/${findCarousel.name}`)
         );
       }
 
