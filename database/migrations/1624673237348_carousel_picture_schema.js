@@ -8,7 +8,7 @@ class CarouselPictureSchema extends Schema {
     this.create("carousel_pictures", (table) => {
       table.increments();
       table.string("carousel_name", 254).notNullable();
-      table.string("carousel_description", 254).notNullable();
+      table.string("carousel_description", 254);
       table.string("name", 254).notNullable();
       table.string("mime", 254).notNullable();
       table.text("path").notNullable();
