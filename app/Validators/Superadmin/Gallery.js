@@ -7,7 +7,7 @@ class SuperadminGallery {
 
     let rules = {
       picture_name: "required|string",
-      picture_description: "required|string",
+      picture_description: "string",
       image: "required|file|file_ext:png,jpg,jpeg|file_size:5mb",
     };
 

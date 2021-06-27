@@ -7,7 +7,7 @@ class SuperadminCarousel {
 
     let rules = {
       carousel_name: "required|string",
-      carousel_description: "required|string",
+      carousel_description: "string",
       image: "required|file|file_ext:png,jpg,jpeg|file_size:5mb",
     };
 
