@@ -13,7 +13,7 @@ class AdminGallery {
 
     switch (method) {
       case "POST":
-        if (uri == "/api/v1/superadmin/galleries") {
+        if (uri == "/api/v1/admin/galleries") {
           rules = null;
           rules = {
             page: "required|number",
@@ -23,7 +23,7 @@ class AdminGallery {
           };
         }
 
-        if (uri == "/api/v1/superadmin/gallery") {
+        if (uri == "/api/v1/admin/gallery") {
           rules = rules;
         }
         break;

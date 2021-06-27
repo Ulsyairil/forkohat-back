@@ -13,7 +13,7 @@ class AdminCarousel {
 
     switch (method) {
       case "POST":
-        if (uri == "/api/v1/superadmin/carousels") {
+        if (uri == "/api/v1/admin/carousels") {
           rules = null;
           rules = {
             page: "required|number",
@@ -23,7 +23,7 @@ class AdminCarousel {
           };
         }
 
-        if (uri == "/api/v1/superadmin/carousel") {
+        if (uri == "/api/v1/admin/carousel") {
           rules = rules;
         }
         break;
