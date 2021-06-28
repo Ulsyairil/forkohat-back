@@ -74,6 +74,8 @@ Route.group(() => {
   Route.get("/order/stuff", "Public/OrderStuffController.get").validator(
     "Public/OrderStuff"
   );
+  Route.get("/galleries", "Public/GalleryController.index");
+  Route.get("/carousels", "Public/CarouselController.index");
 }).prefix("api/v1");
 
 Route.group(function () {
