@@ -47,7 +47,7 @@ class FaqTopicController {
         .first();
 
       if (!data) {
-        return response.status(404).send({
+        return response.status(400).send({
           message: "not found",
         });
       }
@@ -72,7 +72,7 @@ class FaqTopicController {
         .first();
 
       if (!data) {
-        return response.status(404).send({
+        return response.status(400).send({
           message: "not found",
         });
       }
@@ -97,7 +97,7 @@ class FaqTopicController {
         .first();
 
       if (!data) {
-        return response.status(404).send({
+        return response.status(400).send({
           message: "not found",
         });
       }
@@ -116,7 +116,7 @@ class FaqTopicController {
         .first();
 
       if (!data) {
-        return response.status(404).send({
+        return response.status(400).send({
           message: "not found",
         });
       }

@@ -49,7 +49,7 @@ class EventController {
       console.log(data);
 
       if (data == null) {
-        return response.status(404).send({
+        return response.status(400).send({
           message: "not found",
         });
       }

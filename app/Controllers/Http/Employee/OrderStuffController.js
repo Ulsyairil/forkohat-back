@@ -117,7 +117,7 @@ class OrderStuffController {
       let find = await OrderStuff.find(request.input("id"));
 
       if (!find) {
-        return response.status(404).send({
+        return response.status(400).send({
           message: "not found",
         });
       }
@@ -147,7 +147,7 @@ class OrderStuffController {
       let find = await OrderStuff.find(request.input("id"));
 
       if (!find) {
-        return response.status(404).send({
+        return response.status(400).send({
           message: "not found",
         });
       }
@@ -173,7 +173,7 @@ class OrderStuffController {
       let find = await OrderStuff.find(request.input("id"));
 
       if (!find) {
-        return response.status(404).send({
+        return response.status(400).send({
           message: "not found",
         });
       }
@@ -199,7 +199,7 @@ class OrderStuffController {
       let find = await OrderStuff.find(request.input("id"));
 
       if (!find) {
-        return response.status(404).send({
+        return response.status(400).send({
           message: "not found",
         });
       }

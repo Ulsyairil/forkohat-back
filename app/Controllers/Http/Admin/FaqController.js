@@ -22,7 +22,7 @@ class FaqController {
       let data = await Faq.find(request.input("faq_id"));
 
       if (!data) {
-        return response.status(404).send({
+        return response.status(400).send({
           message: "not found",
         });
       }

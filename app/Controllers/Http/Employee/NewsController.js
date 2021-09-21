@@ -39,7 +39,7 @@ class NewsController {
         .first();
 
       if (!data) {
-        return response.status(404).send({
+        return response.status(400).send({
           message: "not found",
         });
       }
@@ -350,7 +350,7 @@ class NewsController {
         .first();
 
       if (!findFile) {
-        return response.status(404).send({
+        return response.status(400).send({
           message: "file not found",
         });
       }

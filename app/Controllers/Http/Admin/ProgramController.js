@@ -31,7 +31,7 @@ class ProgramController {
         .first();
 
       if (!data) {
-        return response.status(404).send({
+        return response.status(400).send({
           message: "not found",
         });
       }
