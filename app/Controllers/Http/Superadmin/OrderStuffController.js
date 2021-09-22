@@ -26,6 +26,7 @@ class OrderStuffController {
     try {
       let data = await OrderStuff.query()
         .with("orders")
+        .with("users")
         .where("id", request.input("id"))
         .first();
 
@@ -42,12 +43,16 @@ class OrderStuffController {
     }
   }
 
-  async create({ request, response }) {
+  async create({ auth, request, response }) {
     try {
+      let user = await auth.getUser();
+
       let create = await OrderStuff.create({
         order_id: request.input("order_id"),
         name: request.input("name"),
         description: request.input("description"),
+        showed: request.input("showed"),
+        user_id: user.id,
       });
 
       return response.send(create);
@@ -73,6 +78,7 @@ class OrderStuffController {
           order_id: request.input("order_id"),
           name: request.input("name"),
           description: request.input("description"),
+          showed: request.input("showed"),
         });
 
       let data = await OrderStuff.query()

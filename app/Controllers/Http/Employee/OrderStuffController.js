@@ -19,6 +19,8 @@ class OrderStuffController {
         page: "required|number",
         limit: "required|number",
         search: "string",
+        showed: "required|in:all,private,member,public",
+        trash: "required|boolean",
       };
 
       const validation = await validateAll(request.all(), rules);
@@ -27,9 +29,13 @@ class OrderStuffController {
         return response.status(422).send(validation.messages());
       }
 
-      let query = OrderStuff.query().with("orderStuffFiles", (builder) => {
-        builder.where("deleted_at", null).orderBy("id", "desc");
-      });
+      let user = await auth.getUser();
+
+      let query = OrderStuff.query()
+        .with("users")
+        .with("orderStuffFiles", (builder) => {
+          builder.where("deleted_at", null).orderBy("id", "desc");
+        });
 
       if (request.input("search") != null) {
         query
@@ -37,9 +43,30 @@ class OrderStuffController {
           .orWhere("description", "like", `%${request.input("search")}%`);
       }
 
+      if (request.input("showed") == "private") {
+        query
+          .where("showed", request.input("showed"))
+          .where("user_id", user.id);
+      }
+
+      if (request.input("showed") == "member") {
+        query.where("showed", "member");
+      }
+
+      if (request.input("showed") == "public") {
+        query.where("showed", "public");
+      }
+
+      if (request.input("trash") == 0) {
+        query.whereNull("deleted_at");
+      }
+
+      if (request.input("trash") == 1) {
+        query.whereNotNull("deleted_at");
+      }
+
       let data = await query
         .where("order_id", request.input("order_id"))
-        .where("deleted_at", null)
         .orderBy("id", "asc")
         .paginate(request.input("page"), request.input("limit"));
 
@@ -81,6 +108,7 @@ class OrderStuffController {
     try {
       let data = await OrderStuff.query()
         .with("orders")
+        .with("users")
         .where("id", request.input("id"))
         .first();
 
@@ -97,12 +125,16 @@ class OrderStuffController {
     }
   }
 
-  async create({ request, response }) {
+  async create({ auth, request, response }) {
     try {
+      let user = await auth.getUser();
+
       let create = await OrderStuff.create({
         order_id: request.input("order_id"),
         name: request.input("name"),
         description: request.input("description"),
+        showed: request.input("showed"),
+        user_id: user.id,
       });
 
       return response.send(create);
@@ -128,6 +160,7 @@ class OrderStuffController {
           order_id: request.input("order_id"),
           name: request.input("name"),
           description: request.input("description"),
+          showed: request.input("showed"),
         });
 
       let data = await OrderStuff.query()

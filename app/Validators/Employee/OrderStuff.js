@@ -9,6 +9,7 @@ class EmployeeOrderStuff {
       order_id: "required|number",
       name: "required|string",
       description: "required|string",
+      showed: "required|in:private,member,public",
     };
 
     switch (method) {
@@ -40,6 +41,7 @@ class EmployeeOrderStuff {
             order_id: "required|number",
             name: "required|string",
             description: "required|string",
+            showed: "required|in:private,member,public",
           };
         }
 

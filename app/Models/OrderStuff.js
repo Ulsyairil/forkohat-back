@@ -29,6 +29,10 @@ class OrderStuff extends Model {
     return super.formatDates(field, value);
   }
 
+  users() {
+    return this.hasOne("App/Models/User", "user_id", "id");
+  }
+
   orders() {
     return this.hasOne("App/Models/Order", "order_id", "id");
   }

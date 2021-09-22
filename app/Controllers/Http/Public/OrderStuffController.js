@@ -18,6 +18,7 @@ class OrderStuffController {
       let data = await query
         .where("order_id", request.input("order_id"))
         .where("deleted_at", null)
+        .where('showed', 'public')
         .orderBy("id", "desc")
         .paginate(request.input("page"), request.input("limit"));
       console.log(data.toJSON());
@@ -35,6 +36,7 @@ class OrderStuffController {
         .with("orderStuffFiles")
         .where("id", request.input("id"))
         .where("deleted_at", null)
+        .where('showed', 'public')
         .first();
       console.log(data);
 
