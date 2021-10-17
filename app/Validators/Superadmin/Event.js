@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 class SuperadminEvent {
   get rules() {
@@ -6,66 +6,79 @@ class SuperadminEvent {
     const uri = this.ctx.request.url();
 
     let rules = {
-      name: 'required|string',
-      content: 'required|string',
-      registration_date: 'date',
-      expired_date: 'date',
-      image: 'required|file|file_ext:png,jpg,jpeg|file_size:5mb',
+      order_id: "required|number",
+      name: "required|string",
+      content: "required|string",
+      registration_date: "date",
+      expired_date: "date",
+      image: "required|file|file_ext:png,jpg,jpeg|file_size:5mb",
+      url: "url",
+      showed: "required|in:private,member,public",
     };
 
     switch (method) {
-      case 'GET':
+      case "GET":
         rules = null;
         rules = {
-          event_id: 'required|number',
+          event_id: "required|number",
         };
         break;
 
-      case 'POST':
-        if (uri == '/api/v1/superadmin/event') {
+      case "POST":
+        if (uri == "/api/v1/superadmin/events") {
+          rules = null;
+          rules = {
+            order_id: "required|number",
+            showed: "in:private,member,public",
+          };
+        }
+
+        if (uri == "/api/v1/superadmin/event") {
           rules = rules;
         }
         break;
 
-      case 'PUT':
-        if (uri == '/api/v1/superadmin/event') {
+      case "PUT":
+        if (uri == "/api/v1/superadmin/event") {
           rules = null;
           rules = {
-            event_id: 'required|number',
-            name: 'required|string',
-            content: 'required|string',
-            registration_date: 'date',
-            expired_date: 'date',
+            event_id: "required|number",
+            name: "required|string",
+            content: "required|string",
+            registration_date: "date",
+            expired_date: "date",
+            url: "url",
+            showed: "required|in:private,member,public",
           };
         }
 
-        if (uri == '/api/v1/superadmin/event/dump') {
+        if (uri == "/api/v1/superadmin/event/dump") {
           rules = null;
           rules = {
-            event_id: 'required|number',
+            event_id: "required|number",
           };
         }
 
-        if (uri == '/api/v1/superadmin/event/restore') {
+        if (uri == "/api/v1/superadmin/event/restore") {
           rules = null;
           rules = {
-            event_id: 'required|number',
+            event_id: "required|number",
           };
         }
         break;
 
-      case 'DELETE':
-        if (uri == '/api/v1/superadmin/event') {
+      case "DELETE":
+        if (uri == "/api/v1/superadmin/event") {
           rules = null;
           rules = {
-            event_id: 'required|number',
+            event_id: "required|number",
           };
         }
 
-        if (uri == '/api/v1/superadmin/event/file') {
+        if (uri == "/api/v1/superadmin/event/file") {
           rules = null;
           rules = {
-            file_id: 'required|number',
+            file_id: "required|number",
           };
         }
         break;

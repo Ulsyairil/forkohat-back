@@ -80,7 +80,9 @@ Route.group(() => {
 
 Route.group(function () {
   // Event routes
-  Route.post("events", "Superadmin/EventController.index");
+  Route.post("events", "Superadmin/EventController.index").validator(
+    "Superadmin/Event"
+  );
   Route.get("event", "Superadmin/EventController.get").validator(
     "Superadmin/Event"
   );
@@ -105,6 +107,7 @@ Route.group(function () {
 
   // Rule routes
   Route.post("rules", "Superadmin/RuleController.index");
+  Route.get("rules", "Superadmin/RuleController.indexAll");
   Route.get("rule", "Superadmin/RuleController.get").validator(
     "Superadmin/Rule"
   );
@@ -345,7 +348,7 @@ Route.group(function () {
 
 Route.group(function () {
   // Event routes
-  Route.post("events", "Admin/EventController.index");
+  Route.post("events", "Admin/EventController.index").validator("Admin/Event");
   Route.get("event", "Admin/EventController.get").validator("Admin/Event");
   Route.post("event", "Admin/EventController.create").validator("Admin/Event");
   Route.put("event", "Admin/EventController.edit").validator("Admin/Event");
@@ -364,6 +367,7 @@ Route.group(function () {
 
   // Rule routes
   Route.post("rules", "Admin/RuleController.index");
+  Route.get("rules", "Admin/RuleController.indexAll");
   Route.get("rule", "Admin/RuleController.get").validator("Admin/Rule");
   Route.post("rule", "Admin/RuleController.create").validator("Admin/Rule");
   Route.put("rule", "Admin/RuleController.edit").validator("Admin/Rule");
@@ -551,7 +555,9 @@ Route.group(function () {
 
 Route.group(function () {
   // Event routes
-  Route.post("events", "Employee/EventController.index");
+  Route.post("events", "Employee/EventController.index").validator(
+    "Employee/Event"
+  );
   Route.get("event", "Employee/EventController.get").validator(
     "Employee/Event"
   );

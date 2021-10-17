@@ -21,6 +21,18 @@ class RuleController {
     }
   }
 
+  async indexAll({ auth, request, response }) {
+    try {
+      let data = await Rule.query().orderBy("id", "desc").fetch();
+      console.log(data);
+
+      return response.send(data);
+    } catch (error) {
+      console.log(error.message);
+      return response.status(500).send(error.message);
+    }
+  }
+
   async get({ request, response }) {
     try {
       let data = await Rule.find(request.input("rule_id"));

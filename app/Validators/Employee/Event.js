@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 class EmployeeEvent {
   get rules() {
@@ -6,66 +6,73 @@ class EmployeeEvent {
     const uri = this.ctx.request.url();
 
     let rules = {
-      name: 'required|string',
-      content: 'required|string',
-      registration_date: 'date',
-      expired_date: 'date',
-      image: 'required|file|file_ext:png,jpg,jpeg|file_size:5mb',
+      name: "required|string",
+      content: "required|string",
+      registration_date: "date",
+      expired_date: "date",
+      image: "required|file|file_ext:png,jpg,jpeg|file_size:5mb",
     };
 
     switch (method) {
-      case 'GET':
+      case "GET":
         rules = null;
         rules = {
-          event_id: 'required|number',
+          event_id: "required|number",
         };
         break;
 
-      case 'POST':
-        if (uri == '/api/v1/employee/event') {
+      case "POST":
+        if (uri == "/api/v1/employee/events") {
+          rules = null;
+          rules = {
+            order_id: "required|number",
+          };
+        }
+
+        if (uri == "/api/v1/employee/event") {
           rules = rules;
         }
         break;
 
-      case 'PUT':
-        if (uri == '/api/v1/employee/event') {
+      case "PUT":
+        if (uri == "/api/v1/employee/event") {
           rules = null;
           rules = {
-            event_id: 'required|number',
-            name: 'required|string',
-            content: 'required|string',
-            registration_date: 'date',
-            expired_date: 'date',
+            event_id: "required|number",
+            name: "required|string",
+            content: "required|string",
+            registration_date: "date",
+            expired_date: "date",
           };
         }
 
-        if (uri == '/api/v1/employee/event/dump') {
+        if (uri == "/api/v1/employee/event/dump") {
           rules = null;
           rules = {
-            event_id: 'required|number',
+            event_id: "required|number",
           };
         }
 
-        if (uri == '/api/v1/employee/event/restore') {
+        if (uri == "/api/v1/employee/event/restore") {
           rules = null;
           rules = {
-            event_id: 'required|number',
+            event_id: "required|number",
           };
         }
         break;
 
-      case 'DELETE':
-        if (uri == '/api/v1/employee/event') {
+      case "DELETE":
+        if (uri == "/api/v1/employee/event") {
           rules = null;
           rules = {
-            event_id: 'required|number',
+            event_id: "required|number",
           };
         }
 
-        if (uri == '/api/v1/employee/event/file') {
+        if (uri == "/api/v1/employee/event/file") {
           rules = null;
           rules = {
-            file_id: 'required|number',
+            file_id: "required|number",
           };
         }
         break;

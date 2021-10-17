@@ -6,6 +6,8 @@ class PublicEvent {
     const uri = this.ctx.request.url();
 
     let rules = {
+      program_id: "required|number",
+      order_id: "required_if:program,!=,null|number",
       page: "required|number",
       limit: "required|number",
       search: "string",

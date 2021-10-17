@@ -11,12 +11,27 @@ const Moment = require("moment");
 const voca = require("voca");
 
 class EventController {
-  async index({ request, response }) {
+  async index({ auth, request, response }) {
     try {
-      let data = await Event.query()
+      let user = await auth.getUser();
+
+      let query = Event.query()
         .with("users")
-        .orderBy("id", "desc")
-        .fetch();
+        .where("order_id", request.input("order_id"));
+
+      if (request.input("showed") == "private") {
+        query.where("showed", "private").where("author_id", user.id);
+      }
+
+      if (request.input("showed") == "member") {
+        query.where("showed", "member");
+      }
+
+      if (request.input("showed") == "public") {
+        query.where("showed", "public");
+      }
+
+      let data = await query.orderBy("id", "desc").fetch();
 
       return response.send(data);
     } catch (error) {
@@ -112,10 +127,13 @@ class EventController {
       // Insert to events table
       let event = await Event.create({
         author_id: user.id,
+        order_id: request.input("order_id"),
         name: request.input("name"),
         content: request.input("content"),
         registration_date: request.input("registration_date"),
         expired_date: request.input("expired_date"),
+        url: request.input("url"),
+        showed: request.input("showed"),
       });
 
       if (inputFiles) {
@@ -242,6 +260,8 @@ class EventController {
           content: request.input("content"),
           registration_date: request.input("registration_date"),
           expired_date: request.input("expired_date"),
+          url: request.input("url"),
+          showed: request.input("showed"),
         });
 
       if (inputFiles) {

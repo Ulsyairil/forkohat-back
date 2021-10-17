@@ -21,6 +21,12 @@ class EventController {
           .orWhere("expired_date", "like", `%${request.input("search")}%`);
       }
 
+      if (request.input("order_id") != null) {
+        query
+          .where("order_id", request.input("order_id"))
+          .where("showed", "public");
+      }
+
       let data = await query
         .where("deleted_at", null)
         .orderBy("id", "desc")

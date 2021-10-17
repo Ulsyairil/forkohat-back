@@ -11,11 +11,10 @@ const Moment = require("moment");
 const voca = require("voca");
 
 class EventController {
-  async index({ auth, request, response }) {
+  async index({ request, response }) {
     try {
-      let user = await auth.getUser();
       let data = await Event.query()
-        .where("author_id", user.id)
+        .where("order_id", request.input("order_id"))
         .orderBy("id", "desc")
         .fetch();
       console.log(data);
@@ -27,14 +26,12 @@ class EventController {
     }
   }
 
-  async get({ auth, request, response }) {
+  async get({ request, response }) {
     try {
-      let user = await auth.getUser();
       let data = await Event.query()
         .with("users")
         .with("eventFiles")
         .where("id", request.input("event_id"))
-        .where("author_id", user.id)
         .first();
 
       if (!data) {
@@ -116,10 +113,13 @@ class EventController {
       // Insert to events table
       let event = await Event.create({
         author_id: user.id,
+        order_id: request.input("order_id"),
         name: request.input("name"),
         content: request.input("content"),
         registration_date: request.input("registration_date"),
         expired_date: request.input("expired_date"),
+        url: request.input("url"),
+        showed: request.input("showed"),
       });
 
       if (inputFiles) {
@@ -246,6 +246,8 @@ class EventController {
           content: request.input("content"),
           registration_date: request.input("registration_date"),
           expired_date: request.input("expired_date"),
+          url: request.input("url"),
+          showed: request.input("showed"),
         });
 
       if (inputFiles) {

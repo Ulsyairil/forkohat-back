@@ -4,7 +4,24 @@ const Rule = use("App/Models/Rule");
 const Moment = require("moment");
 
 class RuleController {
-  async index({ request, response }) {
+  async index({ auth, request, response }) {
+    try {
+      let user = await auth.getUser();
+      let data = await Rule.query()
+        .whereNot("id", 1)
+        .whereNot("id", 2)
+        .orderBy("id", "desc")
+        .fetch();
+      console.log(data);
+
+      return response.send(data);
+    } catch (error) {
+      console.log(error.message);
+      return response.status(500).send(error.message);
+    }
+  }
+
+  async indexAll({ request, response }) {
     try {
       let data = await Rule.query().orderBy("id", "desc").fetch();
       console.log(data);

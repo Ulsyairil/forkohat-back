@@ -48,6 +48,10 @@ class Event extends Model {
   eventFiles() {
     return this.hasMany("App/Models/EventFile", "id", "event_id");
   }
+
+  orders() {
+    return this.hasOne("App/Models/Order", "order_id", "id");
+  }
 }
 
 module.exports = Event;
