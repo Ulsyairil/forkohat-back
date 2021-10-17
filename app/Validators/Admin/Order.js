@@ -20,6 +20,13 @@ class AdminOrder {
         break;
 
       case "POST":
+        if (uri == "/api/v1/admin/orders") {
+          rules = null;
+          rules = {
+            program_id: "required|number",
+          };
+        }
+
         if (uri == "/api/v1/admin/order") {
           rules = rules;
         }

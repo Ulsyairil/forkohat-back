@@ -12,7 +12,10 @@ const OrderFile = use("App/Models/OrderFile");
 class OrderController {
   async index({ request, response }) {
     try {
-      let data = await Order.query().orderBy("id", "desc").fetch();
+      let data = await Order.query()
+        .where("program_id", request.input("program_id"))
+        .orderBy("id", "desc")
+        .fetch();
       console.log(data);
 
       return response.send(data);

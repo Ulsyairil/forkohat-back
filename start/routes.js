@@ -467,7 +467,7 @@ Route.group(function () {
   );
 
   // Order route
-  Route.post("orders", "Admin/OrderController.index");
+  Route.post("orders", "Admin/OrderController.index").validator("Admin/Order");
   Route.get("order", "Admin/OrderController.get").validator("Admin/Order");
   Route.post("order", "Admin/OrderController.create").validator("Admin/Order");
   Route.put("order", "Admin/OrderController.edit").validator("Admin/Order");
