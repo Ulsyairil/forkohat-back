@@ -8,9 +8,9 @@ class AuthController {
   async login({ auth, request, response }) {
     try {
       const rules = {
-        select: "required|in:nip,email",
+        select: "required|in:username,email",
+        username: "required_when:select,username|string",
         email: "required_when:select,email|email",
-        nip: "required_when:select,nip|string",
         password: "required|string",
       };
 
@@ -24,16 +24,18 @@ class AuthController {
 
       if (request.input("select") == "email") {
         check = await User.query()
-          .with("rules")
+          .with("Rule")
+          .with("Rule.RuleItem")
           .where("email", request.input("email"))
           .whereNull("deleted_at")
           .first();
       }
 
-      if (request.input("select") == "nip") {
+      if (request.input("select") == "username") {
         check = await User.query()
-          .with("rules")
-          .where("nip", request.input("nip"))
+          .with("Rule")
+          .with("Rule.RuleItem")
+          .where("username", request.input("username"))
           .whereNull("deleted_at")
           .first();
       }
@@ -42,11 +44,11 @@ class AuthController {
         let message;
 
         if (request.input("select") == "email") {
-          message = "email not exists";
+          message = "Email not exists";
         }
 
-        if (request.input("select") == "nip") {
-          message = "nip not exists";
+        if (request.input("select") == "username") {
+          message = "Username not exists";
         }
 
         return response.status(401).send({
@@ -67,7 +69,7 @@ class AuthController {
         });
       }
 
-      let generate = await auth.withRefreshToken().generate(check);
+      let generate = await auth.generate(check);
 
       return response.send({
         token: generate,
@@ -79,11 +81,12 @@ class AuthController {
     }
   }
 
-  async checkUser({ auth, request, response }) {
+  async register({ request, response }) {
     try {
       const rules = {
-        refresh: "required|boolean",
-        refresh_token: "required|string",
+        fullname: "required|string",
+        username: "required|string",
+        password: "required|string",
       };
 
       const validation = await validateAll(request.all(), rules);
@@ -92,6 +95,34 @@ class AuthController {
         return response.status(422).send(validation.messages());
       }
 
+      const fullname = request.input("fullname");
+      const username = request.input("username");
+      const password = request.input("password");
+
+      const findUser = await User.query().where("username", username).first();
+
+      if (findUser) {
+        return response.status(400).send({
+          message: "user still exist",
+        });
+      }
+
+      const createUser = await User.create({
+        rule_id: 2,
+        fullname: fullname,
+        username: username,
+        password: password,
+      });
+
+      return response.status(200).send(createUser);
+    } catch (error) {
+      console.log(error.message);
+      return response.status(500).send(error.message);
+    }
+  }
+
+  async checkUser({ auth, request, response }) {
+    try {
       let check = await auth.check();
 
       if (!check) {
@@ -100,24 +131,14 @@ class AuthController {
         });
       }
 
-      let auth_user = await auth.getUser();
+      const userLogged = await auth.getUser();
       let data = await User.query()
-        .with("rules")
-        .where("id", auth_user.id)
+        .with("Rule")
+        .where("id", userLogged.id)
         .whereNull("deleted_at")
         .first();
 
-      let refresh_token = null;
-
-      if (request.input("refresh") == true) {
-        refresh_token = await auth.generateForRefreshToken(
-          request.input("refresh_token"),
-          true
-        );
-      }
-
       return response.send({
-        token: refresh_token,
         data: data,
       });
     } catch (error) {
@@ -129,7 +150,7 @@ class AuthController {
   async logout({ auth, request, response }) {
     try {
       const rules = {
-        refresh_token: "required|string",
+        token: "required|string",
       };
 
       const validation = await validateAll(request.all(), rules);
@@ -139,8 +160,8 @@ class AuthController {
       }
 
       await auth
-        .authenticator("jwt")
-        .revokeTokens([request.input("refresh_token")], true);
+        .authenticator("api")
+        .revokeTokens([request.input("token")], true);
 
       return response.send({
         message: "logout success",

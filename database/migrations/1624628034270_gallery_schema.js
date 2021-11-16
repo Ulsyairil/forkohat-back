@@ -7,12 +7,31 @@ class GallerySchema extends Schema {
   up() {
     this.create("galleries", (table) => {
       table.increments();
-      table.string("picture_name", 254).notNullable();
-      table.string("picture_description", 254);
-      table.string("name", 254).notNullable();
-      table.string("mime", 254).notNullable();
-      table.text("path").notNullable();
-      table.text("url").notNullable();
+      table
+        .bigInteger("uploaded_by")
+        .notNullable()
+        .unsigned()
+        .references("id")
+        .inTable("users")
+        .onUpdate("cascade")
+        .onDelete("cascade");
+      table
+        .bigInteger("updated_by")
+        .notNullable()
+        .unsigned()
+        .references("id")
+        .inTable("users")
+        .onUpdate("cascade")
+        .onDelete("cascade");
+      table.string("title", 254).nullable();
+      table.string("image_name", 254).notNullable();
+      table.string("image_mime", 254).notNullable();
+      table.text("image_path").notNullable();
+      table.text("image_url").notNullable();
+      table
+        .enu("showed", ["public", "member", "private"])
+        .default("private")
+        .notNullable();
       table.timestamps();
     });
   }

@@ -1,11 +1,14 @@
 "use strict";
 
-const CarouselPicture = use("App/Models/CarouselPicture");
+const Carousel = use("App/Models/Carousel");
 
 class CarouselController {
   async index({ request, response }) {
     try {
-      const data = await CarouselPicture.query().orderBy("id", "desc").fetch();
+      const data = await Carousel.query()
+        .where("showed", 1)
+        .orderBy("id", "asc")
+        .fetch();
 
       return response.status(200).send(data);
     } catch (error) {

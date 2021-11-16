@@ -29,7 +29,7 @@ class UserFile extends Model {
     return super.formatDates(field, value);
   }
 
-  users() {
+  User() {
     return this.hasOne("App/Models/User", "user_id", "id");
   }
 }

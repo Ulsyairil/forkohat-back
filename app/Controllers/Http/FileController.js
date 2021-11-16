@@ -1,17 +1,31 @@
 "use strict";
 
 const Userfile = use("App/Models/UserFile");
-const ProgramFile = use("App/Models/ProgramFile");
-const OrderFile = use("App/Models/OrderFile");
-const NewsFile = use("App/Models/NewsFile");
+const Program = use("App/Models/Program");
+const Arrangement = use("App/Models/Arrangement");
+const ArrangementItem = use("App/Models/ArrangementItem");
+const News = use("App/Models/News");
+const Event = use("App/Models/Event");
 const EventFile = use("App/Models/EventFile");
 const Gallery = use("App/Models/Gallery");
-const CarouselPicture = use("App/Models/CarouselPicture");
+const Carousel = use("App/Models/Carousel");
 const Helpers = use("Helpers");
 
 class FileController {
   async index({ params, request, response }) {
     try {
+      if (params.mime == null || params.mime == "") {
+        return response.status(422).send({
+          message: "mime must be filled",
+        });
+      }
+
+      if (params.filename == null || params.filename == "") {
+        return response.status(422).send({
+          message: "filename must be filled",
+        });
+      }
+
       // User file
       let findUserFile = await Userfile.query()
         .where("mime", params.mime)
@@ -25,45 +39,76 @@ class FileController {
         );
       }
 
-      // Program file
-      let findProgramFile = await ProgramFile.query()
-        .where("mime", params.mime)
-        .where("name", params.filename)
+      // Program image
+      let findProgramImage = await Program.query()
+        .where("image_mime", params.mime)
+        .where("image_name", params.filename)
         .whereNull("deleted_at")
         .first();
 
-      if (findProgramFile) {
+      if (findProgramImage) {
         return response.download(
-          Helpers.resourcesPath(`uploads/programs/${findProgramFile.name}`)
+          Helpers.resourcesPath(
+            `uploads/programs/${findProgramImage.image_name}`
+          )
         );
       }
 
-      // Order file
-      let findOrderFile = await OrderFile.query()
-        .where("mime", params.mime)
-        .where("name", params.filename)
+      // Arrangement image
+      let findArrangementImage = await Arrangement.query()
+        .where("image_mime", params.mime)
+        .where("image_name", params.filename)
         .whereNull("deleted_at")
         .first();
 
-      if (findOrderFile) {
+      if (findArrangementImage) {
         return response.download(
-          Helpers.resourcesPath(`uploads/orders/${findOrderFile.name}`)
+          Helpers.resourcesPath(
+            `uploads/arrangements/${findArrangementImage.image_name}`
+          )
         );
       }
 
-      // News file
-      let findNewsFile = await NewsFile.query()
-        .where("mime", params.mime)
-        .where("name", params.filename)
+      // Arrangement Item file
+      let findArrangementItemFile = await ArrangementItem.query()
+        .where("file_mime", params.mime)
+        .where("file_name", params.filename)
         .whereNull("deleted_at")
         .first();
 
-      if (findNewsFile) {
+      if (findArrangementItemFile) {
         return response.download(
-          Helpers.resourcesPath(`uploads/news/${findNewsFile.name}`)
+          Helpers.resourcesPath(
+            `uploads/orders/${findArrangementItemFile.file_name}`
+          )
         );
       }
 
+      // News image
+      let findNewsImage = await News.query()
+        .where("image_mime", params.mime)
+        .where("image_name", params.filename)
+        .whereNull("deleted_at")
+        .first();
+
+      if (findNewsImage) {
+        return response.download(
+          Helpers.resourcesPath(`uploads/news/${findNewsImage.image_name}`)
+        );
+      }
+
+      // Event image
+      let findEventImage = await Event.query()
+        .where("image_mime", params.mime)
+        .andWhere("image_name", params.filename)
+        .whereNull("deleted_at")
+        .first();
+
+      if (findEventImage) {
+        return response.download(
+          Helpers.resourcesPath(`uploads/events/${findEventImage.image_name}`)
+        );
+      }
       // Event file
       let findEventFile = await EventFile.query()
         .where("mime", params.mime)
@@ -77,31 +122,31 @@ class FileController {
         );
       }
 
-      // Gallery file
+      // Gallery image
       let findGallery = await Gallery.query()
-        .where("mime", params.mime)
-        .andWhere("name", params.filename)
+        .where("image_mime", params.mime)
+        .andWhere("image_name", params.filename)
         .first();
 
       if (findGallery) {
         return response.download(
-          Helpers.resourcesPath(`uploads/gallery/${findGallery.name}`)
+          Helpers.resourcesPath(`uploads/gallery/${findGallery.image_name}`)
         );
       }
 
-      // CarouselPicture file
-      let findCarousel = await CarouselPicture.query()
-        .where("mime", params.mime)
-        .andWhere("name", params.filename)
+      // Carousel image
+      let findCarousel = await Carousel.query()
+        .where("image_mime", params.mime)
+        .andWhere("image_name", params.filename)
         .first();
 
       if (findCarousel) {
         return response.download(
-          Helpers.resourcesPath(`uploads/carousel/${findCarousel.name}`)
+          Helpers.resourcesPath(`uploads/carousel/${findCarousel.image_name}`)
         );
       }
 
-      return response.status(400).send({
+      return response.status(404).send({
         message: "not found",
       });
     } catch (error) {

@@ -22,15 +22,7 @@ class Program extends Model {
       return Moment(value).format("YYYY-MM-DD HH:mm:ss");
     }
 
-    if (field === "deleted_at") {
-      return Moment(value).format("YYYY-MM-DD HH:mm:ss");
-    }
-
     return super.formatDates(field, value);
-  }
-
-  programFiles() {
-    return this.hasMany("App/Models/ProgramFile", "id", "program_id");
   }
 }
 

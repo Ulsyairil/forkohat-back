@@ -1,18 +1,41 @@
 "use strict";
 
 const Rule = use("App/Models/Rule");
-const Moment = require("moment");
+const { validate } = use("Validator");
 
 class RuleController {
   async index({ auth, request, response }) {
     try {
-      let user = await auth.getUser();
-      let data = await Rule.query()
+      // Validate request
+      const rules = {
+        page: "required|integer",
+        limit: "required|integer",
+        order: "required|in:asc,desc",
+        search: "string",
+      };
+
+      const validation = await validate(request.all(), rules);
+
+      if (validation.fails()) {
+        return response.status(422).send(validation.messages()[0]);
+      }
+
+      const page = request.input("page");
+      const limit = request.input("limit");
+      const order = request.input("order");
+      const search = request.input("search");
+
+      let query = Rule.query();
+
+      if (search) {
+        query.where("name", "like", `%${search}%`);
+      }
+
+      const data = await query
         .whereNot("id", 1)
-        .whereNot("id", user.rule_id)
-        .orderBy("id", "desc")
-        .fetch();
-      console.log(data);
+        .whereNot("id", 2)
+        .orderBy("id", order)
+        .paginate(page, limit);
 
       return response.send(data);
     } catch (error) {
@@ -35,11 +58,27 @@ class RuleController {
 
   async get({ request, response }) {
     try {
-      let data = await Rule.find(request.input("rule_id"));
+      // Validate request
+      const rules = {
+        rule_id: "required|integer",
+      };
+
+      const validation = await validate(request.all(), rules);
+
+      if (validation.fails()) {
+        return response.status(422).send(validation.messages()[0]);
+      }
+
+      const rule_id = request.input("rule_id");
+
+      let data = await Rule.query()
+        .with("RuleItem")
+        .where("id", rule_id)
+        .first();
 
       if (!data) {
-        return response.status(400).send({
-          message: "not found",
+        return response.status(404).send({
+          message: "Rule Tidak Ditemukan",
         });
       }
 
@@ -52,11 +91,28 @@ class RuleController {
 
   async create({ request, response }) {
     try {
-      let rule = await Rule.create({
-        rule: request.input("rule"),
+      // Validate request
+      const rules = {
+        rule: "required|string",
+      };
+
+      const messages = {
+        "rule.required": "Nama Rule Harus Diisi",
+      };
+
+      const validation = await validate(request.all(), rules, messages);
+
+      if (validation.fails()) {
+        return response.status(422).send(validation.messages()[0]);
+      }
+
+      const rule = request.input("rule");
+
+      const create = await Rule.create({
+        name: rule,
       });
 
-      return response.send(rule);
+      return response.send(create);
     } catch (error) {
       console.log(error.message);
       return response.status(500).send(error.message);
@@ -65,13 +121,40 @@ class RuleController {
 
   async edit({ request, response }) {
     try {
-      await Rule.query()
-        .where("id", request.input("rule_id"))
-        .update({
-          rule: request.input("rule"),
+      // Validate request
+      const rules = {
+        rule_id: "required|integer",
+        rule: "required|string",
+      };
+
+      const messages = {
+        "rule_id.required": "ID Rule Harus Diisi",
+        "rule_id.integer": "ID Rule Harus Berupa Angka",
+        "rule.required": "Nama Rule Harus Diisi",
+      };
+
+      const validation = await validate(request.all(), rules, messages);
+
+      if (validation.fails()) {
+        return response.status(422).send(validation.messages()[0]);
+      }
+
+      const rule = request.input("rule");
+      const rule_id = request.input("rule_id");
+
+      const findRule = await Rule.find(rule_id);
+
+      if (!findRule) {
+        return response.status(404).send({
+          message: "Rule Tidak Ditemukan",
         });
+      }
 
-      let data = await Rule.find(request.input("rule_id"));
+      await Rule.query().where("id", rule_id).update({
+        name: rule,
+      });
+
+      let data = await Rule.find(rule_id);
 
       return response.send(data);
     } catch (error) {
@@ -80,30 +163,34 @@ class RuleController {
     }
   }
 
-  async dump({ request, response }) {
+  async destroy({ request, response }) {
     try {
-      await Rule.query().where("id", request.input("rule_id")).update({
-        deleted_at: Moment.now(),
+      // Validate request
+      const rules = {
+        rule_id: "required|integer",
+      };
+
+      const validation = await validate(request.all(), rules);
+
+      if (validation.fails()) {
+        return response.status(422).send(validation.messages()[0]);
+      }
+
+      const rule_id = request.input("rule_id");
+
+      const findRule = await Rule.find(rule_id);
+
+      if (!findRule) {
+        return response.status(404).send({
+          message: "Rule Tidak Ditemukan",
+        });
+      }
+
+      await Rule.query().where("id", rule_id).delete();
+
+      return response.send({
+        message: "Rule Berhasil Dihapus",
       });
-
-      let data = await Rule.find(request.input("rule_id"));
-
-      return response.send(data);
-    } catch (error) {
-      console.log(error.message);
-      return response.status(500).send(error.message);
-    }
-  }
-
-  async restore({ request, response }) {
-    try {
-      await Rule.query().where("id", request.input("rule_id")).update({
-        deleted_at: null,
-      });
-
-      let data = await Rule.find(request.input("rule_id"));
-
-      return response.send(data);
     } catch (error) {
       console.log(error.message);
       return response.status(500).send(error.message);

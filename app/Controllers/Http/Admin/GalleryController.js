@@ -5,27 +5,45 @@ const fs = use("fs");
 const path = use("path");
 const removeFile = Helpers.promisify(fs.unlink);
 const Gallery = use("App/Models/Gallery");
-const Moment = require("moment");
 const voca = require("voca");
 const RandomString = require("randomstring");
+const { validate } = use("Validator");
 
 class GalleryController {
   async index({ request, response }) {
     try {
+      // Validate request
+      const rules = {
+        page: "required|integer",
+        limit: "required|integer",
+        order: "required|in:asc,desc",
+        search: "string",
+        showed: "required|in:private,member,public",
+      };
+
+      const validation = await validate(request.all(), rules);
+
+      if (validation.fails()) {
+        return response.status(422).send(validation.messages()[0]);
+      }
+
+      // All input
       const page = request.input("page");
       const limit = request.input("limit");
       const order = request.input("order");
       const search = request.input("search");
+      const showed = request.input("showed");
 
       let query = Gallery.query();
 
       if (search) {
-        query
-          .where("picture_name", "like", `%${search}%`)
-          .orWhere("picture_description", "like", `%${search}%`);
+        query.where("title", "like", `%${search}%`);
       }
 
-      const data = await query.orderBy("id", order).paginate(page, limit);
+      const data = await query
+        .where("showed", showed)
+        .orderBy("id", order)
+        .paginate(page, limit);
 
       return response.status(200).send(data);
     } catch (error) {
@@ -34,32 +52,68 @@ class GalleryController {
     }
   }
 
-  async create({ request, response }) {
+  async create({ auth, request, response }) {
     try {
-      let inputFile = request.file("image");
+      // Validate request
+      const rules = {
+        title: "string",
+        showed: "required|in:private,member,public",
+      };
+
+      const messages = {
+        "showed.required": "Gambar Ditampilkan Harus Diisi",
+        "showed.in":
+          "Gambar Ditampilkan Harus Diisi : private, member, atau public",
+      };
+
+      const validation = await validate(request.all(), rules, messages);
+
+      if (validation.fails()) {
+        return response.status(422).send(validation.messages()[0]);
+      }
+
+      // All input
+      const title = request.input("title");
+      const showed = request.input("showed");
+      const image = request.file("image");
+
+      // Get user data logged in
+      const user = await auth.getUser();
+
+      // Check if input image is null / empty
+      if (image == null) {
+        return response.status(422).send({
+          message: "Gambar Harus Diunggah",
+        });
+      }
+
+      // Move uploaded image
       let random = RandomString.generate({
         capitalization: "lowercase",
       });
 
       let fileName = `${voca.snakeCase(
-        inputFile.clientName.split(".").slice(0, -1).join(".")
-      )}_${random}.${inputFile.extname}`;
+        image.clientName.split(".").slice(0, -1).join(".")
+      )}_${random}.${image.extname}`;
 
-      await inputFile.move(Helpers.resourcesPath("uploads/gallery"), {
+      await image.move(Helpers.resourcesPath("uploads/gallery"), {
         name: fileName,
       });
 
-      if (!inputFile.moved()) {
-        return response.status(422).send(inputFile.errors());
+      if (!image.moved()) {
+        return response.status(422).send(image.error());
       }
 
+      // Create data
       let create = await Gallery.create({
-        picture_name: request.input("picture_name"),
-        picture_description: request.input("picture_description"),
-        name: fileName,
-        mime: inputFile.extname,
-        path: Helpers.resourcesPath("uploads/gallery"),
-        url: `/api/v1/file/${inputFile.extname}/${fileName}`,
+        title: title,
+        uploaded_by: user.id,
+        updated_by: user.id,
+        image_name: fileName,
+        image_mime: image.extname,
+        image_path: Helpers.resourcesPath("uploads/gallery"),
+        image_url: `/api/v1/file/${image.extname}/${fileName}`,
+        showed: showed,
       });
 
       return response.send(create);
@@ -69,29 +123,134 @@ class GalleryController {
     }
   }
 
-  async delete({ request, response }) {
+  async edit({ auth, request, response }) {
     try {
-      let findFile = await Gallery.query()
-        .where("id", request.input("gallery_id"))
-        .first();
+      // Validate request
+      const rules = {
+        gallery_id: "required|integer",
+        title: "string",
+        showed: "required|in:private,member,public",
+      };
 
-      if (findFile == null) {
-        return response.status(400).send({
-          message: "Gambar tidak ditemukan",
+      const messages = {
+        "gallery_id.required": "ID Galeri Harus Diisi",
+        "gallery_id.integer": "ID Galeri Harus Berupa Angka",
+        "showed.required": "Gambar Ditampilkan Harus Diisi",
+        "showed.in":
+          "Gambar Ditampilkan Harus Diisi : private, member, atau public",
+      };
+
+      const validation = await validate(request.all(), rules, messages);
+
+      if (validation.fails()) {
+        return response.status(422).send(validation.messages()[0]);
+      }
+
+      // All input
+      const gallery_id = request.input("gallery_id");
+      const title = request.input("title");
+      const showed = request.input("showed");
+      const image = request.file("image");
+
+      // Get user data logged in
+      const user = await auth.getUser();
+
+      let findData = await Gallery.query().where("id", gallery_id).first();
+
+      if (findData == null) {
+        return response.status(404).send({
+          message: "Galeri Tidak Ditemukan",
         });
       }
 
-      // Delete file and data if exists
-      if (findFile) {
+      const query = Gallery.query();
+
+      if (image) {
+        // Delete image
         removeFile(
-          path.join(Helpers.resourcesPath("uploads/gallery"), findFile.name)
+          path.join(
+            Helpers.resourcesPath("uploads/gallery"),
+            findData.image_name
+          )
         );
+
+        // Move uploaded image
+        let random = RandomString.generate({
+          capitalization: "lowercase",
+        });
+
+        let fileName = `${voca.snakeCase(
+          image.clientName.split(".").slice(0, -1).join(".")
+        )}_${random}.${image.extname}`;
+
+        await image.move(Helpers.resourcesPath("uploads/gallery"), {
+          name: fileName,
+        });
+
+        if (!image.moved()) {
+          return response.status(422).send(image.error());
+        }
+
+        await query.where("id", gallery_id).update({
+          title: title,
+          updated_by: user.id,
+          image_name: fileName,
+          image_mime: image.extname,
+          image_path: Helpers.resourcesPath("uploads/gallery"),
+          image_url: `/api/v1/file/${image.extname}/${fileName}`,
+          showed: showed,
+        });
+      } else {
+        await query.where("id", gallery_id).update({
+          title: title,
+          updated_by: user.id,
+          showed: showed,
+        });
       }
 
-      await Gallery.query().where("id", findFile.id).delete();
+      let updatedData = await Gallery.query().where("id", gallery_id).first();
+
+      return response.status(200).send(updatedData);
+    } catch (error) {
+      console.log(error.message);
+      return response.status(500).send(error.message);
+    }
+  }
+
+  async destroy({ request, response }) {
+    try {
+      // Validate request
+      const rules = {
+        gallery_id: "required|integer",
+      };
+
+      const validation = await validate(request.all(), rules);
+
+      if (validation.fails()) {
+        return response.status(422).send(validation.messages()[0]);
+      }
+
+      // All input
+      const gallery_id = request.input("gallery_id");
+
+      let findData = await Gallery.query().where("id", gallery_id).first();
+
+      if (findData == null) {
+        return response.status(404).send({
+          message: "Galeri Tidak Ditemukan",
+        });
+      }
+
+      // Delete image
+      removeFile(
+        path.join(Helpers.resourcesPath("uploads/gallery"), findData.file_name)
+      );
+
+      // Delete data
+      await Gallery.query().where("id", gallery_id).delete();
 
       return response.send({
-        message: "deleted",
+        message: "Gambar Berhasil Dihapus",
       });
     } catch (error) {
       console.log(error.message);

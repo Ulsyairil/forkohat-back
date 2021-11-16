@@ -5,7 +5,10 @@ const Gallery = use("App/Models/Gallery");
 class GalleryController {
   async index({ request, response }) {
     try {
-      const data = await Gallery.query().orderBy("id", "desc").fetch();
+      const data = await Gallery.query()
+        .where("showed", "public")
+        .orderBy("id", "desc")
+        .fetch();
 
       return response.status(200).send(data);
     } catch (error) {

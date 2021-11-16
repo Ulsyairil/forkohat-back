@@ -1,33 +1,45 @@
 "use strict";
 
 const News = use("App/Models/News");
+const { validate } = use("Validator");
 
 class NewsController {
   async index({ request, response }) {
     try {
-      let query = News.query()
-        .with("users", (builder) => {
-          builder.select("id", "name").where("deleted_at", null);
-        })
-        .with("newsFiles", (builder) => {
-          builder.where("type", "banner").where("deleted_at", null);
-        });
+      const rules = {
+        page: "required|integer",
+        limit: "required|integer",
+        order: "required|in:asc,desc",
+        search: "string",
+        trash: "required|boolean",
+      };
 
-      console.log(request.input("search"));
+      const validation = await validate(request.all(), rules);
 
-      if (request.input("search") != null) {
+      if (validation.fails()) {
+        return response.status(422).send(validation.messages()[0]);
+      }
+
+      const page = request.input("page");
+      const limit = request.input("limit");
+      const order = request.input("order");
+      const search = request.input("search");
+
+      // Get data
+      let query = News.query().with("Author");
+
+      if (search) {
         query
-          .where("title", "like", `%${request.input("search")}%`)
-          .orWhere("content", "like", `%${request.input("search")}%`);
+          .where("title", "like", `%${search}%`)
+          .orWhere("content", "like", `%${search}%`);
       }
 
       let data = await query
-        .where("deleted_at", null)
-        .orderBy("id", "desc")
-        .paginate(request.input("page"), request.input("limit"));
-      console.log(data.toJSON());
+        .whereNull("deleted_at")
+        .orderBy("id", order)
+        .paginate(page, limit);
 
-      return response.send(data.toJSON());
+      return response.send(data);
     } catch (error) {
       console.log(error.message);
       return response.status(500).send(error.message);
@@ -36,21 +48,23 @@ class NewsController {
 
   async get({ request, response }) {
     try {
-      let data = await News.query()
-        .with("users", (builder) => {
-          builder.select("id", "name").where("deleted_at", null);
-        })
-        .with("newsFiles", (builder) => {
-          builder.where("deleted_at", null);
-        })
-        .where("id", request.input("id"))
-        .where("deleted_at", null)
-        .first();
-      console.log(data);
+      const rules = {
+        news_id: "required|integer",
+      };
 
-      if (data == null) {
-        return response.status(400).send({
-          message: "not found",
+      const validation = await validate(request.all(), rules);
+
+      if (validation.fails()) {
+        return response.status(422).send(validation.messages()[0]);
+      }
+
+      const news_id = request.input("news_id");
+
+      let data = await News.query().with("Author").where("id", news_id).first();
+
+      if (!data) {
+        return response.status(404).send({
+          message: "Berita Tidak Ditemukan",
         });
       }
 

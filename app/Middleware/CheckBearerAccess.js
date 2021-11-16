@@ -2,7 +2,6 @@
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 /** @typedef {import('@adonisjs/framework/src/View')} View */
-const Rule = use("App/Models/Rule");
 
 class CheckBearerAccess {
   /**
@@ -18,16 +17,17 @@ class CheckBearerAccess {
         message: "Unauthenticated",
       });
 
-    let check = await auth.check();
-
-    if (check == false)
+    try {
+      await auth.check();
+    } catch (error) {
       return response.status(403).send({
-        message: "Missing or invalid jwt token",
+        message: "Missing or invalid api token",
       });
+    }
 
     let user = await auth.getUser();
 
-    if (schemes[0] == "superadmin") {
+    if (schemes[0] == "admin") {
       if (user.rule_id != 1) {
         return response.status(403).send({
           message: "Forbidden Access",
@@ -37,7 +37,7 @@ class CheckBearerAccess {
       await next();
     }
 
-    if (schemes[0] == "admin") {
+    if (schemes[0] == "public") {
       if (user.rule_id != 2) {
         return response.status(403).send({
           message: "Forbidden Access",

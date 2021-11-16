@@ -12,30 +12,32 @@
 
 /** @type {import('@adonisjs/lucid/src/Factory')} */
 const Factory = use("Factory");
-const User = use("App/Models/User");
+const Database = use("Database");
+const Hash = use("Hash");
+const Moment = require("moment");
 
 class UserSeeder {
   async run() {
-    const query = await User.createMany([
+    await Database.table("users").insert([
       {
         rule_id: 1,
-        name: "Super Administrator",
-        email: "superadmin@forkohat.id",
-        password: "superadmin12345",
-        job: "Super Administrator Forkohat",
-        district: 6471030,
+        fullname: "Super Administrator",
+        username: "superadmin",
+        password: await Hash.make("superadmin12345"),
+        created_at: Moment().format("YYYY-MM-DD HH:mm:ss"),
+        updated_at: Moment().format("YYYY-MM-DD HH:mm:ss"),
       },
       {
-        rule_id: 2,
-        name: "Administrator",
-        email: "admin@forkohat.id",
-        password: "admin12345",
-        job: "Administrator Forkohat",
-        district: 6471030,
+        rule_id: 1,
+        fullname: "Administrator",
+        username: "admin",
+        password: await Hash.make("admin12345"),
+        created_at: Moment().format("YYYY-MM-DD HH:mm:ss"),
+        updated_at: Moment().format("YYYY-MM-DD HH:mm:ss"),
       },
     ]);
 
-    console.log(query);
+    console.log("Users Generated");
   }
 }
 

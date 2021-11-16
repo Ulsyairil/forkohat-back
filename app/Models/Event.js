@@ -12,13 +12,20 @@ class Event extends Model {
   static get dates() {
     return super.dates.concat([
       "registration_date",
+      "end_registration_date",
       "expired_date",
+      "created_at",
+      "updated_at",
       "deleted_at",
     ]);
   }
 
   static formatDates(field, value) {
     if (field === "registration_date") {
+      return Moment(new Date(value)).format("YYYY-MM-DD");
+    }
+
+    if (field === "end_registration_date") {
       return Moment(new Date(value)).format("YYYY-MM-DD");
     }
 
@@ -41,16 +48,16 @@ class Event extends Model {
     return super.formatDates(field, value);
   }
 
-  users() {
+  Author() {
     return this.hasOne("App/Models/User", "author_id", "id");
   }
 
-  eventFiles() {
+  EventFiles() {
     return this.hasMany("App/Models/EventFile", "id", "event_id");
   }
 
-  orders() {
-    return this.hasOne("App/Models/Order", "order_id", "id");
+  Arrangement() {
+    return this.hasOne("App/Models/Arrangement", "arrangement_id", "id");
   }
 }
 

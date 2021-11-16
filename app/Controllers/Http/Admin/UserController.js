@@ -1,27 +1,56 @@
 "use strict";
 
-const Helpers = use("Helpers");
-const fs = use("fs");
-const path = use("path");
-const removeFile = Helpers.promisify(fs.unlink);
 const User = use("App/Models/User");
-const UserFile = use("App/Models/UserFile");
-const RandomString = require("randomstring");
 const Moment = require("moment");
 const Hash = use("Hash");
-const voca = require("voca");
+const { validate } = use("Validator");
 
 class UserController {
   async index({ auth, request, response }) {
     try {
-      let user = await auth.getUser();
-      let data = await User.query()
-        .with("rules")
+      // Validate request
+      const rules = {
+        page: "required|integer",
+        limit: "required|integer",
+        order: "required|in:asc,desc",
+        search: "string",
+        trash: "required|boolean",
+      };
+
+      const validation = await validate(request.all(), rules);
+
+      if (validation.fails()) {
+        return response.status(422).send(validation.messages()[0]);
+      }
+
+      const page = request.input("page");
+      const limit = request.input("limit");
+      const order = request.input("order");
+      const search = request.input("search");
+      const user = await auth.getUser();
+      const trash = request.input("trash");
+
+      let query = User.query().with("Rule");
+
+      if (search) {
+        query
+          .where("fullname", "like", `%${search}%`)
+          .orWhere("username", "like", `%${search}%`)
+          .orWhere("email", "like", `%${search}%`);
+      }
+
+      if (trash == "0" || trash == false) {
+        query.whereNull("deleted_at");
+      }
+
+      if (trash == "1" || trash == true) {
+        query.whereNotNull("deleted_at");
+      }
+
+      const data = await query
         .whereNot("id", user.id)
-        .whereNot("rule_id", 1)
-        .orderBy("id", "desc")
-        .fetch();
-      console.log(data);
+        .orderBy("id", order)
+        .paginate(page, limit);
 
       return response.send(data);
     } catch (error) {
@@ -32,16 +61,28 @@ class UserController {
 
   async get({ request, response }) {
     try {
-      let data = await User.query()
-        .with("rules")
-        .with("userFiles")
-        .where("id", request.input("id"))
-        .whereNot("rule_id", 1)
+      // Validate request
+      const rules = {
+        user_id: "required|integer",
+      };
+
+      const validation = await validate(request.all(), rules);
+
+      if (validation.fails()) {
+        return response.status(422).send(validation.messages()[0]);
+      }
+
+      const user_id = request.input("user_id");
+
+      const data = await User.query()
+        .with("Rule")
+        .with("Rule.RuleItem")
+        .where("id", user_id)
         .first();
 
       if (!data) {
-        return response.status(400).send({
-          message: "not found",
+        return response.status(404).send({
+          message: "Pengguna Tidak Ditemukan",
         });
       }
 
@@ -54,61 +95,62 @@ class UserController {
 
   async create({ request, response }) {
     try {
-      let fileName;
-      let random = RandomString.generate({
-        capitalization: "lowercase",
-      });
+      // Validate request
+      const rules = {
+        rule_id: "required|integer",
+        fullname: "required|string",
+        username: "required|string",
+        email: "email",
+        password: "required|string",
+      };
 
-      // Upload image
-      let inputImage = request.file("image", {
-        size: "2mb",
-        extnames: ["png", "jpg", "jpeg"],
-      });
+      const messages = {
+        "rule_id.required": "ID Rule Harus Diisi",
+        "rule_id.integer": "ID Rule Harus Berupa Angka",
+        "fullname.required": "Nama Lengkap Harus Diisi",
+        "username.required": "Username Harus Diisi",
+        "email.email": "Email Tidak Valid",
+        "password.required": "Password Harus Diisi",
+      };
 
-      if (inputImage) {
-        fileName = `${voca.snakeCase(
-          inputImage.clientName.split(".").slice(0, -1).join(".")
-        )}_${random}.${inputImage.extname}`;
+      const validation = await validate(request.all(), rules, messages);
 
-        await inputImage.move(Helpers.resourcesPath("uploads/users"), {
-          name: fileName,
+      if (validation.fails()) {
+        return response.status(422).send(validation.messages()[0]);
+      }
+
+      const rule_id = request.input("rule_id");
+      const fullname = request.input("fullname");
+      const username = request.input("username");
+      const email = request.input("email");
+      const password = request.input("password");
+
+      const findUser = User.query().where("username", username);
+
+      if (email) {
+        findUser.where("email", email);
+      }
+
+      if (await findUser.first()) {
+        return response.status(404).send({
+          message: "username or email still exist",
         });
-
-        if (!inputImage.moved()) {
-          return response.status(422).send(inputImage.errors());
-        }
       }
 
       // Insert to users table
-      let user = await User.create({
-        rule_id: request.input("rule_id"),
-        name: request.input("name"),
-        email: request.input("email"),
-        nip: request.input("nip"),
-        password: request.input("password"),
-        job: request.input("job"),
-        district: request.input("district"),
-        sub_district: request.input("sub_district"),
-        gender: request.input("gender"),
-        bio: request.input("bio"),
+      const createdUser = await User.create({
+        rule_id: rule_id,
+        fullname: fullname,
+        username: username,
+        email: email,
+        password: password,
       });
 
-      if (inputImage) {
-        await UserFile.create({
-          user_id: user.id,
-          type: "profile_picture",
-          name: fileName,
-          mime: inputImage.extname,
-          path: Helpers.resourcesPath("uploads/users"),
-          url: `/api/v1/file/${inputImage.extname}/${fileName}`,
-        });
-      }
-
       // Get data created
-      let data = await User.query()
-        .with("rules")
-        .with("userFiles")
-        .where("id", user.id)
+      const data = await User.query()
+        .with("Rule")
+        .with("Rule.RuleItem")
+        .where("id", createdUser.id)
         .first();
 
       return response.send(data);
@@ -120,75 +162,56 @@ class UserController {
 
   async edit({ request, response }) {
     try {
-      let random = RandomString.generate({
-        capitalization: "lowercase",
-      });
+      // Validate request
+      const rules = {
+        user_id: "required|integer",
+        rule_id: "required|integer",
+        fullname: "required|string",
+        username: "required|string",
+        email: "email",
+        password: "string",
+      };
 
-      // Upload image
-      let inputImage = request.file("image", {
-        size: "2mb",
-        extnames: ["png", "jpg", "jpeg"],
-      });
+      const messages = {
+        "user_id.required": "ID User Harus Diisi",
+        "user_id.integer": "ID User Harus Berupa Angka",
+        "rule_id.required": "ID Rule Harus Diisi",
+        "rule_id.integer": "ID Rule Harus Berupa Angka",
+        "fullname.required": "Nama Lengkap Harus Diisi",
+        "username.required": "Username Harus Diisi",
+        "email.email": "Email Tidak Valid",
+      };
 
-      if (inputImage) {
-        let findImage = await UserFile.query()
-          .where("user_id", request.input("id"))
-          .andWhere("type", "profile_picture")
-          .first();
+      const validation = await validate(request.all(), rules);
 
-        // Delete image and data if exists
-        if (findImage) {
-          removeFile(
-            path.join(Helpers.resourcesPath("uploads/users"), findImage.name)
-          );
+      if (validation.fails()) {
+        return response.status(422).send(validation.messages()[0]);
+      }
 
-          await UserFile.query().where("id", findImage.id).delete();
-        }
+      const user_id = request.input("user_id");
+      const rule_id = request.input("rule_id");
+      const fullname = request.input("fullname");
+      const username = request.input("username");
+      const email = request.input("email");
+      const password = request.input("password");
 
-        let fileName = `${voca.snakeCase(
-          inputImage.clientName.split(".").slice(0, -1).join(".")
-        )}_${random}.${inputImage.extname}`;
+      let payload = {
+        rule_id: rule_id,
+        fullname: fullname,
+        username: username,
+        email: email,
+      };
 
-        await inputImage.move(Helpers.resourcesPath("uploads/users"), {
-          name: fileName,
-        });
-
-        if (!inputImage.moved()) {
-          return response.status(422).send(inputImage.errors());
-        }
-
-        await UserFile.create({
-          user_id: request.input("id"),
-          type: "profile_picture",
-          name: fileName,
-          mime: inputImage.extname,
-          path: Helpers.resourcesPath("uploads/users"),
-          url: `/api/v1/file/${inputImage.extname}/${fileName}`,
-        });
+      if (password) {
+        const hashPassword = await Hash.make(password);
+        payload.password = hashPassword;
       }
 
       // Insert to users table
-      await User.query()
-        .where("id", request.input("id"))
-        .update({
-          rule_id: request.input("rule_id"),
-          name: request.input("name"),
-          email: request.input("email"),
-          nip: request.input("nip"),
-          password: await Hash.make(request.input("password")),
-          job: request.input("job"),
-          district: request.input("district"),
-          sub_district: request.input("sub_district"),
-          gender: request.input("gender"),
-          bio: request.input("bio"),
-        });
+      await User.query().where("id", user_id).update(payload);
 
       // Get data created
-      let data = await User.query()
-        .with("rules")
-        .with("userFiles")
-        .where("id", request.input("id"))
-        .first();
+      let data = await User.query().with("Rule").where("id", user_id).first();
 
       return response.send(data);
     } catch (error) {
@@ -199,16 +222,33 @@ class UserController {
 
   async dump({ request, response }) {
     try {
-      await User.query().where("id", request.input("id")).update({
+      // Validate request
+      const rules = {
+        user_id: "required|integer",
+      };
+
+      const validation = await validate(request.all(), rules);
+
+      if (validation.fails()) {
+        return response.status(422).send(validation.messages()[0]);
+      }
+
+      const user_id = request.input("user_id");
+
+      const findUser = await User.query().where("id", user_id).first();
+
+      if (!findUser) {
+        return response.status(404).send({
+          message: "Pengguna Tidak Ditemukan",
+        });
+      }
+
+      await User.query().where("id", user_id).update({
         deleted_at: Moment.now(),
       });
 
       // Get data created
-      let data = await User.query()
-        .with("rules")
-        .with("userFiles")
-        .where("id", request.input("id"))
-        .first();
+      let data = await User.query().with("Rule").where("id", user_id).first();
 
       return response.send(data);
     } catch (error) {
@@ -219,18 +259,69 @@ class UserController {
 
   async restore({ request, response }) {
     try {
-      await User.query().where("id", request.input("id")).update({
+      // Validate request
+      const rules = {
+        user_id: "required|integer",
+      };
+
+      const validation = await validate(request.all(), rules);
+
+      if (validation.fails()) {
+        return response.status(422).send(validation.messages()[0]);
+      }
+
+      const user_id = request.input("user_id");
+
+      const findUser = await User.query().where("id", user_id).first();
+
+      if (!findUser) {
+        return response.status(404).send({
+          message: "Pengguna Tidak Ditemukan",
+        });
+      }
+
+      await User.query().where("id", user_id).update({
         deleted_at: null,
       });
 
       // Get data created
-      let data = await User.query()
-        .with("rules")
-        .with("userFiles")
-        .where("id", request.input("id"))
-        .first();
+      let data = await User.query().with("Rule").where("id", user_id).first();
 
       return response.send(data);
+    } catch (error) {
+      console.log(error.message);
+      return response.status(500).send(error.message);
+    }
+  }
+
+  async destroy({ request, response }) {
+    try {
+      // Validate request
+      const rules = {
+        user_id: "required|integer",
+      };
+
+      const validation = await validate(request.all(), rules);
+
+      if (validation.fails()) {
+        return response.status(422).send(validation.messages()[0]);
+      }
+
+      const user_id = request.input("user_id");
+
+      const findUser = await User.query().where("id", user_id).first();
+
+      if (!findUser) {
+        return response.status(404).send({
+          message: "Pengguna Tidak Ditemukan",
+        });
+      }
+
+      await User.query().where("id", user_id).delete();
+
+      return response.send({
+        message: "Pengguna Berhasil Dihapus",
+      });
     } catch (error) {
       console.log(error.message);
       return response.status(500).send(error.message);

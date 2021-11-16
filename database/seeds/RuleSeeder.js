@@ -12,20 +12,25 @@
 
 /** @type {import('@adonisjs/lucid/src/Factory')} */
 const Factory = use("Factory");
-const Rules = use("App/Models/Rule");
+const Database = use("Database");
+const Moment = require("moment");
 
 class RuleSeeder {
   async run() {
-    const query = await Rules.createMany([
+    await Database.table("rules").insert([
       {
-        rule: "Super Administrator",
+        name: "Administrator",
+        created_at: Moment().format("YYYY-MM-DD HH:mm:ss"),
+        updated_at: Moment().format("YYYY-MM-DD HH:mm:ss"),
       },
       {
-        rule: "Administration",
+        name: "Public",
+        created_at: Moment().format("YYYY-MM-DD HH:mm:ss"),
+        updated_at: Moment().format("YYYY-MM-DD HH:mm:ss"),
       },
     ]);
 
-    console.log(query);
+    console.log("Rules Generated");
   }
 }
 

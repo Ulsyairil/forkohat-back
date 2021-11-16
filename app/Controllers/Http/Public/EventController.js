@@ -1,39 +1,62 @@
 "use strict";
 
 const Event = use("App/Models/Event");
+const Arrangement = use("App/Models/Arrangement");
+const { validate } = use("Validator");
 
 class EventController {
   async index({ request, response }) {
     try {
-      let query = Event.query()
-        .with("users", (builder) => {
-          builder.select("id", "name").where("deleted_at", null);
-        })
-        .with("eventFiles", (builder) => {
-          builder.where("type", "banner").where("deleted_at", null);
-        });
+      const rules = {
+        arrangement_id: "required|integer",
+        page: "required|integer",
+        limit: "required|integer",
+        order: "required|in:asc,desc",
+        search: "string",
+      };
 
-      if (request.input("search") != null) {
-        query
-          .where("name", "like", `%${request.input("search")}%`)
-          .orWhere("content", "like", `%${request.input("search")}%`)
-          .orWhere("registration_date", "like", `%${request.input("search")}%`)
-          .orWhere("expired_date", "like", `%${request.input("search")}%`);
+      const validation = await validate(request.all(), rules);
+
+      if (validation.fails()) {
+        return response.status(422).send(validation.messages()[0]);
       }
 
-      if (request.input("order_id") != null) {
+      const page = request.input("page");
+      const limit = request.input("limit");
+      const order = request.input("order");
+      const search = request.input("search");
+      const arrangement_id = request.input("arrangement_id");
+
+      // Find arrangement
+      let findArrangement = await Arrangement.find(arrangement_id);
+
+      // Check arrangement if exist
+      if (!findArrangement) {
+        return response.status(404).send({
+          message: "Tatanan Tidak Ditemukan",
+        });
+      }
+
+      // Get data
+      let query = Event.query()
+        .with("Author")
+        .with("Arrangement")
+        .with("Arrangement.Program")
+        .where("arrangement_id", arrangement_id);
+
+      if (search) {
         query
-          .where("order_id", request.input("order_id"))
-          .where("showed", "public");
+          .where("title", "like", `%${search}%`)
+          .orWhere("description", "like", `%${search}%`);
       }
 
       let data = await query
-        .where("deleted_at", null)
-        .orderBy("id", "desc")
-        .paginate(request.input("page"), request.input("limit"));
-      console.log(data.toJSON());
+        .where("showed", "public")
+        .whereNull("deleted_at")
+        .orderBy("id", order)
+        .paginate(page, limit);
 
-      return response.send(data.toJSON());
+      return response.send(data);
     } catch (error) {
       console.log(error.message);
       return response.status(500).send(error.message);
@@ -42,21 +65,30 @@ class EventController {
 
   async get({ request, response }) {
     try {
-      let data = await Event.query()
-        .with("users", (builder) => {
-          builder.select("id", "name").where("deleted_at", null);
-        })
-        .with("eventFiles", (builder) => {
-          builder.where("deleted_at", null);
-        })
-        .where("id", request.input("id"))
-        .where("deleted_at", null)
-        .first();
-      console.log(data);
+      const rules = {
+        event_id: "required|integer",
+      };
 
-      if (data == null) {
+      const validation = await validate(request.all(), rules);
+
+      if (validation.fails()) {
+        return response.status(422).send(validation.messages()[0]);
+      }
+
+      const event_id = request.input("event_id");
+
+      // Get data
+      let data = await Event.query()
+        .with("Author")
+        .with("EventFiles")
+        .with("Arrangement")
+        .with("Arrangement.Program")
+        .where("id", event_id)
+        .first();
+
+      if (!data) {
         return response.status(400).send({
-          message: "not found",
+          message: "Kegiatan Tidak Ditemukan",
         });
       }
 

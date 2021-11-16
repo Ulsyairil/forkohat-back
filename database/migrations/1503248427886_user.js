@@ -1,39 +1,36 @@
-'use strict';
+"use strict";
 
 /** @type {import('@adonisjs/lucid/src/Schema')} */
-const Schema = use('Schema');
+const Schema = use("Schema");
 
 class UserSchema extends Schema {
   up() {
-    this.create('users', (table) => {
-      table.engine('InnoDB');
+    this.create("users", (table) => {
+      table.engine("InnoDB");
       table.bigIncrements();
       table
-        .bigInteger('rule_id')
+        .bigInteger("rule_id")
         .notNullable()
         .unsigned()
-        .references('id')
-        .inTable('rules')
-        .onDelete('cascade');
-      table.string('name', 254).notNullable().unique();
-      table.string('email', 254).notNullable().unique();
-      table.string('nip', 18).nullable().unique();
-      table.string('password', 60).notNullable();
-      table.string('job', 254).notNullable();
-      table.bigInteger('district').notNullable();
-      table.bigInteger('sub_district').nullable();
-      table
-        .enu('gender', ['male', 'female', 'secret'])
-        .default('secret')
-        .notNullable();
-      table.text('bio').nullable();
+        .references("id")
+        .inTable("rules")
+        .onUpdate("cascade")
+        .onDelete("cascade");
+      table.string("fullname", 254).notNullable();
+      table.string("username", 254).notNullable().unique();
+      table.string("email", 254).nullable().unique();
+      table.string("password", 60).notNullable();
+      table.string("image_name", 254).nullable();
+      table.string("image_mime", 254).nullable();
+      table.text("image_path").nullable();
+      table.text("image_url").nullable();
       table.timestamps();
-      table.timestamp('deleted_at', { precision: 6 }).nullable();
+      table.timestamp("deleted_at", { precision: 6 }).nullable();
     });
   }
 
   down() {
-    this.drop('users');
+    this.drop("users");
   }
 }
 
