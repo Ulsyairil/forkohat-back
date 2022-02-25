@@ -98,12 +98,7 @@ class ProgramController {
         description: "required|string",
       };
 
-      const messages = {
-        "title.required": "Judul Program Harus Diisi",
-        "description.required": "Deskripsi Program Harus Diisi",
-      };
-
-      const validation = await validate(request.all(), rules, messages);
+      const validation = await validate(request.all(), rules);
 
       if (validation.fails()) {
         return response.status(422).send(validation.messages()[0]);
@@ -170,14 +165,7 @@ class ProgramController {
         description: "required|string",
       };
 
-      const messages = {
-        "program_id.required": "ID Program Harus Diisi",
-        "program_id.integer": "ID Program Harus Berupa Angka",
-        "title.required": "Judul Program Harus Diisi",
-        "description.required": "Deskripsi Program Harus Diisi",
-      };
-
-      const validation = await validate(request.all(), rules, messages);
+      const validation = await validate(request.all(), rules);
 
       if (validation.fails()) {
         return response.status(422).send(validation.messages()[0]);
@@ -261,88 +249,6 @@ class ProgramController {
       return response.status(500).send(error.message);
     }
   }
-
-  // async dump({ request, response }) {
-  //   try {
-  //     // Validate request
-  //     const rules = {
-  //       program_id: "required|integer",
-  //     };
-
-  //     const validation = await validate(request.all(), rules);
-
-  //     if (validation.fails()) {
-  //       return response.status(422).send(validation.messages()[0]);
-  //     }
-
-  //     // All input
-  //     const program_id = request.input("program_id");
-
-  //     // Find program
-  //     let findData = await Program.find(program_id);
-
-  //     // Return false if program not exists
-  //     if (!findData) {
-  //       return response.status(404).send({
-  //         message: "Program Tidak Ditemukan",
-  //       });
-  //     }
-
-  //     // Dump program
-  //     await Program.query().where("id", program_id).update({
-  //       deleted_at: Moment.now(),
-  //     });
-
-  //     // Get data dumped
-  //     let data = await Program.query().where("id", program_id).first();
-
-  //     return response.send(data);
-  //   } catch (error) {
-  //     console.log(error.message);
-  //     return response.status(500).send(error.message);
-  //   }
-  // }
-
-  // async restore({ request, response }) {
-  //   try {
-  //     // Validate request
-  //     const rules = {
-  //       program_id: "required|integer",
-  //     };
-
-  //     const validation = await validate(request.all(), rules);
-
-  //     if (validation.fails()) {
-  //       return response.status(422).send(validation.messages()[0]);
-  //     }
-
-  //     // All input
-  //     const program_id = request.input("program_id");
-
-  //     // Find program
-  //     let findData = await Program.find(program_id);
-
-  //     // Return false if program not exists
-  //     if (!findData) {
-  //       return response.status(404).send({
-  //         message: "Program Tidak Ditemukan",
-  //       });
-  //     }
-
-  //     // Restore program
-  //     await Program.query().where("id", program_id).update({
-  //       deleted_at: null,
-  //     });
-
-  //     // Get data restored
-  //     let data = await Program.query().where("id", program_id).first();
-
-  //     return response.send(data);
-  //   } catch (error) {
-  //     console.log(error.message);
-  //     return response.status(500).send(error.message);
-  //   }
-  // }
 
   async destroy({ request, response }) {
     try {

@@ -14,7 +14,8 @@ class EventFilesSchema extends Schema {
         .unsigned()
         .references("id")
         .inTable("events")
-        .onDelete("cascade");
+        .onDelete("cascade")
+        .onUpdate("cascade");
       table.string("name", 254).notNullable();
       table.string("mime", 254).notNullable();
       table.text("path").notNullable();

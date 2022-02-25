@@ -55,15 +55,7 @@ class CarouselController {
         showed: "required|boolean",
       };
 
-      const messages = {
-        "title.required": "Judul Carousel Harus Diisi",
-        "title.max": "Judul Carousel Maksimal 254 Karakter",
-        "showed.required": "Carousel Ditampilkan Harus Diisi",
-        "showed.boolean":
-          "Carousel Ditampilkan Harus Berupa Boolean : True, atau False",
-      };
-
-      const validation = await validate(request.all(), rules, messages);
+      const validation = await validate(request.all(), rules);
 
       if (validation.fails()) {
         return response.status(422).send(validation.messages()[0]);
@@ -125,17 +117,7 @@ class CarouselController {
         showed: "required|boolean",
       };
 
-      const messages = {
-        "carousel_id.required": "ID Carousel Harus Diisi",
-        "carousel_id.integer": "ID Carousel Harus Berupa Angka",
-        "title.required": "Judul Carousel Harus Diisi",
-        "title.max": "Judul Carousel Maksimal 254 Karakter",
-        "showed.required": "Carousel Ditampilkan Harus Diisi",
-        "showed.boolean":
-          "Carousel Ditampilkan Harus Berupa Boolean : True, atau False",
-      };
-
-      const validation = await validate(request.all(), rules, messages);
+      const validation = await validate(request.all(), rules);
 
       if (validation.fails()) {
         return response.status(422).send(validation.messages()[0]);

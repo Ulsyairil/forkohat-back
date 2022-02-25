@@ -95,13 +95,7 @@ class NewsCommentController {
         comment: "required|string",
       };
 
-      const messages = {
-        "news_id.required": "ID Berita Harus Diisi",
-        "news_id.integer": "ID Berita Harus Berupa Angka",
-        "comment.required": "Komentar Berita Harus Diisi",
-      };
-
-      const validation = await validate(request.all(), rules, messages);
+      const validation = await validate(request.all(), rules);
 
       if (validation.fails()) {
         return response.status(422).send(validation.messages()[0]);
@@ -140,13 +134,7 @@ class NewsCommentController {
         comment: "required|string",
       };
 
-      const messages = {
-        "news_comment_id.required": "ID Komentar Berita Harus Diisi",
-        "news_comment_id.integer": "ID Komentar Berita Harus Berupa Angka",
-        "comment.required": "Komentar Berita Harus Diisi",
-      };
-
-      const validation = await validate(request.all(), rules, messages);
+      const validation = await validate(request.all(), rules);
 
       if (validation.fails()) {
         return response.status(422).send(validation.messages()[0]);

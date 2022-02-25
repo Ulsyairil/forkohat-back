@@ -37,6 +37,16 @@ class CheckBearerAccess {
       await next();
     }
 
+    if (schemes[0] == "member") {
+      if (user.rule_id != (1 || 2)) {
+        return response.status(403).send({
+          message: "Forbidden Access",
+        });
+      }
+
+      await next();
+    }
+
     if (schemes[0] == "public") {
       if (user.rule_id != 2) {
         return response.status(403).send({

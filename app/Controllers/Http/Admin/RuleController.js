@@ -96,11 +96,7 @@ class RuleController {
         rule: "required|string",
       };
 
-      const messages = {
-        "rule.required": "Nama Rule Harus Diisi",
-      };
-
-      const validation = await validate(request.all(), rules, messages);
+      const validation = await validate(request.all(), rules);
 
       if (validation.fails()) {
         return response.status(422).send(validation.messages()[0]);
@@ -127,13 +123,7 @@ class RuleController {
         rule: "required|string",
       };
 
-      const messages = {
-        "rule_id.required": "ID Rule Harus Diisi",
-        "rule_id.integer": "ID Rule Harus Berupa Angka",
-        "rule.required": "Nama Rule Harus Diisi",
-      };
-
-      const validation = await validate(request.all(), rules, messages);
+      const validation = await validate(request.all(), rules);
 
       if (validation.fails()) {
         return response.status(422).send(validation.messages()[0]);

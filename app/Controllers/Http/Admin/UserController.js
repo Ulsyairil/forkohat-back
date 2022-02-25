@@ -104,16 +104,7 @@ class UserController {
         password: "required|string",
       };
 
-      const messages = {
-        "rule_id.required": "ID Rule Harus Diisi",
-        "rule_id.integer": "ID Rule Harus Berupa Angka",
-        "fullname.required": "Nama Lengkap Harus Diisi",
-        "username.required": "Username Harus Diisi",
-        "email.email": "Email Tidak Valid",
-        "password.required": "Password Harus Diisi",
-      };
-
-      const validation = await validate(request.all(), rules, messages);
+      const validation = await validate(request.all(), rules);
 
       if (validation.fails()) {
         return response.status(422).send(validation.messages()[0]);
@@ -170,16 +161,6 @@ class UserController {
         username: "required|string",
         email: "email",
         password: "string",
-      };
-
-      const messages = {
-        "user_id.required": "ID User Harus Diisi",
-        "user_id.integer": "ID User Harus Berupa Angka",
-        "rule_id.required": "ID Rule Harus Diisi",
-        "rule_id.integer": "ID Rule Harus Berupa Angka",
-        "fullname.required": "Nama Lengkap Harus Diisi",
-        "username.required": "Username Harus Diisi",
-        "email.email": "Email Tidak Valid",
       };
 
       const validation = await validate(request.all(), rules);

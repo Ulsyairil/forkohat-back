@@ -3,6 +3,7 @@
 const { validateAll } = use("Validator");
 const Hash = use("Hash");
 const User = use("App/Models/User");
+const Voca = require("voca");
 
 class AuthController {
   async login({ auth, request, response }) {
@@ -65,13 +66,13 @@ class AuthController {
 
       if (!isSame) {
         return response.status(401).send({
-          message: "wrong password",
+          message: "Wrong password",
         });
       }
 
       let generate = await auth.generate(check);
 
-      return response.send({
+      return response.status(200).send({
         token: generate,
         data: check,
       });
@@ -81,12 +82,12 @@ class AuthController {
     }
   }
 
-  async register({ request, response }) {
+  async register({ request, auth, response }) {
     try {
       const rules = {
         fullname: "required|string",
-        username: "required|string",
-        password: "required|string",
+        username: "required|string|min:6",
+        password: "required|string|min:8",
       };
 
       const validation = await validateAll(request.all(), rules);
@@ -95,7 +96,7 @@ class AuthController {
         return response.status(422).send(validation.messages());
       }
 
-      const fullname = request.input("fullname");
+      const fullname = Voca.titleCase(request.input("fullname"));
       const username = request.input("username");
       const password = request.input("password");
 
@@ -103,18 +104,30 @@ class AuthController {
 
       if (findUser) {
         return response.status(400).send({
-          message: "user still exist",
+          message: "Username Telah Digunakan",
         });
       }
 
-      const createUser = await User.create({
+      await User.create({
         rule_id: 2,
         fullname: fullname,
         username: username,
         password: password,
       });
 
-      return response.status(200).send(createUser);
+      const getUser = await User.query()
+        .with("Rule")
+        .with("Rule.RuleItem")
+        .where("fullname", fullname)
+        .where("username", username)
+        .first();
+
+      const generate = await auth.generate(getUser);
+
+      return response.status(200).send({
+        token: generate,
+        data: getUser,
+      });
     } catch (error) {
       console.log(error.message);
       return response.status(500).send(error.message);
@@ -138,7 +151,7 @@ class AuthController {
         .whereNull("deleted_at")
         .first();
 
-      return response.send({
+      return response.status(200).send({
         data: data,
       });
     } catch (error) {
@@ -163,8 +176,8 @@ class AuthController {
         .authenticator("api")
         .revokeTokens([request.input("token")], true);
 
-      return response.send({
-        message: "logout success",
+      return response.status(200).send({
+        message: "Logout success",
       });
     } catch (error) {
       console.log(error.message);

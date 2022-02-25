@@ -32,7 +32,10 @@ class ProgramController {
           .orWhere("description", "like", `%${search}%`);
       }
 
-      const data = await query.orderBy("id", order).paginate(page, limit);
+      const data = await query
+        .where("id", "!=", 1)
+        .orderBy("id", order)
+        .paginate(page, limit);
 
       return response.status(200).send(data);
     } catch (error) {

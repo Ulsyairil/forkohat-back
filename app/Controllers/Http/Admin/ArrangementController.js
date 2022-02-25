@@ -109,13 +109,7 @@ class ArrangementController {
         description: "string",
       };
 
-      const messages = {
-        "program_id.required": "ID Program Harus Diisi",
-        "program_id.integer": "ID Program Harus Berupa Angka",
-        "title.required": "Judul Tatanan Harus Diisi",
-      };
-
-      const validation = await validate(request.all(), rules, messages);
+      const validation = await validate(request.all(), rules);
 
       if (validation.fails()) {
         return response.status(422).send(validation.messages()[0]);
@@ -189,14 +183,6 @@ class ArrangementController {
         arrangement_id: "required|integer",
         title: "required|string",
         description: "string",
-      };
-
-      const messages = {
-        "arrangement_id.required": "ID Tatanan Harus Diisi",
-        "arrangement_id.integer": "ID Tatanan Harus Berupa Angka",
-        "program_id.required": "ID Program Harus Diisi",
-        "program_id.integer": "ID Program Harus Berupa Angka",
-        "title.required": "Judul Tatanan Harus Diisi",
       };
 
       const validation = await validate(request.all(), rules);

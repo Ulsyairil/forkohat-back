@@ -35,7 +35,7 @@ class ArrangementItemController {
       // Check arrangement exist
       if (!findArrangement) {
         return response.status(404).send({
-          message: "Tatanan Tidak Ditemukan",
+          message: "Tatanan not exist",
         });
       }
 

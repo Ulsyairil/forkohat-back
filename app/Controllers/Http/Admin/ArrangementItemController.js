@@ -131,16 +131,7 @@ class ArrangementItemController {
         showed: "required|in:public,member,private",
       };
 
-      const messages = {
-        "arrangement_id.required": "ID Tatanan Harus Diisi",
-        "arrangement_id.integer": "ID Tatanan Harus Berupa Angka",
-        "title.required": "Judul Isi Tatanan Harus Diisi",
-        "showed.required": "Isi Tatanan Ditampilkan Harus Diisi",
-        "showed.in":
-          "Isi Tatanan Ditampilkan Hanya Dapat Diisi : public, member, dan private",
-      };
-
-      const validation = await validate(request.all(), rules, messages);
+      const validation = await validate(request.all(), rules);
 
       if (validation.fails()) {
         return response.status(422).send(validation.messages()[0]);
@@ -211,16 +202,7 @@ class ArrangementItemController {
         showed: "required|in:public,member,private",
       };
 
-      const messages = {
-        "arrangement_item_id.required": "ID Isi Tatanan Harus Diisi",
-        "arrangement_item_id.integer": "ID Isi Tatanan Harus Berupa Angka",
-        "title.required": "Judul Isi Tatanan Harus Diisi",
-        "showed.required": "Isi Tatanan Ditampilkan Harus Diisi",
-        "showed.in":
-          "Isi Tatanan Ditampilkan Hanya Dapat Diisi : public, member, dan private",
-      };
-
-      const validation = await validate(request.all(), rules, messages);
+      const validation = await validate(request.all(), rules);
 
       if (validation.fails()) {
         return response.status(422).send(validation.messages()[0]);

@@ -99,12 +99,7 @@ class NewsController {
         content: "required|string ",
       };
 
-      const messages = {
-        "title.required": "Judul Berita Harus Diisi",
-        "content.required": "Konten Berita Harus Diisi",
-      };
-
-      const validation = await validate(request.all(), rules, messages);
+      const validation = await validate(request.all(), rules);
 
       if (validation.fails()) {
         return response.status(422).send(validation.messages()[0]);
@@ -168,14 +163,7 @@ class NewsController {
         content: "required|string ",
       };
 
-      const messages = {
-        "news_id.required": "ID Berita Harus Diisi",
-        "news_id.integer": "ID Berita Harus Berupa Angka",
-        "title.required": "Judul Berita Harus Diisi",
-        "content.required": "Konten Berita Harus Diisi",
-      };
-
-      const validation = await validate(request.all(), rules, messages);
+      const validation = await validate(request.all(), rules);
 
       if (validation.fails()) {
         return response.status(422).send(validation.messages()[0]);

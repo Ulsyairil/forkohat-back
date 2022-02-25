@@ -13,21 +13,24 @@ class RuleItemsSchema extends Schema {
         .unsigned()
         .references("id")
         .inTable("rules")
-        .onDelete("cascade");
+        .onDelete("cascade")
+        .onUpdate("cascade");
       table
         .bigInteger("program_id")
         .notNullable()
         .unsigned()
         .references("id")
         .inTable("programs")
-        .onDelete("cascade");
+        .onDelete("cascade")
+        .onUpdate("cascade");
       table
         .bigInteger("arrangement_id")
         .notNullable()
         .unsigned()
         .references("id")
         .inTable("arrangements")
-        .onDelete("cascade");
+        .onDelete("cascade")
+        .onUpdate("cascade");
       table.timestamps();
     });
   }

@@ -7,6 +7,36 @@ const Program = use("App/Models/Program");
 const { validate } = use("Validator");
 
 class RuleItemController {
+  async index({ request, response }) {
+    try {
+      // Validate request
+      const rules = {
+        page: "required|integer",
+        limit: "required|integer",
+        order: "required|in:asc,desc",
+      };
+
+      const validation = await validate(request.all(), rules);
+
+      if (validation.fails()) {
+        return response.status(422).send(validation.messages()[0]);
+      }
+
+      const page = request.input("page");
+      const limit = request.input("limit");
+      const order = request.input("order");
+
+      let query = RuleItem.query().with("Program").with("Arrangement");
+
+      let data = await query.orderBy("id", order).paginate(page, limit);
+
+      return response.send(data);
+    } catch (error) {
+      console.log(error.message);
+      return response.status(500).send(error.message);
+    }
+  }
+
   async create({ request, response }) {
     try {
       // Validate request
@@ -38,7 +68,7 @@ class RuleItemController {
 
       if (findRuleItemExist) {
         return response.status(400).send({
-          message: "Isi Rule Sudah Ada",
+          message: "Wewenang Sudah Ada",
         });
       }
 
@@ -103,13 +133,13 @@ class RuleItemController {
 
       if (!findRuleItemExist) {
         return response.status(400).send({
-          message: "Isi Rule Masih Ada",
+          message: "Wewenang Tidak Ditemukan",
         });
       }
 
       if (!findRuleItem) {
         return response.status(404).send({
-          message: "Isi Rule Tidak Ditemukan",
+          message: "Wewenang Tidak Ditemukan",
         });
       }
 
@@ -165,14 +195,14 @@ class RuleItemController {
 
       if (!findRuleItem) {
         return response.status(404).send({
-          message: "Isi Rule Tidak Ditemukan",
+          message: "Wewenang Tidak Ditemukan",
         });
       }
 
       await RuleItem.query().where("id", rule_item_id).delete();
 
       return response.send({
-        message: "Isi Rule Berhasil Dihapus",
+        message: "Wewenang Berhasil Dihapus",
       });
     } catch (error) {
       console.log(error.message);

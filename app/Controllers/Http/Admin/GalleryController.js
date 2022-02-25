@@ -60,13 +60,7 @@ class GalleryController {
         showed: "required|in:private,member,public",
       };
 
-      const messages = {
-        "showed.required": "Gambar Ditampilkan Harus Diisi",
-        "showed.in":
-          "Gambar Ditampilkan Harus Diisi : private, member, atau public",
-      };
-
-      const validation = await validate(request.all(), rules, messages);
+      const validation = await validate(request.all(), rules);
 
       if (validation.fails()) {
         return response.status(422).send(validation.messages()[0]);
@@ -132,15 +126,7 @@ class GalleryController {
         showed: "required|in:private,member,public",
       };
 
-      const messages = {
-        "gallery_id.required": "ID Galeri Harus Diisi",
-        "gallery_id.integer": "ID Galeri Harus Berupa Angka",
-        "showed.required": "Gambar Ditampilkan Harus Diisi",
-        "showed.in":
-          "Gambar Ditampilkan Harus Diisi : private, member, atau public",
-      };
-
-      const validation = await validate(request.all(), rules, messages);
+      const validation = await validate(request.all(), rules);
 
       if (validation.fails()) {
         return response.status(422).send(validation.messages()[0]);

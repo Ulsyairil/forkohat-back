@@ -99,7 +99,6 @@ class EventController {
       // Get data
       let data = await Event.query()
         .with("Author")
-        .with("EventFiles")
         .with("Arrangement")
         .with("Arrangement.Program")
         .where("id", event_id)
@@ -131,26 +130,7 @@ class EventController {
         showed: "required|in:member,public",
       };
 
-      const messages = {
-        "arrangement_id.required": "ID Tatanan Harus Diisi",
-        "arrangement_id.integer": "ID Tatanan Harus Berupa Angka",
-        "title.required": "Judul Kegiatan Harus Diisi",
-        "description.required": "Deskripsi Kegiatan Harus Diisi",
-        "registration_date.date":
-          "Tanggal Registrasi Kegiatan Harus Berupa Tanggal : DD/MM/YYYY",
-        "end_registration_date.required_if":
-          "Tanggal Berakhir Registrasi Kegiatan Harus Diisi",
-        "end_registration_date.date":
-          "Tanggal Berakhir Registrasi Kegiatan Harus Berupa Tanggal : DD/MM/YYYY",
-        "expired_date.required": "Tanggal Berakhir Kegiatan Harus Diisi",
-        "expired_date.date":
-          "Tanggal Berakhir Kegiatan Harus Berupa Tanggal : DD/MM/YYYY",
-        "registration_url.url": "URL Registrasi Kegiatan Harus Berupa Link",
-        "showed.required": "Kegiatan Ditampilkan Harus Diisi",
-        "showed.in": "Kegiatan Ditampilkan Harus Diisi : member, atau public",
-      };
-
-      const validation = await validate(request.all(), rules, messages);
+      const validation = await validate(request.all(), rules);
 
       if (validation.fails()) {
         return response.status(422).send(validation.messages()[0]);
@@ -194,8 +174,7 @@ class EventController {
       });
 
       // Move image
-      let fileName;
-      fileName = `${voca.snakeCase(
+      let fileName = `${voca.snakeCase(
         image.clientName.split(".").slice(0, -1).join(".")
       )}_${random}.${image.extname}`;
 
@@ -294,28 +273,7 @@ class EventController {
         showed: "required|in:member,public",
       };
 
-      const messages = {
-        "event_id.required": "ID Kegiatan Harus Diisi",
-        "event_id.integer": "ID Kegiatan Harus Berupa Angka",
-        "arrangement_id.required": "ID Tatanan Harus Diisi",
-        "arrangement_id.integer": "ID Tatanan Harus Berupa Angka",
-        "title.required": "Judul Kegiatan Harus Diisi",
-        "description.required": "Deskripsi Kegiatan Harus Diisi",
-        "registration_date.date":
-          "Tanggal Registrasi Kegiatan Harus Berupa Tanggal : DD/MM/YYYY",
-        "end_registration_date.required_if":
-          "Tanggal Berakhir Registrasi Kegiatan Harus Diisi",
-        "end_registration_date.date":
-          "Tanggal Berakhir Registrasi Kegiatan Harus Berupa Tanggal : DD/MM/YYYY",
-        "expired_date.required": "Tanggal Berakhir Kegiatan Harus Diisi",
-        "expired_date.date":
-          "Tanggal Berakhir Kegiatan Harus Berupa Tanggal : DD/MM/YYYY",
-        "registration_url.url": "URL Registrasi Kegiatan Harus Berupa Link",
-        "showed.required": "Kegiatan Ditampilkan Harus Diisi",
-        "showed.in": "Kegiatan Ditampilkan Harus Diisi : member, atau public",
-      };
-
-      const validation = await validate(request.all(), rules, messages);
+      const validation = await validate(request.all(), rules);
 
       if (validation.fails()) {
         return response.status(422).send(validation.messages()[0]);
@@ -330,7 +288,6 @@ class EventController {
       const expired_date = request.input("expired_date");
       const registration_url = request.input("registration_url");
       const showed = request.input("showed");
-      const files = request.file("files");
       const image = request.file("image", {
         extnames: ["png", "jpg", "jpeg"],
       });
@@ -364,34 +321,6 @@ class EventController {
         );
       }
 
-      // Upload multi file
-      let movedFiles;
-      if (files) {
-        await files.moveAll(Helpers.resourcesPath("uploads/event"), (file) => {
-          let filename = `${voca.snakeCase(
-            file.clientName.split(".").slice(0, -1).join(".")
-          )}_${random}.${file.extname}`;
-
-          return {
-            name: filename,
-          };
-        });
-
-        movedFiles = files.movedList();
-
-        if (!files.movedAll()) {
-          await Promise.all(
-            movedFiles.map((file) => {
-              return removeFile(
-                path.join(Helpers.resourcesPath("uploads/event"), file.fileName)
-              );
-            })
-          );
-
-          return response.status(422).send(files.errors());
-        }
-      }
-
       let updateEvent = Event.query().where("id", request.input("event_id"));
 
       // Update event table
@@ -420,18 +349,6 @@ class EventController {
           expired_date: expired_date,
           registration_url: registration_url,
           showed: showed,
-        });
-      }
-
-      if (files) {
-        movedFiles.forEach(async (value) => {
-          await EventFile.create({
-            event_id: event_id,
-            name: value.fileName,
-            mime: value.extname,
-            path: Helpers.resourcesPath("uploads/event"),
-            url: `/api/v1/file/${value.extname}/${value.fileName}`,
-          });
         });
       }
 
@@ -571,41 +488,6 @@ class EventController {
 
       return response.send({
         message: "Kegiatan Berhasil Dihapus",
-      });
-    } catch (error) {
-      console.log(error.message);
-      return response.status(500).send(error.message);
-    }
-  }
-
-  async destroyFile({ request, response }) {
-    try {
-      const rules = {
-        file_id: "required|integer",
-      };
-
-      const validation = await validate(request.all(), rules);
-
-      if (validation.fails()) {
-        return response.status(422).send(validation.messages()[0]);
-      }
-
-      const file_id = request.input("file_id");
-
-      let findFile = await EventFile.query().where("id", file_id).first();
-
-      if (!findFile) {
-        return response.status(404).send({
-          message: "Berkas Kegiatan Tidak Ditemukan",
-        });
-      }
-
-      removeFile(path.join(findFile.path, findFile.name));
-
-      await EventFile.query().where("id", file_id).delete();
-
-      return response.send({
-        message: "Berkas Kegiatan Berhasil Dihapus",
       });
     } catch (error) {
       console.log(error.message);

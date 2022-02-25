@@ -35,13 +35,13 @@ Route.group(() => {
 
   Route.post("login", "AuthController.login");
   Route.post("register", "AuthController.register");
-  Route.post("user/token", "AuthController.checkUser").middleware(["api"]);
+  Route.get("me", "AuthController.checkUser").middleware(["api"]);
   Route.post("logout", "AuthController.logout").middleware(["api"]);
 
   Route.get("file/:mime/:filename", "FileController.index");
 
   Route.post("news", "Public/NewsController.index");
-  Route.post("events", "Public/EventController.index");
+  Route.post("events", "Public/EventController.indexPublic");
   Route.post("faqs", "Public/FaqController.index");
   Route.get("galleries", "Public/GalleryController.index");
   Route.get("carousels", "Public/CarouselController.index");
@@ -67,9 +67,9 @@ Route.group(function () {
   Route.delete("rule", "Admin/RuleController.destroy");
 
   // Rule item routes
-  Route.post("rule/item", "Admin/RuleItemController.create");
-  Route.put("rule/item", "Admin/RuleItemController.edit");
-  Route.delete("rule/item", "Admin/RuleItemController.destroy");
+  Route.post("rule/role", "Admin/RuleItemController.create");
+  Route.put("rule/role", "Admin/RuleItemController.edit");
+  Route.delete("rule/role", "Admin/RuleItemController.destroy");
 
   // FAQ route
   Route.post("faqs", "Admin/FaqController.index");
@@ -109,7 +109,11 @@ Route.group(function () {
   Route.put("event/dump", "Admin/EventController.dump");
   Route.put("event/restore", "Admin/EventController.restore");
   Route.delete("event", "Admin/EventController.destroy");
-  Route.delete("event/file", "Admin/EventController.deleteFile");
+
+  // Event file
+  Route.post("event/file", "Admin/EventFileController.index");
+  Route.post("event/file/add", "Admin/EventFileController.create");
+  Route.delete("event/file", "Admin/EventFileController.destroy");
 
   // Event comment route
   Route.post("event/comments", "Admin/EventCommentController.index");
@@ -192,7 +196,11 @@ Route.group(function () {
   Route.put("event/dump", "Member/EventController.dump");
   Route.put("event/restore", "Member/EventController.restore");
   Route.delete("event", "Member/EventController.destroy");
-  Route.delete("event/file", "Member/EventController.destroyFile");
+
+  // Event file
+  Route.post("event/file", "Admin/EventController.index");
+  Route.post("event/file/add", "Admin/EventController.create");
+  Route.delete("event/file", "Admin/EventController.destroy");
 
   // Event comment route
   Route.post("event/comments", "Member/EventCommentController.index");
@@ -218,7 +226,7 @@ Route.group(function () {
   Route.delete("news/comment", "Member/NewsCommentController.destroy");
 })
   .prefix("api/v1/member")
-  .middleware(["api"]);
+  .middleware(["api:member"]);
 // End Member Route
 
 Route.group(function () {
@@ -227,6 +235,10 @@ Route.group(function () {
 
   // Arrangement
   Route.post("arrangements", "Public/ArrangementController.index");
+  Route.post(
+    "arrangement/generals",
+    "Public/ArrangementController.indexGeneral"
+  );
 
   // Arrangement item route
   Route.post("arrangement/items", "Public/ArrangementItemController.index");

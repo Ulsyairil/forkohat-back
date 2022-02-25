@@ -2,14 +2,15 @@
 
 const User = use("App/Models/User");
 const Hash = use("Hash");
+const { validate } = use("Validator");
 
 class ProfileController {
   async changePassword({ auth, request, response }) {
     try {
       // Validate request
       const rules = {
-        password: "string",
-        confirmation_password: "same:password|required|string",
+        new_password: "required|string",
+        confirmation_new_password: "required|string",
       };
 
       const validation = await validate(request.all(), rules);
@@ -18,8 +19,18 @@ class ProfileController {
         return response.status(422).send(validation.messages()[0]);
       }
 
-      const confirmation_password = request.input("confirmation_password");
-      const hashPassword = await Hash.make(confirmation_password);
+      const newPassword = request.input("new_password");
+      const confirmationNewPassword = request.input(
+        "confirmation_new_password"
+      );
+
+      if (confirmationNewPassword != newPassword) {
+        return response.status(422).send({
+          message: "Kata sandi tidak sama",
+        });
+      }
+
+      const hashPassword = await Hash.make(confirmationNewPassword);
       const user = await auth.getUser();
 
       await User.query().where("id", user.id).update({
@@ -27,7 +38,7 @@ class ProfileController {
       });
 
       return response.status(422).send({
-        message: "success update password",
+        message: "Kata sandi berhasil diubah",
       });
     } catch (error) {
       console.log(error.message);

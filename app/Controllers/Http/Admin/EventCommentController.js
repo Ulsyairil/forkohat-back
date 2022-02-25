@@ -95,13 +95,7 @@ class EventCommentController {
         comment: "required|string",
       };
 
-      const messages = {
-        "event_id.required": "ID Kegiatan Harus Diisi",
-        "event_id.integer": "ID Kegiatan Harus Berupa Angka",
-        "comment.required": "Komentar Kegiatan Harus Diisi",
-      };
-
-      const validation = await validate(request.all(), rules, messages);
+      const validation = await validate(request.all(), rules);
 
       if (validation.fails()) {
         return response.status(422).send(validation.messages()[0]);
@@ -140,13 +134,7 @@ class EventCommentController {
         comment: "required|string",
       };
 
-      const messages = {
-        "event_comment_id.required": "ID Komentar Kegiatan Harus Diisi",
-        "event_comment_id.integer": "ID Komentar Kegiatan Harus Berupa Angka",
-        "comment.required": "Komentar Kegiatan Harus Diisi",
-      };
-
-      const validation = await validate(request.all(), rules, messages);
+      const validation = await validate(request.all(), rules);
 
       if (validation.fails()) {
         return response.status(422).send(validation.messages()[0]);

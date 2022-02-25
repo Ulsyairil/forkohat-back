@@ -95,14 +95,7 @@ class FaqTopicController {
         description: "required|string",
       };
 
-      const messages = {
-        "faq_id.required": "ID FAQ Harus Diisi",
-        "faq_id.integer": "ID FAQ Harus Berupa Angka",
-        "title.required": "Judul Topik FAQ Harus Diisi",
-        "description.required": "Deskripsi Topik FAQ Harus Diisi",
-      };
-
-      const validation = await validate(request.all(), rules, messages);
+      const validation = await validate(request.all(), rules);
 
       if (validation.fails()) {
         return response.status(422).send(validation.messages()[0]);
@@ -142,16 +135,7 @@ class FaqTopicController {
         description: "string",
       };
 
-      const messages = {
-        "faq_topic_id.required": "ID Topik FAQ Harus Diisi",
-        "faq_topic_id.integer": "ID Topik FAQ Harus Berupa Angka",
-        "faq_id.required": "ID FAQ Harus Diisi",
-        "faq_id.integer": "ID FAQ Harus Berupa Angka",
-        "title.required": "Judul Topik FAQ Harus Diisi",
-        "description.required": "Deskripsi Topik FAQ Harus Diisi",
-      };
-
-      const validation = await validate(request.all(), rules, messages);
+      const validation = await validate(request.all(), rules);
 
       if (validation.fails()) {
         return response.status(422).send(validation.messages()[0]);
