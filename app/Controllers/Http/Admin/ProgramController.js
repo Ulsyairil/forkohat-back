@@ -57,6 +57,23 @@ class ProgramController {
     }
   }
 
+  async indexAll({ request, response }) {
+    try {
+      // Find program
+      const data = await Program.query()
+        .whereNot("id", 1)
+        .orderBy("title", "asc")
+        .fetch();
+
+      console.log(data);
+
+      return response.send(data);
+    } catch (error) {
+      console.log(error.message);
+      return response.status(500).send(error.message);
+    }
+  }
+
   async get({ request, response }) {
     try {
       // Validate request

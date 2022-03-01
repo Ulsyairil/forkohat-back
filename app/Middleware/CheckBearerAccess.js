@@ -38,7 +38,7 @@ class CheckBearerAccess {
     }
 
     if (schemes[0] == "member") {
-      if (user.rule_id != (1 || 2)) {
+      if (user.rule_id != (1 && 2)) {
         return response.status(403).send({
           message: "Forbidden Access",
         });

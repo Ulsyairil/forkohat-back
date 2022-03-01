@@ -43,7 +43,6 @@ class FileController {
       let findProgramImage = await Program.query()
         .where("image_mime", params.mime)
         .where("image_name", params.filename)
-        .whereNull("deleted_at")
         .first();
 
       if (findProgramImage) {
@@ -58,7 +57,6 @@ class FileController {
       let findArrangementImage = await Arrangement.query()
         .where("image_mime", params.mime)
         .where("image_name", params.filename)
-        .whereNull("deleted_at")
         .first();
 
       if (findArrangementImage) {
@@ -113,7 +111,6 @@ class FileController {
       let findEventFile = await EventFile.query()
         .where("mime", params.mime)
         .andWhere("name", params.filename)
-        .whereNull("deleted_at")
         .first();
 
       if (findEventFile) {

@@ -219,7 +219,7 @@ class GalleryController {
       // All input
       const gallery_id = request.input("gallery_id");
 
-      let findData = await Gallery.query().where("id", gallery_id).first();
+      const findData = await Gallery.query().where("id", gallery_id).first();
 
       if (findData == null) {
         return response.status(404).send({
@@ -229,7 +229,7 @@ class GalleryController {
 
       // Delete image
       removeFile(
-        path.join(Helpers.resourcesPath("uploads/gallery"), findData.file_name)
+        path.join(Helpers.resourcesPath("uploads/gallery"), findData.image_name)
       );
 
       // Delete data

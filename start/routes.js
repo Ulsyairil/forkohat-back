@@ -124,6 +124,7 @@ Route.group(function () {
 
   // Program route
   Route.post("programs", "Admin/ProgramController.index");
+  Route.get("programs", "Admin/ProgramController.indexAll");
   Route.get("program", "Admin/ProgramController.get");
   Route.post("program", "Admin/ProgramController.create");
   Route.put("program", "Admin/ProgramController.edit");
@@ -133,6 +134,7 @@ Route.group(function () {
 
   // Arrangement route
   Route.post("arrangements", "Admin/ArrangementController.index");
+  Route.get("arrangements", "Admin/ArrangementController.indexAll");
   Route.get("arrangement", "Admin/ArrangementController.get");
   Route.post("arrangement", "Admin/ArrangementController.create");
   Route.put("arrangement", "Admin/ArrangementController.edit");
@@ -198,7 +200,7 @@ Route.group(function () {
   Route.delete("event", "Member/EventController.destroy");
 
   // Event file
-  Route.post("event/file", "Admin/EventController.index");
+  Route.post("event/files", "Admin/EventController.index");
   Route.post("event/file/add", "Admin/EventController.create");
   Route.delete("event/file", "Admin/EventController.destroy");
 

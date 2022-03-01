@@ -63,7 +63,7 @@ class CarouselController {
 
       const title = request.input("title");
       const description = request.input("description");
-      const showed = request.input("showed");
+      const showed = request.input("showed") == ("false" || 0) ? false : true;
       const image = request.file("image", {
         extnames: ["png", "jpg", "jpeg"],
       });
@@ -127,7 +127,7 @@ class CarouselController {
       const carousel_id = request.input("carousel_id");
       const title = request.input("title");
       const description = request.input("description");
-      const showed = request.input("showed");
+      const showed = request.input("showed") == ("false" || 0) ? false : true;
       const image = request.file("image", {
         extnames: ["png", "jpg", "jpeg"],
       });
@@ -208,7 +208,7 @@ class CarouselController {
         return response.status(422).send(validation.messages());
       }
 
-      let findFile = await Carousel.query()
+      const findFile = await Carousel.query()
         .where("id", request.input("carousel_id"))
         .first();
 
@@ -223,7 +223,7 @@ class CarouselController {
         removeFile(
           path.join(
             Helpers.resourcesPath("uploads/carousel"),
-            findFile.picture_name
+            findFile.image_name
           )
         );
       }
