@@ -49,7 +49,7 @@ class NewsController {
   async get({ request, response }) {
     try {
       const rules = {
-        news_id: "required|integer",
+        id: "required|integer",
       };
 
       const validation = await validate(request.all(), rules);
@@ -58,13 +58,13 @@ class NewsController {
         return response.status(422).send(validation.messages()[0]);
       }
 
-      const news_id = request.input("news_id");
+      const news_id = request.input("id");
 
       let data = await News.query().with("Author").where("id", news_id).first();
 
       if (!data) {
         return response.status(404).send({
-          message: "Berita Tidak Ditemukan",
+          message: "News not found",
         });
       }
 

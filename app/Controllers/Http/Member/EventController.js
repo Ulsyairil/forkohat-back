@@ -85,7 +85,7 @@ class EventController {
   async get({ request, response }) {
     try {
       const rules = {
-        event_id: "required|integer",
+        id: "required|integer",
       };
 
       const validation = await validate(request.all(), rules);
@@ -94,7 +94,7 @@ class EventController {
         return response.status(422).send(validation.messages()[0]);
       }
 
-      const event_id = request.input("event_id");
+      const event_id = request.input("id");
 
       // Get data
       let data = await Event.query()
@@ -107,7 +107,7 @@ class EventController {
 
       if (!data) {
         return response.status(404).send({
-          message: "Kegiatan Tidak Ditemukan",
+          message: "Event not found",
         });
       }
 
@@ -153,7 +153,7 @@ class EventController {
       // Check if input image is null
       if (image == null) {
         return response.status(422).send({
-          message: "Gambar Kegiatan Harus Diunggah",
+          message: "Event Image must be uploaded",
         });
       }
 
@@ -163,7 +163,7 @@ class EventController {
       // Check arrangement if exist
       if (!findArrangement) {
         return response.status(404).send({
-          message: "Tatanan Tidak Ditemukan",
+          message: "Arrangement not found",
         });
       }
 
@@ -256,8 +256,6 @@ class EventController {
         .first();
 
       return response.send(data);
-
-      // return response.status(200).send("test");
     } catch (error) {
       console.log(error.message);
       return response.status(500).send(error.message);
@@ -267,7 +265,7 @@ class EventController {
   async edit({ request, response }) {
     try {
       const rules = {
-        event_id: "required|integer",
+        id: "required|integer",
         arrangement_id: "required|integer",
         title: "required|string",
         description: "required|string",
@@ -284,7 +282,7 @@ class EventController {
         return response.status(422).send(validation.messages()[0]);
       }
 
-      const event_id = request.input("event_id");
+      const event_id = request.input("id");
       const arrangement_id = request.input("arrangement_id");
       const title = request.input("title");
       const description = request.input("description");
@@ -377,7 +375,7 @@ class EventController {
     try {
       // Validate request
       const rules = {
-        event_id: "required|integer",
+        id: "required|integer",
       };
 
       const validation = await validate(request.all(), rules);
@@ -387,14 +385,14 @@ class EventController {
       }
 
       // All input
-      const event_id = request.input("event_id");
+      const event_id = request.input("id");
 
       // Check event if exist
       const findData = await Event.find(event_id);
 
       if (!findData) {
         return response.status(404).send({
-          message: "Kegiatan Tidak Ditemukan",
+          message: "Event not found",
         });
       }
 
@@ -417,7 +415,7 @@ class EventController {
     try {
       // Validate request
       const rules = {
-        event_id: "required|integer",
+        id: "required|integer",
       };
 
       const validation = await validate(request.all(), rules);
@@ -427,14 +425,14 @@ class EventController {
       }
 
       // All input
-      const event_id = request.input("event_id");
+      const event_id = request.input("id");
 
       // Check event if exist
       const findData = await Event.find(event_id);
 
       if (!findData) {
         return response.status(404).send({
-          message: "Kegiatan Tidak Ditemukan",
+          message: "Event not found",
         });
       }
 
@@ -458,7 +456,7 @@ class EventController {
   async destroy({ request, response }) {
     try {
       const rules = {
-        event_id: "required|integer",
+        id: "required|integer",
       };
 
       const validation = await validate(request.all(), rules);
@@ -467,14 +465,14 @@ class EventController {
         return response.status(422).send(validation.messages()[0]);
       }
 
-      const event_id = request.input("event_id");
+      const event_id = request.input("id");
 
       // Check event if exist
       const findData = await Event.find(event_id);
 
       if (!findData) {
         return response.status(404).send({
-          message: "Kegiatan Tidak Ditemukan",
+          message: "Event not found",
         });
       }
 
@@ -492,7 +490,7 @@ class EventController {
       await Event.query().where("id", event_id).delete();
 
       return response.send({
-        message: "Kegiatan Berhasil Dihapus",
+        message: "Event deleted",
       });
     } catch (error) {
       console.log(error.message);

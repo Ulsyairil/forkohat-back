@@ -23,8 +23,6 @@ class ProgramSeeder {
       created_at: Moment().format("YYYY-MM-DD HH:mm:ss"),
       updated_at: Moment().format("YYYY-MM-DD HH:mm:ss"),
     });
-
-    console.log("Program Generated");
   }
 }
 

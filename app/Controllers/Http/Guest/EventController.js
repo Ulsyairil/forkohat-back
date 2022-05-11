@@ -111,7 +111,7 @@ class EventController {
   async get({ request, response }) {
     try {
       const rules = {
-        event_id: "required|integer",
+        id: "required|integer",
       };
 
       const validation = await validate(request.all(), rules);
@@ -120,7 +120,7 @@ class EventController {
         return response.status(422).send(validation.messages()[0]);
       }
 
-      const event_id = request.input("event_id");
+      const event_id = request.input("id");
 
       // Get data
       let data = await Event.query()
@@ -133,7 +133,7 @@ class EventController {
 
       if (!data) {
         return response.status(400).send({
-          message: "Kegiatan Tidak Ditemukan",
+          message: "Event not found",
         });
       }
 

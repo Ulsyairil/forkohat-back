@@ -113,7 +113,7 @@ class EventFileController {
   async destroy({ request, response }) {
     try {
       const rules = {
-        file_id: "required|integer",
+        id: "required|integer",
       };
 
       const validation = await validate(request.all(), rules);
@@ -122,13 +122,13 @@ class EventFileController {
         return response.status(422).send(validation.messages()[0]);
       }
 
-      const file_id = request.input("file_id");
+      const file_id = request.input("id");
 
       const findFile = await EventFile.query().where("id", file_id).first();
 
       if (!findFile) {
         return response.status(404).send({
-          message: "Berkas Kegiatan Tidak Ditemukan",
+          message: "File not found",
         });
       }
 
@@ -137,7 +137,7 @@ class EventFileController {
       await EventFile.query().where("id", file_id).delete();
 
       return response.send({
-        message: "Berkas Kegiatan Berhasil Dihapus",
+        message: "File deleted",
       });
     } catch (error) {
       console.log(error.message);

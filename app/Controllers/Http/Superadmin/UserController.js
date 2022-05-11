@@ -51,8 +51,6 @@ class UserController {
       const data = await query
         .with("Rule")
         .with("Rule.Permission")
-        .whereNot("rule_id", 1)
-        .whereNot("rule_id", 2)
         .orderBy("id", order)
         .paginate(page, limit);
 

@@ -19,12 +19,20 @@ class RuleSeeder {
   async run() {
     await Database.table("rules").insert([
       {
-        name: "Administrator",
+        name: "Superadmin",
+        is_superadmin: true,
         created_at: Moment().format("YYYY-MM-DD HH:mm:ss"),
         updated_at: Moment().format("YYYY-MM-DD HH:mm:ss"),
       },
       {
-        name: "Public",
+        name: "Administrator",
+        is_admin: true,
+        created_at: Moment().format("YYYY-MM-DD HH:mm:ss"),
+        updated_at: Moment().format("YYYY-MM-DD HH:mm:ss"),
+      },
+      {
+        name: "Guest",
+        is_guest: true,
         created_at: Moment().format("YYYY-MM-DD HH:mm:ss"),
         updated_at: Moment().format("YYYY-MM-DD HH:mm:ss"),
       },

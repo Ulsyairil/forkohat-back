@@ -9,6 +9,10 @@ class RulesSchema extends Schema {
       table.engine("InnoDB");
       table.bigIncrements();
       table.string("name", 254).notNullable().unique();
+      table.boolean("is_superadmin").default(false).notNullable();
+      table.boolean("is_admin").default(false).notNullable();
+      table.boolean("is_member").default(false).notNullable();
+      table.boolean("is_guest").default(false).notNullable();
       table.timestamps();
     });
   }

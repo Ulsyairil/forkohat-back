@@ -24,6 +24,10 @@ class Program extends Model {
 
     return super.formatDates(field, value);
   }
+
+  Permission() {
+    return this.hasOne("App/Models/Permission", "id", "program_id");
+  }
 }
 
 module.exports = Program;

@@ -66,7 +66,7 @@ class NewsController {
   async get({ request, response }) {
     try {
       const rules = {
-        news_id: "required|integer",
+        id: "required|integer",
       };
 
       const validation = await validate(request.all(), rules);
@@ -75,13 +75,13 @@ class NewsController {
         return response.status(422).send(validation.messages()[0]);
       }
 
-      const news_id = request.input("news_id");
+      const news_id = request.input("id");
 
       let data = await News.query().with("Author").where("id", news_id).first();
 
       if (!data) {
         return response.status(404).send({
-          message: "Berita Tidak Ditemukan",
+          message: "News not found",
         });
       }
 
@@ -114,7 +114,7 @@ class NewsController {
 
       if (!image) {
         return response.status(422).send({
-          message: "Gambar Berita Harus Diunggah",
+          message: "News image must be uploaded",
         });
       }
 
@@ -158,7 +158,7 @@ class NewsController {
   async edit({ request, response }) {
     try {
       const rules = {
-        news_id: "required|integer",
+        id: "required|integer",
         title: "required|string",
         content: "required|string ",
       };
@@ -169,7 +169,7 @@ class NewsController {
         return response.status(422).send(validation.messages()[0]);
       }
 
-      const news_id = request.input("news_id");
+      const news_id = request.input("id");
       const title = request.input("title");
       const content = request.input("content");
       const image = request.file("image", {
@@ -180,7 +180,7 @@ class NewsController {
 
       if (!findNews) {
         return response.status(404).send({
-          message: "Berita Tidak Ditemukan",
+          message: "News not found",
         });
       }
 
@@ -239,7 +239,7 @@ class NewsController {
   async dump({ request, response }) {
     try {
       const rules = {
-        news_id: "required|integer",
+        id: "required|integer",
       };
 
       const validation = await validate(request.all(), rules);
@@ -248,13 +248,13 @@ class NewsController {
         return response.status(422).send(validation.messages()[0]);
       }
 
-      const news_id = request.input("news_id");
+      const news_id = request.input("id");
 
       let findNews = await News.find(news_id);
 
       if (!findNews) {
         return response.status(404).send({
-          message: "Berita Tidak Ditemukan",
+          message: "News not found",
         });
       }
 
@@ -275,7 +275,7 @@ class NewsController {
   async restore({ request, response }) {
     try {
       const rules = {
-        news_id: "required|integer",
+        id: "required|integer",
       };
 
       const validation = await validate(request.all(), rules);
@@ -284,13 +284,13 @@ class NewsController {
         return response.status(422).send(validation.messages()[0]);
       }
 
-      const news_id = request.input("news_id");
+      const news_id = request.input("id");
 
       let findNews = await News.find(news_id);
 
       if (!findNews) {
         return response.status(404).send({
-          message: "Berita Tidak Ditemukan",
+          message: "News not found",
         });
       }
 
@@ -311,7 +311,7 @@ class NewsController {
   async destroy({ request, response }) {
     try {
       const rules = {
-        news_id: "required|integer",
+        id: "required|integer",
       };
 
       const validation = await validate(request.all(), rules);
@@ -320,13 +320,13 @@ class NewsController {
         return response.status(422).send(validation.messages()[0]);
       }
 
-      const news_id = request.input("news_id");
+      const news_id = request.input("id");
 
       const findNews = await News.find(news_id);
 
       if (!findNews) {
         return response.status(404).send({
-          message: "Berita Tidak Ditemukan",
+          message: "News not found",
         });
       }
 
@@ -335,7 +335,7 @@ class NewsController {
       await News.query().where("id", news_id).delete();
 
       return response.send({
-        message: "Berita Berhasil Dihapus",
+        message: "News deleted",
       });
     } catch (error) {
       console.log(error.message);

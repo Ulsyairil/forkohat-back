@@ -1,14 +1,14 @@
 "use strict";
 
-const NewsComment = use("App/Models/NewsComment");
-const News = use("App/Models/News");
+const EventComment = use("App/Models/EventComment");
+const Event = use("App/Models/Event");
 const { validate } = use("Validator");
 
-class NewsCommentController {
+class EventCommentController {
   async index({ request, response }) {
     try {
       const rules = {
-        news_id: "required|integer",
+        event_id: "required|integer",
         page: "required|integer",
         limit: "required|integer",
         order: "required|in:asc,desc",
@@ -21,21 +21,21 @@ class NewsCommentController {
         return response.status(422).send(validation.messages()[0]);
       }
 
-      const news_id = request.input("news_id");
+      const event_id = request.input("event_id");
       const page = request.input("page");
       const limit = request.input("limit");
       const order = request.input("order");
       const search = request.input("search");
 
-      const findNews = await News.find(news_id);
+      const findEvent = await Event.find(event_id);
 
-      if (!findNews) {
+      if (!findEvent) {
         return response.status(404).send({
-          message: "Berita Tidak Ditemukan",
+          message: "Event not found",
         });
       }
 
-      let query = NewsComment.query();
+      let query = EventComment.query();
 
       if (search) {
         query.where("comment", "like", `%${search}%`);
@@ -43,7 +43,7 @@ class NewsCommentController {
 
       const data = await query
         .with("User")
-        .where("news_id", news_id)
+        .where("event_id", event_id)
         .orderBy("id", order)
         .paginate(page, limit);
 
@@ -58,7 +58,7 @@ class NewsCommentController {
     try {
       // Validate request
       const rules = {
-        news_comment_id: "required|integer",
+        id: "required|integer",
       };
 
       const validation = await validate(request.all(), rules);
@@ -67,16 +67,16 @@ class NewsCommentController {
         return response.status(422).send(validation.messages()[0]);
       }
 
-      const news_comment_id = request.input("news_comment_id");
+      const event_comment_id = request.input("id");
 
-      let data = await NewsComment.query()
+      let data = await EventComment.query()
         .with("User")
-        .where("id", news_comment_id)
+        .where("id", event_comment_id)
         .first();
 
       if (!data) {
         return response.status(400).send({
-          message: "Komentar Berita Tidak Ditemukan",
+          message: "Comment not found",
         });
       }
 
@@ -91,37 +91,31 @@ class NewsCommentController {
     try {
       // Validate request
       const rules = {
-        news_id: "required|integer",
+        event_id: "required|integer",
         comment: "required|string",
       };
 
-      const messages = {
-        "news_id.required": "ID Berita Harus Diisi",
-        "news_id.integer": "ID Berita Harus Berupa Angka",
-        "comment.required": "Komentar Berita Harus Diisi",
-      };
-
-      const validation = await validate(request.all(), rules, messages);
+      const validation = await validate(request.all(), rules);
 
       if (validation.fails()) {
         return response.status(422).send(validation.messages()[0]);
       }
 
       const comment = request.input("comment");
-      const news_id = request.input("news_id");
+      const event_id = request.input("event_id");
       const user = await auth.getUser();
 
-      const findNews = await News.find(news_id);
+      const findEvent = await Event.find(event_id);
 
-      if (!findNews) {
+      if (!findEvent) {
         return response.status(404).send({
-          message: "Berita Tidak Ditemukan",
+          message: "Event not found",
         });
       }
 
-      let create = await NewsComment.create({
+      let create = await EventComment.create({
         user_id: user.id,
-        news_id: news_id,
+        event_id: event_id,
         comment: comment,
       });
 
@@ -136,46 +130,40 @@ class NewsCommentController {
     try {
       // Validate request
       const rules = {
-        news_comment_id: "required|integer",
+        id: "required|integer",
         comment: "required|string",
       };
 
-      const messages = {
-        "news_comment_id.required": "ID Komentar Berita Harus Diisi",
-        "news_comment_id.integer": "ID Komentar Berita Harus Berupa Angka",
-        "comment.required": "Komentar Berita Harus Diisi",
-      };
-
-      const validation = await validate(request.all(), rules, messages);
+      const validation = await validate(request.all(), rules);
 
       if (validation.fails()) {
         return response.status(422).send(validation.messages()[0]);
       }
 
-      const news_comment_id = request.input("news_comment_id");
+      const event_comment_id = request.input("id");
       const comment = request.input("comment");
       const user = await auth.getUser();
 
-      const findNewsComment = await NewsComment.query()
-        .where("id", news_comment_id)
+      const findEventComment = await EventComment.query()
+        .where("id", event_comment_id)
         .where("user_id", user.id)
         .first();
 
-      if (!findNewsComment) {
+      if (!findEventComment) {
         return response.status(404).send({
-          message: "Komentar Berita Tidak Ditemukan",
+          message: "Comment not found",
         });
       }
 
-      await NewsComment.query()
-        .where("id", news_comment_id)
+      await EventComment.query()
+        .where("id", event_comment_id)
         .where("user_id", user.id)
         .update({
           comment: comment,
         });
 
-      const updatedData = await NewsComment.query()
-        .where("id", news_comment_id)
+      const updatedData = await EventComment.query()
+        .where("id", event_comment_id)
         .where("user_id", user.id)
         .first();
 
@@ -190,7 +178,7 @@ class NewsCommentController {
     try {
       // Validate request
       const rules = {
-        news_comment_id: "required|integer",
+        id: "required|integer",
       };
 
       const validation = await validate(request.all(), rules);
@@ -199,27 +187,27 @@ class NewsCommentController {
         return response.status(422).send(validation.messages()[0]);
       }
 
-      const news_comment_id = request.input("news_comment_id");
+      const event_comment_id = request.input("id");
       const user = await auth.getUser();
 
-      const findNewsComment = await NewsComment.query()
-        .where("id", news_comment_id)
+      const findEventComment = await EventComment.query()
+        .where("id", event_comment_id)
         .where("user_id", user.id)
         .first();
 
-      if (!findNewsComment) {
+      if (!findEventComment) {
         return response.status(404).send({
-          message: "Komentar Berita Tidak Ditemukan",
+          message: "Comment not found",
         });
       }
 
-      await NewsComment.query()
-        .where("id", news_comment_id)
+      await EventComment.query()
+        .where("id", event_comment_id)
         .where("user_id", user.id)
         .delete();
 
       return response.send({
-        message: "Komentar Berita Berhasil Dihapus",
+        message: "Comment deleted",
       });
     } catch (error) {
       console.log(error.message);
@@ -228,4 +216,4 @@ class NewsCommentController {
   }
 }
 
-module.exports = NewsCommentController;
+module.exports = EventCommentController;

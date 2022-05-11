@@ -27,7 +27,7 @@ class CheckBearerAccess {
 
     let user = await auth.getUser();
 
-    if (schemes[0] == "admin") {
+    if (schemes[0] == "superadmin") {
       if (user.rule_id != 1) {
         return response.status(403).send({
           message: "Forbidden Access",
@@ -37,8 +37,8 @@ class CheckBearerAccess {
       await next();
     }
 
-    if (schemes[0] == "member") {
-      if (user.rule_id != (1 && 2)) {
+    if (schemes[0] == "admin") {
+      if (user.rule_id != 2) {
         return response.status(403).send({
           message: "Forbidden Access",
         });
@@ -47,8 +47,18 @@ class CheckBearerAccess {
       await next();
     }
 
-    if (schemes[0] == "public") {
-      if (user.rule_id != 2) {
+    if (schemes[0] == "guest") {
+      if (user.rule_id != 3) {
+        return response.status(403).send({
+          message: "Forbidden Access",
+        });
+      }
+
+      await next();
+    }
+
+    if (schemes[0] == "member") {
+      if (user.rule_id != (1 && 2 && 3)) {
         return response.status(403).send({
           message: "Forbidden Access",
         });

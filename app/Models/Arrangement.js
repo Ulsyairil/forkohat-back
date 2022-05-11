@@ -32,6 +32,10 @@ class Arrangement extends Model {
   ArrangementItem() {
     return this.hasOne("App/Models/ArrangementItem", "id", "arrangement_id");
   }
+
+  Permission() {
+    return this.hasOne("App/Models/Arrangement", "id", "arrangement_id");
+  }
 }
 
 module.exports = Arrangement;

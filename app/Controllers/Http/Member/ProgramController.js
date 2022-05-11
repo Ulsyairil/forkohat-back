@@ -1,6 +1,6 @@
 "use strict";
 
-const RuleItem = use("App/Models/RuleItem");
+const Program = use("App/Models/Program");
 const { validate } = use("Validator");
 
 class ProgramController {
@@ -25,20 +25,15 @@ class ProgramController {
       const search = request.input("search");
 
       const userLogged = await auth.getUser();
-      let query = RuleItem.query().with("Program");
+      let query = Program.query();
 
       if (search) {
-        query.with("Program", (builder) => {
-          builder.where("title", "like", `%${search}%`);
+        query.with("Permission", (builder) => {
+          builder.where("rule_id", userLogged.rule_id).groupBy("program_id");
         });
       }
 
-      const data = await query
-        .select("rule_id", "program_id")
-        .where("rule_id", userLogged.rule_id)
-        .groupBy("program_id")
-        .orderBy("program_id", order)
-        .paginate(page, limit);
+      const data = await query.orderBy("id", order).paginate(page, limit);
 
       return response.status(200).send(data);
     } catch (error) {

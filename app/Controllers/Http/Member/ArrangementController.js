@@ -1,6 +1,6 @@
 "use strict";
 
-const RuleItem = use("App/Models/RuleItem");
+const Arrangement = use("App/Models/Arrangement");
 const Program = use("App/Models/Program");
 const { validate } = use("Validator");
 
@@ -31,25 +31,22 @@ class ArrangementController {
 
       if (!findProgram) {
         return response.status(404).send({
-          message: "program not found",
+          message: "Program not found",
         });
       }
 
       const userLogged = await auth.getUser();
-      let query = RuleItem.query().with("Arrangement");
+      let query = Arrangement.query();
 
       if (search) {
-        query.with("Arrangement", (builder) => {
-          builder.where("title", "like", `%${search}%`);
+        query.with("Permission", (builder) => {
+          builder.where("rule_id", userLogged.rule_id);
         });
       }
 
       const data = await query
-        .select("rule_id", "program_id", "arrangement_id")
-        .where("rule_id", userLogged.rule_id)
         .where("program_id", program_id)
-        .groupBy("arrangement_id")
-        .orderBy("arrangement_id", order)
+        .orderBy("id", order)
         .paginate(page, limit);
 
       return response.status(200).send(data);

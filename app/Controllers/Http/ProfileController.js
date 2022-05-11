@@ -26,7 +26,7 @@ class ProfileController {
 
       if (confirmationNewPassword != newPassword) {
         return response.status(422).send({
-          message: "Kata sandi tidak sama",
+          message: "Password not same",
         });
       }
 
@@ -38,7 +38,7 @@ class ProfileController {
       });
 
       return response.status(422).send({
-        message: "Kata sandi berhasil diubah",
+        message: "Password changed",
       });
     } catch (error) {
       console.log(error.message);

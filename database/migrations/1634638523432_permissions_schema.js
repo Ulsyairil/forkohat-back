@@ -3,13 +3,13 @@
 /** @type {import('@adonisjs/lucid/src/Schema')} */
 const Schema = use("Schema");
 
-class RuleItemsSchema extends Schema {
+class PermissionsSchema extends Schema {
   up() {
-    this.create("rule_items", (table) => {
+    this.create("permissions", (table) => {
+      table.engine("InnoDB");
       table.bigIncrements();
       table
         .bigInteger("rule_id")
-        .notNullable()
         .unsigned()
         .references("id")
         .inTable("rules")
@@ -36,8 +36,8 @@ class RuleItemsSchema extends Schema {
   }
 
   down() {
-    this.drop("rule_items");
+    this.drop("permissions");
   }
 }
 
-module.exports = RuleItemsSchema;
+module.exports = PermissionsSchema;

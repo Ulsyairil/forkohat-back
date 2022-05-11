@@ -95,7 +95,7 @@ class ArrangementItemController {
     try {
       // Validate request
       const rules = {
-        arrangement_item_id: "required|integer",
+        id: "required|integer",
       };
 
       const validation = await validate(request.all(), rules);
@@ -105,7 +105,7 @@ class ArrangementItemController {
       }
 
       // All input
-      const arrangement_item_id = request.input("arrangement_item_id");
+      const arrangement_item_id = request.input("id");
 
       // Find data
       let data = await ArrangementItem.query()
@@ -115,7 +115,7 @@ class ArrangementItemController {
       // Check if data exist
       if (!data) {
         return response.status(404).send({
-          message: "Isi Tatanan Tidak Ditemukan",
+          message: "Item not found",
         });
       }
 
@@ -157,7 +157,7 @@ class ArrangementItemController {
       // Check if input file is null
       if (file == null) {
         return response.status(422).send({
-          message: "Berkas Harus Diunggah",
+          message: "Document must be uploaded",
         });
       }
 
@@ -201,7 +201,7 @@ class ArrangementItemController {
     try {
       // Validate request
       const rules = {
-        arrangement_item_id: "required|integer",
+        id: "required|integer",
         title: "required|string",
         description: "string",
         showed: "required|in:public,member,private",
@@ -214,7 +214,7 @@ class ArrangementItemController {
       }
 
       // All input
-      const arrangement_item_id = request.input("arrangement_item_id");
+      const arrangement_item_id = request.input("id");
       const title = request.input("title");
       const description = request.input("description");
       const showed = request.input("showed");
@@ -233,7 +233,7 @@ class ArrangementItemController {
       // Check data exist
       if (!findData) {
         return response.status(404).send({
-          message: "Isi Tatanan Tidak Ditemukan",
+          message: "Item not found",
         });
       }
 
@@ -302,7 +302,7 @@ class ArrangementItemController {
     try {
       // Validate request
       const rules = {
-        arrangement_item_id: "required|integer",
+        id: "required|integer",
       };
 
       const validation = await validate(request.all(), rules);
@@ -312,7 +312,7 @@ class ArrangementItemController {
       }
 
       // All input
-      const arrangement_item_id = request.input("arrangement_item_id");
+      const arrangement_item_id = request.input("id");
 
       // Find data
       let findData = await ArrangementItem.query()
@@ -322,7 +322,7 @@ class ArrangementItemController {
       // Check data exist
       if (!findData) {
         return response.status(404).send({
-          message: "Isi Tatanan Tidak Ditemukan",
+          message: "Item not found",
         });
       }
 
@@ -347,7 +347,7 @@ class ArrangementItemController {
     try {
       // Validate request
       const rules = {
-        arrangement_item_id: "required|integer",
+        id: "required|integer",
       };
 
       const validation = await validate(request.all(), rules);
@@ -357,7 +357,7 @@ class ArrangementItemController {
       }
 
       // All input
-      const arrangement_item_id = request.input("arrangement_item_id");
+      const arrangement_item_id = request.input("id");
 
       // Find data
       let findData = await ArrangementItem.query()
@@ -367,7 +367,7 @@ class ArrangementItemController {
       // Check data exist
       if (!findData) {
         return response.status(404).send({
-          message: "Isi Tatanan Tidak Ditemukan",
+          message: "Item not found",
         });
       }
 
@@ -392,7 +392,7 @@ class ArrangementItemController {
     try {
       // Validate request
       const rules = {
-        arrangement_item_id: "required|integer",
+        id: "required|integer",
       };
 
       const validation = await validate(request.all(), rules);
@@ -402,7 +402,7 @@ class ArrangementItemController {
       }
 
       // All input
-      const arrangement_item_id = request.input("arrangement_item_id");
+      const arrangement_item_id = request.input("id");
 
       // Find data
       let findData = await ArrangementItem.query()
@@ -412,7 +412,7 @@ class ArrangementItemController {
       // Check data exist
       if (!findData) {
         return response.status(404).send({
-          message: "Isi Tatanan Tidak Ditemukan",
+          message: "Item not found",
         });
       }
 

@@ -58,7 +58,7 @@ class EventCommentController {
     try {
       // Validate request
       const rules = {
-        event_comment_id: "required|integer",
+        id: "required|integer",
       };
 
       const validation = await validate(request.all(), rules);
@@ -67,7 +67,7 @@ class EventCommentController {
         return response.status(422).send(validation.messages()[0]);
       }
 
-      const event_comment_id = request.input("event_comment_id");
+      const event_comment_id = request.input("id");
 
       let data = await EventComment.query()
         .with("User")
@@ -76,7 +76,7 @@ class EventCommentController {
 
       if (!data) {
         return response.status(400).send({
-          message: "Komentar Kegiatan Tidak Ditemukan",
+          message: "Comment not found",
         });
       }
 
@@ -130,7 +130,7 @@ class EventCommentController {
     try {
       // Validate request
       const rules = {
-        event_comment_id: "required|integer",
+        id: "required|integer",
         comment: "required|string",
       };
 
@@ -140,7 +140,7 @@ class EventCommentController {
         return response.status(422).send(validation.messages()[0]);
       }
 
-      const event_comment_id = request.input("event_comment_id");
+      const event_comment_id = request.input("id");
       const comment = request.input("comment");
       const user = await auth.getUser();
 
@@ -151,7 +151,7 @@ class EventCommentController {
 
       if (!findEventComment) {
         return response.status(404).send({
-          message: "Komentar Kegiatan Tidak Ditemukan",
+          message: "Comment not found",
         });
       }
 
@@ -178,7 +178,7 @@ class EventCommentController {
     try {
       // Validate request
       const rules = {
-        event_comment_id: "required|integer",
+        id: "required|integer",
       };
 
       const validation = await validate(request.all(), rules);
@@ -187,7 +187,7 @@ class EventCommentController {
         return response.status(422).send(validation.messages()[0]);
       }
 
-      const event_comment_id = request.input("event_comment_id");
+      const event_comment_id = request.input("id");
       const user = await auth.getUser();
 
       const findEventComment = await EventComment.query()
@@ -197,7 +197,7 @@ class EventCommentController {
 
       if (!findEventComment) {
         return response.status(404).send({
-          message: "Komentar Kegiatan Tidak Ditemukan",
+          message: "Comment not found",
         });
       }
 
@@ -207,7 +207,7 @@ class EventCommentController {
         .delete();
 
       return response.send({
-        message: "Komentar Kegiatan Berhasil Dihapus",
+        message: "Comment deleted",
       });
     } catch (error) {
       console.log(error.message);

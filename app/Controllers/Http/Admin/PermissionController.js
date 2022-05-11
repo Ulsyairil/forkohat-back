@@ -1,12 +1,12 @@
 "use strict";
 
 const Rule = use("App/Models/Rule");
-const RuleItem = use("App/Models/RuleItem");
+const Permission = use("App/Models/Permission");
 const Arrangement = use("App/Models/Arrangement");
 const Program = use("App/Models/Program");
 const { validate } = use("Validator");
 
-class RuleItemController {
+class PermissionController {
   async index({ request, response }) {
     try {
       // Validate request
@@ -26,9 +26,33 @@ class RuleItemController {
       const limit = request.input("limit");
       const order = request.input("order");
 
-      let query = RuleItem.query().with("Program").with("Arrangement");
+      let query = Permission.query().with("Program").with("Arrangement");
 
       let data = await query.orderBy("id", order).paginate(page, limit);
+
+      return response.send(data);
+    } catch (error) {
+      console.log(error.message);
+      return response.status(500).send(error.message);
+    }
+  }
+
+  async indexAll({ request, response }) {
+    try {
+      // Validate request
+      const rules = {
+        rule_id: "required|integer",
+      };
+
+      const validation = await validate(request.all(), rules);
+
+      if (validation.fails()) {
+        return response.status(422).send(validation.messages()[0]);
+      }
+
+      const rule_id = request.input("rule_id");
+
+      const data = await Permission.query().where("rule_id", rule_id).fetch();
 
       return response.send(data);
     } catch (error) {
@@ -60,37 +84,37 @@ class RuleItemController {
       const findProgram = await Program.find(program_id);
       const findArrangement = await Arrangement.find(arrangement_id);
 
-      const findRuleItemExist = await RuleItem.query()
+      const findPermissionExist = await Permission.query()
         .where("rule_id", rule_id)
         .where("program_id", program_id)
         .where("arrangement_id", arrangement_id)
         .first();
 
-      if (findRuleItemExist) {
+      if (findPermissionExist) {
         return response.status(400).send({
-          message: "Wewenang Sudah Ada",
+          message: "Permission is exist",
         });
       }
 
       if (!findRule) {
         return response.status(404).send({
-          message: "Rule Tidak Ditemukan",
+          message: "Rule not found",
         });
       }
 
       if (!findProgram) {
         return response.status(404).send({
-          message: "Program Tidak Ditemukan",
+          message: "Program not found",
         });
       }
 
       if (!findArrangement) {
         return response.status(404).send({
-          message: "Tatanan Tidak Ditemukan",
+          message: "Arrangement not found",
         });
       }
 
-      const createRule = await RuleItem.create({
+      const createRule = await Permission.create({
         rule_id: rule_id,
         program_id: program_id,
         arrangement_id: arrangement_id,
@@ -107,7 +131,7 @@ class RuleItemController {
     try {
       // Validate request
       const rules = {
-        rule_item_id: "required|integer",
+        id: "required|integer",
         rule_id: "required|integer",
         program_id: "required|integer",
         arrangement_id: "required|integer",
@@ -119,55 +143,47 @@ class RuleItemController {
         return response.status(422).send(validation.messages()[0]);
       }
 
-      const rule_item_id = request.input("rule_item_id");
+      const rule_item_id = request.input("id");
       const rule_id = request.input("rule_id");
       const program_id = request.input("program_id");
       const arrangement_id = request.input("arrangement_id");
 
-      const findRuleItem = await RuleItem.find(rule_item_id);
+      const findPermission = await Permission.find(rule_item_id);
       const findRule = await Rule.find(rule_id);
       const findProgram = await Program.find(program_id);
       const findArrangement = await Arrangement.find(arrangement_id);
 
-      const findRuleItemExist = await RuleItem.find(rule_item_id);
-
-      if (!findRuleItemExist) {
-        return response.status(400).send({
-          message: "Wewenang Tidak Ditemukan",
-        });
-      }
-
-      if (!findRuleItem) {
+      if (!findPermission) {
         return response.status(404).send({
-          message: "Wewenang Tidak Ditemukan",
+          message: "Permission not found",
         });
       }
 
       if (!findRule) {
         return response.status(404).send({
-          message: "Rule Tidak Ditemukan",
+          message: "Rule not found",
         });
       }
 
       if (!findProgram) {
         return response.status(404).send({
-          message: "Program Tidak Ditemukan",
+          message: "Program not found",
         });
       }
 
       if (!findArrangement) {
         return response.status(404).send({
-          message: "Tatanan Tidak Ditemukan",
+          message: "Arrangement not found",
         });
       }
 
-      await RuleItem.query().where("id", rule_id).update({
+      await Permission.query().where("id", rule_id).update({
         rule_id: rule_id,
         program_id: program_id,
         arrangement_id: arrangement_id,
       });
 
-      let data = await RuleItem.find(rule_item_id);
+      let data = await Permission.find(rule_item_id);
 
       return response.send(data);
     } catch (error) {
@@ -180,7 +196,7 @@ class RuleItemController {
     try {
       // Validate request
       const rules = {
-        rule_item_id: "required|integer",
+        id: "required|integer",
       };
 
       const validation = await validate(request.all(), rules);
@@ -189,20 +205,20 @@ class RuleItemController {
         return response.status(422).send(validation.messages()[0]);
       }
 
-      const rule_item_id = request.input("rule_item_id");
+      const rule_item_id = request.input("id");
 
-      const findRuleItem = await RuleItem.find(rule_item_id);
+      const findPermission = await Permission.find(rule_item_id);
 
-      if (!findRuleItem) {
+      if (!findPermission) {
         return response.status(404).send({
-          message: "Wewenang Tidak Ditemukan",
+          message: "Permission not found",
         });
       }
 
-      await RuleItem.query().where("id", rule_item_id).delete();
+      await Permission.query().where("id", rule_item_id).delete();
 
       return response.send({
-        message: "Wewenang Berhasil Dihapus",
+        message: "Permission deleted",
       });
     } catch (error) {
       console.log(error.message);
@@ -211,4 +227,4 @@ class RuleItemController {
   }
 }
 
-module.exports = RuleItemController;
+module.exports = PermissionController;
