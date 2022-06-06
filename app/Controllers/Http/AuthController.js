@@ -63,7 +63,7 @@ class AuthController {
           message = "Username tidak ditemukan";
         }
 
-        return response.status(401).send({
+        return response.status(404).send({
           message: message,
         });
       }
