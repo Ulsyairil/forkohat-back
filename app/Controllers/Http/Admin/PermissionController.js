@@ -11,6 +11,7 @@ class PermissionController {
     try {
       // Validate request
       const rules = {
+        rule_id: "required|integer",
         page: "required|integer",
         limit: "required|integer",
         order: "required|in:asc,desc",
@@ -22,13 +23,17 @@ class PermissionController {
         return response.status(422).send(validation.messages()[0]);
       }
 
+      const rule_id = request.input("rule_id");
       const page = request.input("page");
       const limit = request.input("limit");
       const order = request.input("order");
 
       let query = Permission.query().with("Program").with("Arrangement");
 
-      let data = await query.orderBy("id", order).paginate(page, limit);
+      let data = await query
+        .where("rule_id", rule_id)
+        .orderBy("id", order)
+        .paginate(page, limit);
 
       return response.send(data);
     } catch (error) {
