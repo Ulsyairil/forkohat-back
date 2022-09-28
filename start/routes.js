@@ -15,27 +15,18 @@
 
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route = use("Route");
+const Index = require("./../routes/index");
+const Superadmin = require("./../routes/superadmin");
+const Admin = require("./../routes/admin");
+const Member = require("./../routes/member");
+const Guest = require("./../routes/guest");
 
-Route.group(() => {
-  Route.get("province", "IndonesianAreaController.getProvince");
-  Route.get("province/detail", "IndonesianAreaController.detailProvince");
-  Route.get("city", "IndonesianAreaController.getCity");
-  Route.get("city/detail", "IndonesianAreaController.detailCity");
-  Route.get("district", "IndonesianAreaController.getDistrict");
-  Route.get("district/detail", "IndonesianAreaController.detailDistrict");
-  Route.get("sub-district", "IndonesianAreaController.getSubDistrict");
-  Route.get(
-    "sub-district/detail",
-    "IndonesianAreaController.detailSubDistrict"
-  );
+Route.get("/", function ({ response }) {
+  return response.status(403).send("Access Forbidden");
+});
 
-  Route.post("login", "AuthController.login");
-  Route.get("user", "AuthController.checkUser").middleware(["access"]);
-  Route.post("refresh", "AuthController.refreshToken").middleware(["access"]);
-}).prefix("api/v1");
-
-Route.group(function () {}).prefix("api/v1/superadmin");
-
-Route.group(function () {}).prefix("api/v1/admin");
-
-Route.group(function () {}).prefix("api/v1/employee");
+Index(Route);
+Superadmin(Route);
+Admin(Route);
+Member(Route);
+Guest(Route);

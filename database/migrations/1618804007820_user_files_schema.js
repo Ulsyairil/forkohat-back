@@ -6,15 +6,19 @@ const Schema = use("Schema");
 class UserFilesSchema extends Schema {
   up() {
     this.create("user_files", (table) => {
-      table.increments();
+      table.engine("InnoDB");
+      table.bigIncrements();
       table
-        .integer("user_id")
+        .bigInteger("user_id")
         .notNullable()
         .unsigned()
         .references("id")
-        .inTable("users");
+        .inTable("users")
+        .onDelete("cascade")
+        .onUpdate("cascade")
+        .unique();
       table.string("name", 254).notNullable();
-      table.string("mime", 5).notNullable();
+      table.string("mime", 254).notNullable();
       table.text("path").notNullable();
       table.text("url").notNullable();
       table.timestamps();

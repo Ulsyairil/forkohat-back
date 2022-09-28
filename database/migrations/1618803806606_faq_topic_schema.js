@@ -6,17 +6,19 @@ const Schema = use("Schema");
 class FaqTopicSchema extends Schema {
   up() {
     this.create("faq_topics", (table) => {
-      table.increments();
+      table.engine("InnoDB");
+      table.bigIncrements();
       table
-        .integer("faq_id")
+        .bigInteger("faq_id")
         .notNullable()
         .unsigned()
         .references("id")
-        .inTable("faqs");
+        .inTable("faqs")
+        .onUpdate("cascade")
+        .onDelete("cascade");
       table.string("title", 254).notNullable();
       table.text("description").nullable();
       table.timestamps();
-      table.timestamp("deleted_at", { precision: 6 }).nullable();
     });
   }
 

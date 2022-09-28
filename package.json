@@ -30,10 +30,17 @@
     "@adonisjs/shield": "^1.0.8",
     "@adonisjs/validator": "^5.1.0",
     "axios": "^0.21.1",
-    "mysql": "^2.18.1"
+    "chance": "^1.1.8",
+    "file-type": "^16.4.0",
+    "moment": "^2.29.1",
+    "mysql": "^2.18.1",
+    "randomstring": "^1.1.5",
+    "voca": "^1.4.0"
   },
-  "devDependencies": {},
   "autoload": {
     "App": "./app"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^6.3.1"
   }
 }

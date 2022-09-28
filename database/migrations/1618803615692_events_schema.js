@@ -6,17 +6,38 @@ const Schema = use("Schema");
 class EventsSchema extends Schema {
   up() {
     this.create("events", (table) => {
-      table.increments();
+      table.engine("InnoDB");
+      table.bigIncrements();
       table
-        .integer("author_id")
+        .bigInteger("author_id")
         .notNullable()
         .unsigned()
         .references("id")
-        .inTable("users");
-      table.string("name", 254).notNullable();
-      table.text("content").nullable();
+        .inTable("users")
+        .onUpdate("cascade")
+        .onDelete("cascade");
+      table
+        .bigInteger("arrangement_id")
+        .notNullable()
+        .unsigned()
+        .references("id")
+        .inTable("arrangements")
+        .onUpdate("cascade")
+        .onDelete("cascade");
+      table.string("title", 254).notNullable();
+      table.text("description").nullable();
       table.date("registration_date").nullable();
+      table.date("end_registration_date").nullable();
       table.date("expired_date").nullable();
+      table.text("registration_url").nullable();
+      table.string("image_name", 254).notNullable();
+      table.string("image_mime", 254).notNullable();
+      table.text("image_path").notNullable();
+      table.text("image_url").notNullable();
+      table
+        .enu("showed", ["public", "member", "private"])
+        .default("private")
+        .notNullable();
       table.timestamps();
       table.timestamp("deleted_at", { precision: 6 }).nullable();
     });

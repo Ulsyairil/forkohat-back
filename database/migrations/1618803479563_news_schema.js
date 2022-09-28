@@ -6,16 +6,22 @@ const Schema = use("Schema");
 class NewsSchema extends Schema {
   up() {
     this.create("news", (table) => {
-      table.increments();
+      table.engine("InnoDB");
+      table.bigIncrements();
       table
-        .integer("author_id")
+        .bigInteger("author_id")
         .notNullable()
         .unsigned()
         .references("id")
-        .inTable("users");
+        .inTable("users")
+        .onDelete("cascade")
+        .onUpdate("cascade");
       table.string("title", 254).notNullable();
-      table.text("content").nullable();
-      table.date("date").nullable();
+      table.text("content").notNullable();
+      table.string("image_name", 254).notNullable();
+      table.string("image_mime", 254).notNullable();
+      table.text("image_path").notNullable();
+      table.text("image_url").notNullable();
       table.timestamps();
       table.timestamp("deleted_at", { precision: 6 }).nullable();
     });
