@@ -25,7 +25,7 @@ class FaqTopicSeeder {
     for (let index = 1; index <= 5; index++) {
       await Database.table("faq_topics").insert({
         faq_id: RandomNumber.integer({ min: 1, max: 10 }),
-        title: Faker.lorem.lines(),
+        title: Faker.lorem.lines(3),
         description: Faker.lorem.paragraph(),
         created_at: dateNow,
         updated_at: dateNow,
