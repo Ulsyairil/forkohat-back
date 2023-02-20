@@ -6,6 +6,7 @@ const Base = (Route) => {
     Route.get('user', 'Superadmin/UserController.get')
     Route.post('user', 'Superadmin/UserController.create')
     Route.put('user', 'Superadmin/UserController.edit')
+    Route.put('user/password', 'Superadmin/UserController.editPassword')
     Route.put('user/dump', 'Superadmin/UserController.dump')
     Route.put('user/restore', 'Superadmin/UserController.restore')
     Route.delete('user', 'Superadmin/UserController.destroy')

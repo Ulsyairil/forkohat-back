@@ -57,7 +57,11 @@ class PermissionController {
 
       const rule_id = request.input('rule_id')
 
-      const data = await Permission.query().where('rule_id', rule_id).fetch()
+      const data = await Permission.query()
+        .with('Program')
+        .with('Arrangement')
+        .where('rule_id', rule_id)
+        .fetch()
 
       return response.send(data)
     } catch (error) {
