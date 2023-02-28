@@ -486,6 +486,13 @@ class EventController {
         removeFile(path.join(value.path, value.name));
       });
 
+      removeFile(
+        path.join(
+          Helpers.resourcesPath("uploads/event"),
+          findData.image_name
+        )
+      );
+
       await EventFile.query().where("event_id", event_id).delete();
       await Event.query().where("id", event_id).delete();
 

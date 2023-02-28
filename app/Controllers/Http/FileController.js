@@ -45,10 +45,12 @@ class FileController {
         .where('image_name', params.filename)
         .first()
 
+      console.log(findProgramImage)
+
       if (findProgramImage) {
         return response.download(
           Helpers.resourcesPath(
-            `uploads/programs/${findProgramImage.image_name}`
+            `uploads/program/${findProgramImage.image_name}`
           )
         )
       }
@@ -104,7 +106,7 @@ class FileController {
 
       if (findEventImage) {
         return response.download(
-          Helpers.resourcesPath(`uploads/events/${findEventImage.image_name}`)
+          Helpers.resourcesPath(`uploads/event/${findEventImage.image_name}`)
         )
       }
       // Event file
@@ -115,7 +117,7 @@ class FileController {
 
       if (findEventFile) {
         return response.download(
-          Helpers.resourcesPath(`uploads/events/${findEventFile.name}`)
+          Helpers.resourcesPath(`uploads/event/${findEventFile.name}`)
         )
       }
 

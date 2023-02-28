@@ -1,9 +1,15 @@
 "use strict";
 
+const Helpers = use("Helpers");
+const fs = use("fs");
+const path = use("path");
+const removeFile = Helpers.promisify(fs.unlink);
 const Arrangement = use("App/Models/Arrangement");
 const Moment = require("moment");
 const { validate } = use("Validator");
 const Program = use("App/Models/Program");
+const RandomString = require('randomstring')
+const voca = require('voca')
 
 class ArrangementController {
   async index({ request, response }) {
