@@ -180,7 +180,7 @@ class ProgramController {
     try {
       // Validate request
       const rules = {
-        id: 'required|integer',
+        program_id: 'required|integer',
         title: 'required|string',
         description: 'required|string',
       }
@@ -192,7 +192,7 @@ class ProgramController {
       }
 
       // All input
-      const program_id = request.input('id')
+      const program_id = request.input('program_id')
       const title = request.input('title')
       const description = request.input('description')
       const inputImage = request.file('image', {
@@ -242,7 +242,7 @@ class ProgramController {
       }
 
       // Update program
-      let query = Program.query().where('id', request.input('program_id'))
+      let query = Program.query().where('id', program_id)
 
       if (inputImage) {
         await query.update({

@@ -73,13 +73,13 @@ class FileController {
       let findArrangementItemFile = await ArrangementItem.query()
         .where('file_mime', params.mime)
         .where('file_name', params.filename)
-        .whereNull('deleted_at')
+        // .whereNull('deleted_at')
         .first()
 
       if (findArrangementItemFile) {
         return response.download(
           Helpers.resourcesPath(
-            `uploads/orders/${findArrangementItemFile.file_name}`
+            `uploads/arrangements/items/${findArrangementItemFile.file_name}`
           )
         )
       }
