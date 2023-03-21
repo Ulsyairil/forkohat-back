@@ -164,7 +164,7 @@ class ArrangementItemController {
         file.clientName.split('.').slice(0, -1).join('.')
       )}_${random}.${file.extname}`
 
-      await file.move(Helpers.resourcesPath('uploads/arrangement/item'), {
+      await file.move(Helpers.resourcesPath('uploads/arrangement/items'), {
         name: fileName,
       })
 
@@ -180,7 +180,7 @@ class ArrangementItemController {
         description: description,
         file_name: fileName,
         file_mime: file.extname,
-        file_path: Helpers.resourcesPath('uploads/arrangement/item'),
+        file_path: Helpers.resourcesPath('uploads/arrangement/items'),
         file_url: `/api/v1/file/${file.extname}/${fileName}`,
         showed: showed,
       })
@@ -242,7 +242,7 @@ class ArrangementItemController {
         // Delete file
         removeFile(
           path.join(
-            Helpers.resourcesPath('uploads/arrangement/item'),
+            Helpers.resourcesPath('uploads/arrangement/items'),
             findData.file_name
           )
         )
@@ -252,7 +252,7 @@ class ArrangementItemController {
           file.clientName.split('.').slice(0, -1).join('.')
         )}_${random}.${file.extname}`
 
-        await file.move(Helpers.resourcesPath('uploads/arrangement/item'), {
+        await file.move(Helpers.resourcesPath('uploads/arrangement/items'), {
           name: fileName,
         })
 
@@ -267,7 +267,7 @@ class ArrangementItemController {
           description: description,
           file_name: fileName,
           file_mime: file.extname,
-          file_path: Helpers.resourcesPath('uploads/arrangement/item'),
+          file_path: Helpers.resourcesPath('uploads/arrangement/items'),
           file_url: `/api/v1/file/${file.extname}/${fileName}`,
           showed: showed,
         })
@@ -414,7 +414,7 @@ class ArrangementItemController {
       // Delete file saved
       removeFile(
         path.join(
-          Helpers.resourcesPath('uploads/arrangement/item'),
+          Helpers.resourcesPath('uploads/arrangement/items'),
           findData.file_name
         )
       )
