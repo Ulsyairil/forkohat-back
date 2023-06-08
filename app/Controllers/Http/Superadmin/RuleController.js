@@ -73,7 +73,7 @@ class RuleController {
       const rule_id = request.input('id')
 
       let data = await Rule.query()
-        .with('Permission', (permissionQuery) => {
+        .with('Permission', permissionQuery => {
           permissionQuery.with('Program')
           permissionQuery.with('Arrangement')
         })
@@ -82,7 +82,7 @@ class RuleController {
 
       if (!data) {
         return response.status(404).send({
-          message: 'Rule not found',
+          message: 'Rule Tidak Ditemukan',
         })
       }
 
@@ -160,7 +160,7 @@ class RuleController {
 
       if (!findRule) {
         return response.status(404).send({
-          message: 'Rule not found',
+          message: 'Rule Tidak Ditemukan',
         })
       }
 
@@ -200,7 +200,7 @@ class RuleController {
 
       if (!findRule) {
         return response.status(404).send({
-          message: 'Rule not found',
+          message: 'Rule Tidak Ditemukan',
         })
       }
 

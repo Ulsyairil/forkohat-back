@@ -99,7 +99,7 @@ class ProgramController {
       // Return false if program not exists
       if (!data) {
         return response.status(404).send({
-          message: 'Program not found',
+          message: 'Program Tidak Ditemukan',
         })
       }
 
@@ -134,19 +134,18 @@ class ProgramController {
       // Check input image is null
       if (inputImage == null) {
         return response.status(422).send({
-          message: 'Program Image must be uploaded',
+          message: 'Program Gambar Harus Diunggah',
         })
       }
 
       // Moving uploaded file
-      let fileName
       let random = RandomString.generate({
         capitalization: 'lowercase',
       })
 
-      fileName = `${voca.snakeCase(
-        inputImage.clientName.split('.').slice(0, -1).join('.')
-      )}_${random}.${inputImage.extname}`
+      let fileName = `${random}_${new Date().toJSON().slice(0, 10)}.${
+        inputImage.extname
+      }`
 
       await inputImage.move(Helpers.resourcesPath('uploads/program'), {
         name: fileName,
@@ -205,7 +204,7 @@ class ProgramController {
       // Return false if program not exists
       if (!findData) {
         return response.status(404).send({
-          message: 'Program not found',
+          message: 'Program Tidak Ditemukan',
         })
       }
 
@@ -223,14 +222,14 @@ class ProgramController {
           removeFile(
             path.join(
               Helpers.resourcesPath('uploads/program'),
-              findImage.image_name
-            )
+              findImage.image_name,
+            ),
           )
         }
 
-        fileName = `${voca.snakeCase(
-          inputImage.clientName.split('.').slice(0, -1).join('.')
-        )}_${random}.${inputImage.extname}`
+        fileName = `${random}_${new Date().toJSON().slice(0, 10)}.${
+          inputImage.extname
+        }`
 
         await inputImage.move(Helpers.resourcesPath('uploads/program'), {
           name: fileName,
@@ -292,13 +291,16 @@ class ProgramController {
       // Return false if program not exists
       if (!findData) {
         return response.status(404).send({
-          message: 'Program not found',
+          message: 'Program Tidak Ditemukan',
         })
       }
 
       // Delete file
       removeFile(
-        path.join(Helpers.resourcesPath('uploads/program'), findData.image_name)
+        path.join(
+          Helpers.resourcesPath('uploads/program'),
+          findData.image_name,
+        ),
       )
 
       // Delete program

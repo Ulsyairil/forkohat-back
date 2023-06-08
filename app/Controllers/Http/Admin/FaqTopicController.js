@@ -1,58 +1,58 @@
-"use strict";
+'use strict'
 
-const FaqTopic = use("App/Models/FaqTopic");
-const Faq = use("App/Models/Faq");
-const { validate } = use("Validator");
+const FaqTopic = use('App/Models/FaqTopic')
+const Faq = use('App/Models/Faq')
+const { validate } = use('Validator')
 
 class FaqTopicController {
   async index({ request, response }) {
     try {
       // Validate request
       const rules = {
-        faq_id: "required|integer",
-        page: "required|integer",
-        limit: "required|integer",
-        order: "required|in:asc,desc",
-        search: "string",
-      };
-
-      const validation = await validate(request.all(), rules);
-
-      if (validation.fails()) {
-        return response.status(422).send(validation.messages()[0]);
+        faq_id: 'required|integer',
+        page: 'required|integer',
+        limit: 'required|integer',
+        order: 'required|in:asc,desc',
+        search: 'string',
       }
 
-      const faq_id = request.input("faq_id");
-      const page = request.input("page");
-      const limit = request.input("limit");
-      const order = request.input("order");
-      const search = request.input("search");
+      const validation = await validate(request.all(), rules)
 
-      const findFaq = await Faq.find(faq_id);
+      if (validation.fails()) {
+        return response.status(422).send(validation.messages()[0])
+      }
+
+      const faq_id = request.input('faq_id')
+      const page = request.input('page')
+      const limit = request.input('limit')
+      const order = request.input('order')
+      const search = request.input('search')
+
+      const findFaq = await Faq.find(faq_id)
 
       if (!findFaq) {
         return response.status(404).send({
-          message: "FAQ not found",
-        });
+          message: 'FAQ Tidak Ditemukan',
+        })
       }
 
-      let query = FaqTopic.query();
+      let query = FaqTopic.query()
 
       if (search) {
         query
-          .where("title", "like", `%${search}%`)
-          .orWhere("description", "like", `%${search}%`);
+          .where('title', 'like', `%${search}%`)
+          .orWhere('description', 'like', `%${search}%`)
       }
 
       const data = await query
-        .where("faq_id", faq_id)
-        .orderBy("id", order)
-        .paginate(page, limit);
+        .where('faq_id', faq_id)
+        .orderBy('id', order)
+        .paginate(page, limit)
 
-      return response.send(data);
+      return response.send(data)
     } catch (error) {
-      console.log(error.message);
-      return response.status(500).send(error.message);
+      console.log(error.message)
+      return response.status(500).send(error.message)
     }
   }
 
@@ -60,29 +60,29 @@ class FaqTopicController {
     try {
       // Validate request
       const rules = {
-        id: "required|integer",
-      };
-
-      const validation = await validate(request.all(), rules);
-
-      if (validation.fails()) {
-        return response.status(422).send(validation.messages()[0]);
+        id: 'required|integer',
       }
 
-      const faq_topic_id = request.input("id");
+      const validation = await validate(request.all(), rules)
 
-      let data = await FaqTopic.find(faq_topic_id);
+      if (validation.fails()) {
+        return response.status(422).send(validation.messages()[0])
+      }
+
+      const faq_topic_id = request.input('id')
+
+      let data = await FaqTopic.find(faq_topic_id)
 
       if (!data) {
         return response.status(404).send({
-          message: "Topic FAQ not found",
-        });
+          message: 'Topic FAQ Tidak Ditemukan',
+        })
       }
 
-      return response.send(data);
+      return response.send(data)
     } catch (error) {
-      console.log(error.message);
-      return response.status(500).send(error.message);
+      console.log(error.message)
+      return response.status(500).send(error.message)
     }
   }
 
@@ -90,39 +90,39 @@ class FaqTopicController {
     try {
       // Validate request
       const rules = {
-        faq_id: "required|integer",
-        title: "required|string",
-        description: "required|string",
-      };
-
-      const validation = await validate(request.all(), rules);
-
-      if (validation.fails()) {
-        return response.status(422).send(validation.messages()[0]);
+        faq_id: 'required|integer',
+        title: 'required|string',
+        description: 'required|string',
       }
 
-      const faq_id = request.input("faq_id");
-      const title = request.input("title");
-      const description = request.input("description");
+      const validation = await validate(request.all(), rules)
 
-      const findFaq = await Faq.find(faq_id);
+      if (validation.fails()) {
+        return response.status(422).send(validation.messages()[0])
+      }
+
+      const faq_id = request.input('faq_id')
+      const title = request.input('title')
+      const description = request.input('description')
+
+      const findFaq = await Faq.find(faq_id)
 
       if (!findFaq) {
         return response.status(404).send({
-          message: "FAQ not found",
-        });
+          message: 'FAQ Tidak Ditemukan',
+        })
       }
 
       let create = await FaqTopic.create({
         faq_id: faq_id,
         title: title,
         description: description,
-      });
+      })
 
-      return response.send(create);
+      return response.send(create)
     } catch (error) {
-      console.log(error.message);
-      return response.status(500).send(error.message);
+      console.log(error.message)
+      return response.status(500).send(error.message)
     }
   }
 
@@ -130,40 +130,40 @@ class FaqTopicController {
     try {
       // Validate request
       const rules = {
-        id: "required|integer",
-        title: "required|string",
-        description: "string",
-      };
-
-      const validation = await validate(request.all(), rules);
-
-      if (validation.fails()) {
-        return response.status(422).send(validation.messages()[0]);
+        id: 'required|integer',
+        title: 'required|string',
+        description: 'string',
       }
 
-      const faq_topic_id = request.input("id");
-      const title = request.input("title");
-      const description = request.input("description");
+      const validation = await validate(request.all(), rules)
 
-      let findData = await FaqTopic.find(faq_topic_id);
+      if (validation.fails()) {
+        return response.status(422).send(validation.messages()[0])
+      }
+
+      const faq_topic_id = request.input('id')
+      const title = request.input('title')
+      const description = request.input('description')
+
+      let findData = await FaqTopic.find(faq_topic_id)
 
       if (!findData) {
         return response.status(404).send({
-          message: "Topic FAQ not found",
-        });
+          message: 'Topic FAQ Tidak Ditemukan',
+        })
       }
 
-      await FaqTopic.query().where("id", faq_topic_id).update({
+      await FaqTopic.query().where('id', faq_topic_id).update({
         title: title,
         description: description,
-      });
+      })
 
-      let data = await FaqTopic.find(faq_topic_id);
+      let data = await FaqTopic.find(faq_topic_id)
 
-      return response.send(data);
+      return response.send(data)
     } catch (error) {
-      console.log(error.message);
-      return response.status(500).send(error.message);
+      console.log(error.message)
+      return response.status(500).send(error.message)
     }
   }
 
@@ -171,35 +171,35 @@ class FaqTopicController {
     try {
       // Validate request
       const rules = {
-        id: "required|integer",
-      };
-
-      const validation = await validate(request.all(), rules);
-
-      if (validation.fails()) {
-        return response.status(422).send(validation.messages()[0]);
+        id: 'required|integer',
       }
 
-      const faq_topic_id = request.input("id");
+      const validation = await validate(request.all(), rules)
 
-      let findData = await FaqTopic.find(faq_topic_id);
+      if (validation.fails()) {
+        return response.status(422).send(validation.messages()[0])
+      }
+
+      const faq_topic_id = request.input('id')
+
+      let findData = await FaqTopic.find(faq_topic_id)
 
       if (!findData) {
         return response.status(404).send({
-          message: "Topic FAQ not found",
-        });
+          message: 'Topic FAQ Tidak Ditemukan',
+        })
       }
 
-      await FaqTopic.query().where("id", faq_topic_id).delete();
+      await FaqTopic.query().where('id', faq_topic_id).delete()
 
       return response.send({
-        message: "Topic FAQ deleted",
-      });
+        message: 'Topic FAQ deleted',
+      })
     } catch (error) {
-      console.log(error.message);
-      return response.status(500).send(error.message);
+      console.log(error.message)
+      return response.status(500).send(error.message)
     }
   }
 }
 
-module.exports = FaqTopicController;
+module.exports = FaqTopicController

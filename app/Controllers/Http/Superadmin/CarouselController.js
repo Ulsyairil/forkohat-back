@@ -64,8 +64,8 @@ class CarouselController {
 
       return data == ('' || null)
         ? response.status(404).send({
-            message: 'not found',
-          })
+          message: 'not found',
+        })
         : response.status(200).send(data)
     } catch (error) {
       console.log(error.message)
@@ -104,9 +104,7 @@ class CarouselController {
         capitalization: 'lowercase',
       })
 
-      let fileName = `${voca.snakeCase(
-        image.clientName.split('.').slice(0, -1).join('.')
-      )}_${random}.${image.extname}`
+      let fileName = `${random}_${(new Date().toJSON().slice(0, 10))}.${image.extname}`
 
       await image.move(Helpers.resourcesPath('uploads/carousel'), {
         name: fileName,
@@ -182,9 +180,7 @@ class CarouselController {
           capitalization: 'lowercase',
         })
 
-        let fileName = `${voca.snakeCase(
-          image.clientName.split('.').slice(0, -1).join('.')
-        )}_${random}.${image.extname}`
+        let fileName = `${random}_${(new Date().toJSON().slice(0, 10))}.${image.extname}`
 
         await image.move(Helpers.resourcesPath('uploads/carousel'), {
           name: fileName,

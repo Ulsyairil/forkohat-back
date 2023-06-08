@@ -28,7 +28,6 @@ class UserController {
       const limit = request.input('limit')
       const order = request.input('order')
       const search = request.input('search')
-      const user = await auth.getUser()
       const trash = request.input('trash')
 
       let query = User.query().with('Rule')
@@ -100,7 +99,7 @@ class UserController {
 
       if (!data) {
         return response.status(404).send({
-          message: 'User not found',
+          message: 'Pengguna Tidak Ditemukan',
         })
       }
 
@@ -140,7 +139,7 @@ class UserController {
 
       if (await findUser.first()) {
         return response.status(400).send({
-          message: 'Username or email is exist',
+          message: 'Username atau Email Tidak Ada',
         })
       }
 
@@ -194,7 +193,7 @@ class UserController {
 
       if (!findUser) {
         return response.status(404).send({
-          message: 'User not found',
+          message: 'Pengguna Tidak Ditemukan',
         })
       }
 
@@ -245,7 +244,7 @@ class UserController {
 
       if (!findUser) {
         return response.status(404).send({
-          message: 'User not found',
+          message: 'Pengguna Tidak Ditemukan',
         })
       }
 
@@ -288,7 +287,7 @@ class UserController {
 
       if (!findUser) {
         return response.status(404).send({
-          message: 'User not found',
+          message: 'Pengguna Tidak Ditemukan',
         })
       }
 
@@ -325,7 +324,7 @@ class UserController {
 
       if (!findUser) {
         return response.status(404).send({
-          message: 'User not found',
+          message: 'Pengguna Tidak Ditemukan',
         })
       }
 
@@ -362,14 +361,14 @@ class UserController {
 
       if (!findUser) {
         return response.status(404).send({
-          message: 'User not found',
+          message: 'Pengguna Tidak Ditemukan',
         })
       }
 
       await User.query().where('id', user_id).delete()
 
       return response.send({
-        message: 'User deleted',
+        message: 'Pengguna Dihilangkan',
       })
     } catch (error) {
       console.log(error.message)

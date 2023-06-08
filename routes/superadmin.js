@@ -1,4 +1,4 @@
-const Base = (Route) => {
+const Base = Route => {
   Route.group(function () {
     // User route
     Route.post('users', 'Superadmin/UserController.index')
@@ -68,7 +68,9 @@ const Base = (Route) => {
 
     // Event file
     Route.post('event/file', 'Superadmin/EventFileController.index')
+    Route.get('event/file', 'Superadmin/EventFileController.get')
     Route.post('event/file/add', 'Superadmin/EventFileController.create')
+    Route.put('event/file', 'Superadmin/EventFileController.edit')
     Route.delete('event/file', 'Superadmin/EventFileController.destroy')
 
     // Event comment route
@@ -101,25 +103,25 @@ const Base = (Route) => {
     // Arrangement item route
     Route.post(
       'arrangement/items',
-      'Superadmin/ArrangementItemController.index'
+      'Superadmin/ArrangementItemController.index',
     )
     Route.get('arrangement/item', 'Superadmin/ArrangementItemController.get')
     Route.post(
       'arrangement/item',
-      'Superadmin/ArrangementItemController.create'
+      'Superadmin/ArrangementItemController.create',
     )
     Route.put('arrangement/item', 'Superadmin/ArrangementItemController.edit')
     Route.put(
       'arrangement/item/dump',
-      'Superadmin/ArrangementItemController.dump'
+      'Superadmin/ArrangementItemController.dump',
     )
     Route.put(
       'arrangement/item/restore',
-      'Superadmin/ArrangementItemController.restore'
+      'Superadmin/ArrangementItemController.restore',
     )
     Route.delete(
       'arrangement/item',
-      'Superadmin/ArrangementItemController.destroy'
+      'Superadmin/ArrangementItemController.destroy',
     )
 
     // Gallery route

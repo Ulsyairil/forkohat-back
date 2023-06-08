@@ -160,9 +160,9 @@ class ArrangementItemController {
         capitalization: 'lowercase',
       })
 
-      let fileName = `${voca.snakeCase(
-        file.clientName.split('.').slice(0, -1).join('.')
-      )}_${random}.${file.extname}`
+      let fileName = `${random}_${new Date().toJSON().slice(0, 10)}.${
+        file.extname
+      }`
 
       await file.move(Helpers.resourcesPath('uploads/arrangement/items'), {
         name: fileName,
@@ -243,14 +243,14 @@ class ArrangementItemController {
         removeFile(
           path.join(
             Helpers.resourcesPath('uploads/arrangement/items'),
-            findData.file_name
-          )
+            findData.file_name,
+          ),
         )
 
         // Move file
-        let fileName = `${voca.snakeCase(
-          file.clientName.split('.').slice(0, -1).join('.')
-        )}_${random}.${file.extname}`
+        let fileName = `${random}_${new Date().toJSON().slice(0, 10)}.${
+          file.extname
+        }`
 
         await file.move(Helpers.resourcesPath('uploads/arrangement/items'), {
           name: fileName,
@@ -415,8 +415,8 @@ class ArrangementItemController {
       removeFile(
         path.join(
           Helpers.resourcesPath('uploads/arrangement/items'),
-          findData.file_name
-        )
+          findData.file_name,
+        ),
       )
 
       // Destroy data

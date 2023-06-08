@@ -16,13 +16,13 @@ class FileController {
     try {
       if (params.mime == null || params.mime == '') {
         return response.status(422).send({
-          message: 'mime must be filled',
+          message: '"mime" harus diisi',
         })
       }
 
       if (params.filename == null || params.filename == '') {
         return response.status(422).send({
-          message: 'filename must be filled',
+          message: '"filename" Harus Diisi',
         })
       }
 
@@ -35,7 +35,7 @@ class FileController {
 
       if (findUserFile) {
         return response.download(
-          Helpers.resourcesPath(`uploads/users/${findUserFile.name}`)
+          Helpers.resourcesPath(`uploads/users/${findUserFile.name}`),
         )
       }
 
@@ -50,8 +50,8 @@ class FileController {
       if (findProgramImage) {
         return response.download(
           Helpers.resourcesPath(
-            `uploads/program/${findProgramImage.image_name}`
-          )
+            `uploads/program/${findProgramImage.image_name}`,
+          ),
         )
       }
 
@@ -64,8 +64,8 @@ class FileController {
       if (findArrangementImage) {
         return response.download(
           Helpers.resourcesPath(
-            `uploads/arrangements/${findArrangementImage.image_name}`
-          )
+            `uploads/arrangements/${findArrangementImage.image_name}`,
+          ),
         )
       }
 
@@ -79,8 +79,8 @@ class FileController {
       if (findArrangementItemFile) {
         return response.download(
           Helpers.resourcesPath(
-            `uploads/arrangements/items/${findArrangementItemFile.file_name}`
-          )
+            `uploads/arrangements/items/${findArrangementItemFile.file_name}`,
+          ),
         )
       }
 
@@ -93,7 +93,7 @@ class FileController {
 
       if (findNewsImage) {
         return response.download(
-          Helpers.resourcesPath(`uploads/news/${findNewsImage.image_name}`)
+          Helpers.resourcesPath(`uploads/news/${findNewsImage.image_name}`),
         )
       }
 
@@ -106,7 +106,7 @@ class FileController {
 
       if (findEventImage) {
         return response.download(
-          Helpers.resourcesPath(`uploads/event/${findEventImage.image_name}`)
+          Helpers.resourcesPath(`uploads/event/${findEventImage.image_name}`),
         )
       }
       // Event file
@@ -117,7 +117,7 @@ class FileController {
 
       if (findEventFile) {
         return response.download(
-          Helpers.resourcesPath(`uploads/event/${findEventFile.name}`)
+          Helpers.resourcesPath(`uploads/event/${findEventFile.name}`),
         )
       }
 
@@ -129,7 +129,7 @@ class FileController {
 
       if (findGallery) {
         return response.download(
-          Helpers.resourcesPath(`uploads/gallery/${findGallery.image_name}`)
+          Helpers.resourcesPath(`uploads/gallery/${findGallery.image_name}`),
         )
       }
 
@@ -141,7 +141,7 @@ class FileController {
 
       if (findCarousel) {
         return response.download(
-          Helpers.resourcesPath(`uploads/carousel/${findCarousel.image_name}`)
+          Helpers.resourcesPath(`uploads/carousel/${findCarousel.image_name}`),
         )
       }
 

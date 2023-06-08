@@ -1,4 +1,4 @@
-const Base = (Route) => {
+const Base = Route => {
   Route.group(function () {
     // User route
     Route.post('users', 'Admin/UserController.index')
@@ -67,7 +67,9 @@ const Base = (Route) => {
 
     // Event file
     Route.post('event/file', 'Admin/EventFileController.index')
+    Route.get('event/file', 'Admin/EventFileController.get')
     Route.post('event/file/add', 'Admin/EventFileController.create')
+    Route.put('event/file', 'Admin/EventFileController.edit')
     Route.delete('event/file', 'Admin/EventFileController.destroy')
 
     // Event comment route
@@ -105,7 +107,7 @@ const Base = (Route) => {
     Route.put('arrangement/item/dump', 'Admin/ArrangementItemController.dump')
     Route.put(
       'arrangement/item/restore',
-      'Admin/ArrangementItemController.restore'
+      'Admin/ArrangementItemController.restore',
     )
     Route.delete('arrangement/item', 'Admin/ArrangementItemController.destroy')
 

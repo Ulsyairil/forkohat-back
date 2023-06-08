@@ -101,25 +101,25 @@ class PermissionController {
 
       if (findPermissionExist) {
         return response.status(400).send({
-          message: 'Permission is exist',
+          message: 'Permission Tidak Ada',
         })
       }
 
       if (!findRule) {
         return response.status(404).send({
-          message: 'Rule not found',
+          message: 'Rule Tidak Ditemukan',
         })
       }
 
       if (!findProgram) {
         return response.status(404).send({
-          message: 'Program not found',
+          message: 'Program Tidak Ditemukan',
         })
       }
 
       if (!findArrangement) {
         return response.status(404).send({
-          message: 'Arrangement not found',
+          message: 'Tatanan Tidak Ditemukan',
         })
       }
 
@@ -170,19 +170,19 @@ class PermissionController {
 
       if (!findRule) {
         return response.status(404).send({
-          message: 'Rule not found',
+          message: 'Rule Tidak Ditemukan',
         })
       }
 
       if (!findProgram) {
         return response.status(404).send({
-          message: 'Program not found',
+          message: 'Program Tidak Ditemukan',
         })
       }
 
       if (!findArrangement) {
         return response.status(404).send({
-          message: 'Arrangement not found',
+          message: 'Tatanan Tidak Ditemukan',
         })
       }
 

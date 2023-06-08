@@ -1,4 +1,4 @@
-const Base = (Route) => {
+const Base = Route => {
   Route.group(function () {
     // Program
     Route.post('programs', 'Member/ProgramController.index')
@@ -14,7 +14,7 @@ const Base = (Route) => {
     Route.put('arrangement/item/dump', 'Member/ArrangementItemController.dump')
     Route.put(
       'arrangement/item/restore',
-      'Member/ArrangementItemController.restore'
+      'Member/ArrangementItemController.restore',
     )
     Route.delete('arrangement/item', 'Member/ArrangementItemController.destroy')
 
@@ -28,9 +28,11 @@ const Base = (Route) => {
     Route.delete('event', 'Member/EventController.destroy')
 
     // Event file
-    Route.post('event/files', 'Admin/EventController.index')
-    Route.post('event/file/add', 'Admin/EventController.create')
-    Route.delete('event/file', 'Admin/EventController.destroy')
+    Route.post('event/file', 'Member/EventFileController.index')
+    Route.get('event/file', 'Member/EventFileController.get')
+    Route.post('event/file/add', 'Member/EventFileController.create')
+    Route.put('event/file', 'Member/EventFileController.edit')
+    Route.delete('event/file', 'Member/EventFileController.destroy')
 
     // Event comment route
     Route.post('event/comments', 'Member/EventCommentController.index')
