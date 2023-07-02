@@ -54,12 +54,9 @@ class EventController {
         .with('Author')
         .with('Arrangement')
         .with('Arrangement.Program')
-        .where('arrangement_id', arrangement_id)
 
       if (search) {
-        query
-          .where('title', 'like', `%${search}%`)
-          .orWhere('description', 'like', `%${search}%`)
+        query.where('title', 'like', `%${search}%`)
       }
 
       if (trash == '0' || trash == false) {
@@ -71,6 +68,7 @@ class EventController {
       }
 
       let data = await query
+        .where('arrangement_id', arrangement_id)
         .where('showed', showed)
         .orderBy('id', order)
         .paginate(page, limit)
@@ -397,9 +395,7 @@ class EventController {
       })
 
       // Get data restored
-      let data = await Event.query()
-        .where('id', request.input('event_id'))
-        .first()
+      let data = await Event.query().where('id', event_id).first()
 
       return response.send(data)
     } catch (error) {

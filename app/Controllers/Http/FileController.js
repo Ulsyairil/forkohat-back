@@ -30,7 +30,6 @@ class FileController {
       let findUserFile = await Userfile.query()
         .where('mime', params.mime)
         .where('name', params.filename)
-        .whereNull('deleted_at')
         .first()
 
       if (findUserFile) {
@@ -88,7 +87,6 @@ class FileController {
       let findNewsImage = await News.query()
         .where('image_mime', params.mime)
         .where('image_name', params.filename)
-        .whereNull('deleted_at')
         .first()
 
       if (findNewsImage) {
@@ -101,7 +99,6 @@ class FileController {
       let findEventImage = await Event.query()
         .where('image_mime', params.mime)
         .andWhere('image_name', params.filename)
-        .whereNull('deleted_at')
         .first()
 
       if (findEventImage) {
