@@ -124,7 +124,7 @@ class EventController {
         registration_date: 'date',
         end_registration_date: 'required_if:registration_date,date',
         expired_date: 'required|date',
-        registration_url: 'url',
+        registration_url: 'string',
         showed: 'required|in:member,public',
       }
 
@@ -225,7 +225,7 @@ class EventController {
         registration_date: 'date',
         end_registration_date: 'date',
         expired_date: 'required|date',
-        registration_url: 'url',
+        registration_url: 'string',
         showed: 'required|in:member,public',
       }
 
@@ -277,7 +277,7 @@ class EventController {
         )
       }
 
-      let updateEvent = Event.query().where('id', request.input('event_id'))
+      let updateEvent = Event.query().where('id', event_id)
 
       // Update event table
       if (image) {
