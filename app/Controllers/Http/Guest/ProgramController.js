@@ -1,15 +1,12 @@
 "use strict";
 
-const ArrangementItem = use("App/Models/ArrangementItem");
-const Arrangement = use("App/Models/Arrangement");
+const Program = use("App/Models/Program");
 const { validate } = use("Validator");
 
-class ArrangementItemController {
+class ProgramController {
   async index({ request, response }) {
     try {
-      // Validate request
       const rules = {
-        arrangement_id: "required|integer",
         page: "required|integer",
         limit: "required|integer",
         order: "required|in:asc,desc",
@@ -22,41 +19,21 @@ class ArrangementItemController {
         return response.status(422).send(validation.messages()[0]);
       }
 
-      // All input
-      const arrangement_id = request.input("arrangement_id");
       const page = request.input("page");
       const limit = request.input("limit");
       const order = request.input("order");
       const search = request.input("search");
 
-      // Find arrangement
-      let findArrangement = await Arrangement.find(arrangement_id);
+      let query = Program.query();
 
-      // Check arrangement exist
-      if (!findArrangement) {
-        return response.status(404).send({
-          message: "Tatanan Tidak Ditemukan",
-        });
-      }
-
-      // Arrangement item query
-      let query = ArrangementItem.query()
-        .with("Arrangement")
-        .with("UploadedBy")
-        .with("UpdatedBy");
-
-      // Search arrangement item query
       if (search) {
         query
           .where("title", "like", `%${search}%`)
           .orWhere("description", "like", `%${search}%`);
       }
 
-      // Get arrangement item data
       const data = await query
-        .where("arrangement_id", arrangement_id)
-        .where("showed", "public")
-        .whereNull("deleted_at")
+        .where("id", "!=", 1)
         .orderBy("id", order)
         .paginate(page, limit);
 
@@ -68,4 +45,4 @@ class ArrangementItemController {
   }
 }
 
-module.exports = ArrangementItemController;
+module.exports = ProgramController;

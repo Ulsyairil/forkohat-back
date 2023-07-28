@@ -1,58 +1,59 @@
-"use strict";
+'use strict'
 
-const Rule = use("App/Models/Rule");
-const { validate } = use("Validator");
+const Rule = use('App/Models/Rule')
+const { validate } = use('Validator')
 
 class RuleController {
   async index({ auth, request, response }) {
     try {
       // Validate request
       const rules = {
-        page: "required|integer",
-        limit: "required|integer",
-        order: "required|in:asc,desc",
-        search: "string",
-      };
-
-      const validation = await validate(request.all(), rules);
-
-      if (validation.fails()) {
-        return response.status(422).send(validation.messages()[0]);
+        page: 'required|integer',
+        limit: 'required|integer',
+        order: 'required|in:asc,desc',
+        search: 'string',
       }
 
-      const page = request.input("page");
-      const limit = request.input("limit");
-      const order = request.input("order");
-      const search = request.input("search");
+      const validation = await validate(request.all(), rules)
 
-      let query = Rule.query();
+      if (validation.fails()) {
+        return response.status(422).send(validation.messages()[0])
+      }
+
+      const page = request.input('page')
+      const limit = request.input('limit')
+      const order = request.input('order')
+      const search = request.input('search')
+
+      let query = Rule.query()
 
       if (search) {
-        query.where("name", "like", `%${search}%`);
+        query.where('name', 'like', `%${search}%`)
       }
 
       const data = await query
-        .whereNot("id", 1)
-        .whereNot("id", 2)
-        .orderBy("id", order)
-        .paginate(page, limit);
+        .whereNot('id', 1)
+        .whereNot('id', 2)
+        .whereNot('id', 3)
+        .orderBy('id', order)
+        .paginate(page, limit)
 
-      return response.send(data);
+      return response.send(data)
     } catch (error) {
-      console.log(error.message);
-      return response.status(500).send(error.message);
+      console.log(error.message)
+      return response.status(500).send(error.message)
     }
   }
 
   async indexAll({ auth, request, response }) {
     try {
-      let data = await Rule.query().orderBy("id", "desc").fetch();
-      console.log(data);
+      let data = await Rule.query().orderBy('name', 'asc').fetch()
+      console.log(data)
 
-      return response.send(data);
+      return response.send(data)
     } catch (error) {
-      console.log(error.message);
-      return response.status(500).send(error.message);
+      console.log(error.message)
+      return response.status(500).send(error.message)
     }
   }
 
@@ -60,32 +61,32 @@ class RuleController {
     try {
       // Validate request
       const rules = {
-        rule_id: "required|integer",
-      };
-
-      const validation = await validate(request.all(), rules);
-
-      if (validation.fails()) {
-        return response.status(422).send(validation.messages()[0]);
+        id: 'required|integer',
       }
 
-      const rule_id = request.input("rule_id");
+      const validation = await validate(request.all(), rules)
+
+      if (validation.fails()) {
+        return response.status(422).send(validation.messages()[0])
+      }
+
+      const rule_id = request.input('id')
 
       let data = await Rule.query()
-        .with("RuleItem")
-        .where("id", rule_id)
-        .first();
+        .with('Permission')
+        .where('id', rule_id)
+        .first()
 
       if (!data) {
         return response.status(404).send({
-          message: "Rule Tidak Ditemukan",
-        });
+          message: 'Rule Tidak Ditemukan',
+        })
       }
 
-      return response.send(data);
+      return response.send(data)
     } catch (error) {
-      console.log(error.message);
-      return response.status(500).send(error.message);
+      console.log(error.message)
+      return response.status(500).send(error.message)
     }
   }
 
@@ -93,29 +94,25 @@ class RuleController {
     try {
       // Validate request
       const rules = {
-        rule: "required|string",
-      };
-
-      const messages = {
-        "rule.required": "Nama Rule Harus Diisi",
-      };
-
-      const validation = await validate(request.all(), rules, messages);
-
-      if (validation.fails()) {
-        return response.status(422).send(validation.messages()[0]);
+        rule: 'required|string',
       }
 
-      const rule = request.input("rule");
+      const validation = await validate(request.all(), rules)
+
+      if (validation.fails()) {
+        return response.status(422).send(validation.messages()[0])
+      }
+
+      const rule = request.input('rule')
 
       const create = await Rule.create({
         name: rule,
-      });
+      })
 
-      return response.send(create);
+      return response.send(create)
     } catch (error) {
-      console.log(error.message);
-      return response.status(500).send(error.message);
+      console.log(error.message)
+      return response.status(500).send(error.message)
     }
   }
 
@@ -123,43 +120,37 @@ class RuleController {
     try {
       // Validate request
       const rules = {
-        rule_id: "required|integer",
-        rule: "required|string",
-      };
-
-      const messages = {
-        "rule_id.required": "ID Rule Harus Diisi",
-        "rule_id.integer": "ID Rule Harus Berupa Angka",
-        "rule.required": "Nama Rule Harus Diisi",
-      };
-
-      const validation = await validate(request.all(), rules, messages);
-
-      if (validation.fails()) {
-        return response.status(422).send(validation.messages()[0]);
+        id: 'required|integer',
+        rule: 'required|string',
       }
 
-      const rule = request.input("rule");
-      const rule_id = request.input("rule_id");
+      const validation = await validate(request.all(), rules)
 
-      const findRule = await Rule.find(rule_id);
+      if (validation.fails()) {
+        return response.status(422).send(validation.messages()[0])
+      }
+
+      const rule_id = request.input('id')
+      const rule = request.input('rule')
+
+      const findRule = await Rule.find(rule_id)
 
       if (!findRule) {
         return response.status(404).send({
-          message: "Rule Tidak Ditemukan",
-        });
+          message: 'Rule Tidak Ditemukan',
+        })
       }
 
-      await Rule.query().where("id", rule_id).update({
+      await Rule.query().where('id', rule_id).update({
         name: rule,
-      });
+      })
 
-      let data = await Rule.find(rule_id);
+      let data = await Rule.find(rule_id)
 
-      return response.send(data);
+      return response.send(data)
     } catch (error) {
-      console.log(error.message);
-      return response.status(500).send(error.message);
+      console.log(error.message)
+      return response.status(500).send(error.message)
     }
   }
 
@@ -167,35 +158,35 @@ class RuleController {
     try {
       // Validate request
       const rules = {
-        rule_id: "required|integer",
-      };
-
-      const validation = await validate(request.all(), rules);
-
-      if (validation.fails()) {
-        return response.status(422).send(validation.messages()[0]);
+        id: 'required|integer',
       }
 
-      const rule_id = request.input("rule_id");
+      const validation = await validate(request.all(), rules)
 
-      const findRule = await Rule.find(rule_id);
+      if (validation.fails()) {
+        return response.status(422).send(validation.messages()[0])
+      }
+
+      const rule_id = request.input('id')
+
+      const findRule = await Rule.find(rule_id)
 
       if (!findRule) {
         return response.status(404).send({
-          message: "Rule Tidak Ditemukan",
-        });
+          message: 'Rule Tidak Ditemukan',
+        })
       }
 
-      await Rule.query().where("id", rule_id).delete();
+      await Rule.query().where('id', rule_id).delete()
 
       return response.send({
-        message: "Rule Berhasil Dihapus",
-      });
+        message: 'Rule deleted',
+      })
     } catch (error) {
-      console.log(error.message);
-      return response.status(500).send(error.message);
+      console.log(error.message)
+      return response.status(500).send(error.message)
     }
   }
 }
 
-module.exports = RuleController;
+module.exports = RuleController

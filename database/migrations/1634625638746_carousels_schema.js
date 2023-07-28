@@ -7,7 +7,7 @@ class CarouselsSchema extends Schema {
   up() {
     this.create("carousels", (table) => {
       table.bigIncrements();
-      table.string("title", 254).notNullable();
+      table.string("title", 254).nullable();
       table.text("description").nullable();
       table.string("image_name", 254).notNullable();
       table.string("image_mime", 254).notNullable();

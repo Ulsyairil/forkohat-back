@@ -21,8 +21,8 @@ class Rule extends Model {
     return super.formatDates(field, value);
   }
 
-  RuleItem() {
-    return this.hasMany("App/Models/RuleItem", "id", "rule_id");
+  Permission() {
+    return this.hasMany("App/Models/Permission", "id", "rule_id");
   }
 }
 

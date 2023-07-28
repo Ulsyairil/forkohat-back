@@ -15,6 +15,7 @@ class UserFilesSchema extends Schema {
         .references("id")
         .inTable("users")
         .onDelete("cascade")
+        .onUpdate("cascade")
         .unique();
       table.string("name", 254).notNullable();
       table.string("mime", 254).notNullable();

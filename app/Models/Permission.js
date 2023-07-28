@@ -4,9 +4,9 @@
 const Model = use("Model");
 const Moment = require("moment");
 
-class RuleItem extends Model {
+class Permission extends Model {
   static get table() {
-    return "rule_items";
+    return "permissions";
   }
 
   static formatDates(field, value) {
@@ -34,4 +34,4 @@ class RuleItem extends Model {
   }
 }
 
-module.exports = RuleItem;
+module.exports = Permission;

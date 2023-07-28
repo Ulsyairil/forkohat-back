@@ -14,7 +14,8 @@ class NewsSchema extends Schema {
         .unsigned()
         .references("id")
         .inTable("users")
-        .onDelete("cascade");
+        .onDelete("cascade")
+        .onUpdate("cascade");
       table.string("title", 254).notNullable();
       table.text("content").notNullable();
       table.string("image_name", 254).notNullable();

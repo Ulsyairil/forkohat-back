@@ -1,66 +1,106 @@
-"use strict";
+'use strict'
 
-const Arrangement = use("App/Models/Arrangement");
-const Moment = require("moment");
-const { validate } = use("Validator");
-const Program = use("App/Models/Program");
+const Arrangement = use('App/Models/Arrangement')
+const Moment = require('moment')
+const { validate } = use('Validator')
+const Program = use('App/Models/Program')
 
 class ArrangementController {
   async index({ request, response }) {
     try {
       // Validate request
       const rules = {
-        program_id: "required|integer",
-        page: "required|integer",
-        limit: "required|integer",
-        order: "required|in:asc,desc",
-        search: "string",
-      };
+        program_id: 'required|integer',
+        page: 'required|integer',
+        limit: 'required|integer',
+        order: 'required|in:asc,desc',
+        search: 'string',
+      }
 
-      const validation = await validate(request.all(), rules);
+      const validation = await validate(request.all(), rules)
 
       if (validation.fails()) {
-        return response.status(422).send(validation.messages()[0]);
+        return response.status(422).send(validation.messages()[0])
       }
 
       // All input
-      const program_id = request.input("program_id");
-      const page = request.input("page");
-      const limit = request.input("limit");
-      const order = request.input("order");
-      const search = request.input("search");
+      const program_id = request.input('program_id')
+      const page = request.input('page')
+      const limit = request.input('limit')
+      const order = request.input('order')
+      const search = request.input('search')
 
       // Find program data
-      let findProgram = await Program.find(program_id);
+      let findProgram = await Program.find(program_id)
 
       // Check program exist
       if (!findProgram) {
         return response.status(404).send({
-          message: "Program Tidak Ditemukan",
-        });
+          message: 'Program Tidak Ditemukan',
+        })
       }
 
       // Arrangement query
-      let query = Arrangement.query();
+      let query = Arrangement.query()
 
       // Search arrangement query
       if (search) {
         query
-          .where("title", "like", `%${search}%`)
-          .orWhere("description", "like", `%${search}%`);
+          .where('title', 'like', `%${search}%`)
+          .orWhere('description', 'like', `%${search}%`)
       }
 
       // Get arrangement data
       const data = await query
-        .where("program_id", program_id)
-        .orderBy("id", order)
-        .paginate(page, limit);
-      console.log(data);
+        .where('program_id', program_id)
+        .orderBy('id', order)
+        .paginate(page, limit)
+      console.log(data)
 
-      return response.status(200).send(data);
+      return response.status(200).send(data)
     } catch (error) {
-      console.log(error.message);
-      return response.status(500).send(error.message);
+      console.log(error.message)
+      return response.status(500).send(error.message)
+    }
+  }
+
+  async indexAll({ request, response }) {
+    try {
+      // Validate request
+      const rules = {
+        program_id: 'required|integer',
+      }
+
+      const validation = await validate(request.all(), rules)
+
+      if (validation.fails()) {
+        return response.status(422).send(validation.messages()[0])
+      }
+
+      // All input
+      const program_id = request.input('program_id')
+
+      // Find program data
+      let findProgram = await Program.find(program_id)
+
+      // Check program exist
+      if (!findProgram) {
+        return response.status(404).send({
+          message: 'Program Tidak Ditemukan',
+        })
+      }
+
+      // Get arrangement data
+      const data = await Arrangement.query()
+        .where('program_id', program_id)
+        .orderBy('title', 'asc')
+        .fetch()
+      console.log(data)
+
+      return response.status(200).send(data)
+    } catch (error) {
+      console.log(error.message)
+      return response.status(500).send(error.message)
     }
   }
 
@@ -68,35 +108,35 @@ class ArrangementController {
     try {
       // Validate request
       const rules = {
-        arrangement_id: "required|integer",
-      };
+        id: 'required|integer',
+      }
 
-      const validation = await validate(request.all(), rules);
+      const validation = await validate(request.all(), rules)
 
       if (validation.fails()) {
-        return response.status(422).send(validation.messages()[0]);
+        return response.status(422).send(validation.messages()[0])
       }
 
       // All input
-      const arrangement_id = request.input("arrangement_id");
+      const arrangement_id = request.input('id')
 
       // Get data
       let data = await Arrangement.query()
-        .with("Program")
-        .where("id", arrangement_id)
-        .first();
+        .with('Program')
+        .where('id', arrangement_id)
+        .first()
 
       // Check if data exist
       if (!data) {
         return response.send({
-          message: "Tatanan Tidak Ditemukan",
-        });
+          message: 'Tatanan Tidak Ditemukan',
+        })
       }
 
-      return response.send(data);
+      return response.send(data)
     } catch (error) {
-      console.log(error.message);
-      return response.status(500).send(error.message);
+      console.log(error.message)
+      return response.status(500).send(error.message)
     }
   }
 
@@ -104,64 +144,58 @@ class ArrangementController {
     try {
       // Validate request
       const rules = {
-        program_id: "required|integer",
-        title: "required|string",
-        description: "string",
-      };
+        program_id: 'required|integer',
+        title: 'required|string',
+        description: 'string',
+      }
 
-      const messages = {
-        "program_id.required": "ID Program Harus Diisi",
-        "program_id.integer": "ID Program Harus Berupa Angka",
-        "title.required": "Judul Tatanan Harus Diisi",
-      };
-
-      const validation = await validate(request.all(), rules, messages);
+      const validation = await validate(request.all(), rules)
 
       if (validation.fails()) {
-        return response.status(422).send(validation.messages()[0]);
+        return response.status(422).send(validation.messages()[0])
       }
 
       // All input
-      const program_id = request.input("program_id");
-      const title = request.input("title");
-      const description = request.input("description");
-      const image = request.file("image", {
-        extnames: ["png", "jpg", "jpeg"],
-      });
+      const program_id = request.input('program_id')
+      const title = request.input('title')
+      const description = request.input('description')
+      const image = request.file('image', {
+        extnames: ['png', 'jpg', 'jpeg'],
+      })
 
       // Check if input image is null
       if (image == null) {
         return response.status(422).send({
-          message: "Logo Harus Diunggah",
-        });
+          message: 'Logo Harus Diunggah',
+        })
       }
 
       // Find program data
-      let findProgram = await Program.find(program_id);
+      let findProgram = await Program.find(program_id)
 
       // Check program exist
       if (!findProgram) {
         return response.status(404).send({
-          message: "Program Tidak Ditemukan",
-        });
+          message: 'Program Tidak Ditemukan',
+        })
       }
 
       let random = RandomString.generate({
-        capitalization: "lowercase",
-      });
+        capitalization: 'lowercase',
+      })
 
       // Move image
-      let fileName;
-      fileName = `${voca.snakeCase(
-        image.clientName.split(".").slice(0, -1).join(".")
-      )}_${random}.${image.extname}`;
+      let fileName
+      fileName = `${random}_${new Date().toJSON().slice(0, 10)}.${
+        image.extname
+      }`
 
-      await image.move(Helpers.resourcesPath("uploads/arrangements"), {
+      await image.move(Helpers.resourcesPath('uploads/arrangements'), {
         name: fileName,
-      });
+      })
 
       if (!image.moved()) {
-        return response.status(422).send(image.errors());
+        return response.status(422).send(image.errors())
       }
 
       // Create data
@@ -171,14 +205,14 @@ class ArrangementController {
         description: description,
         image_name: fileName,
         image_mime: image.extname,
-        image_path: Helpers.resourcesPath("uploads/arrangements"),
+        image_path: Helpers.resourcesPath('uploads/arrangements'),
         image_url: `/api/v1/file/${image.extname}/${fileName}`,
-      });
+      })
 
-      return response.send(create);
+      return response.send(create)
     } catch (error) {
-      console.log(error.message);
-      return response.status(500).send(error.message);
+      console.log(error.message)
+      return response.status(500).send(error.message)
     }
   }
 
@@ -186,101 +220,93 @@ class ArrangementController {
     try {
       // Validate request
       const rules = {
-        arrangement_id: "required|integer",
-        title: "required|string",
-        description: "string",
-      };
+        id: 'required|integer',
+        title: 'required|string',
+        description: 'string',
+      }
 
-      const messages = {
-        "arrangement_id.required": "ID Tatanan Harus Diisi",
-        "arrangement_id.integer": "ID Tatanan Harus Berupa Angka",
-        "program_id.required": "ID Program Harus Diisi",
-        "program_id.integer": "ID Program Harus Berupa Angka",
-        "title.required": "Judul Tatanan Harus Diisi",
-      };
-
-      const validation = await validate(request.all(), rules);
+      const validation = await validate(request.all(), rules)
 
       if (validation.fails()) {
-        return response.status(422).send(validation.messages()[0]);
+        return response.status(422).send(validation.messages()[0])
       }
 
       // All input
-      const arrangement_id = request.input("arrangement_id");
-      const title = request.input("title");
-      const description = request.input("description");
-      const image = request.file("image", {
-        extnames: ["png", "jpg", "jpeg"],
-      });
+      const arrangement_id = request.input('id')
+      const title = request.input('title')
+      const description = request.input('description')
+      const image = request.file('image', {
+        extnames: ['png', 'jpg', 'jpeg'],
+      })
 
       // Find data
-      let find = await Arrangement.find(arrangement_id);
+      let find = await Arrangement.find(arrangement_id)
 
       // Check if data exist
       if (!find) {
         return response.status(400).send({
-          message: "Tatanan Tidak Ditemukan",
-        });
+          message: 'Tatanan Tidak Ditemukan',
+        })
       }
 
       let random = RandomString.generate({
-        capitalization: "lowercase",
-      });
+        capitalization: 'lowercase',
+      })
 
       // Upload image
-      let fileName, payload;
+      let fileName, payload
       if (image) {
         let findImage = await Arrangement.query()
-          .where("id", arrangement_id)
-          .first();
+          .where('id', arrangement_id)
+          .first()
 
-        fileName = `${voca.snakeCase(
-          image.clientName.split(".").slice(0, -1).join(".")
-        )}_${random}.${image.extname}`;
+        fileName = `${random}_${new Date().toJSON().slice(0, 10)}.${
+          image.extname
+        }`
 
-        await image.move(Helpers.resourcesPath("uploads/arrangements"), {
+        await image.move(Helpers.resourcesPath('uploads/arrangements'), {
           name: fileName,
-        });
+        })
 
         if (!image.moved()) {
-          return response.status(422).send(image.errors());
+          return response.status(422).send(image.errors())
         }
 
         removeFile(
           path.join(
-            Helpers.resourcesPath("uploads/arrangements"),
-            findImage.image_name
-          )
-        );
+            Helpers.resourcesPath('uploads/arrangements'),
+            findImage.image_name,
+          ),
+        )
 
         payload = {
           title: title,
           description: description,
           image_name: fileName,
           image_mime: image.extname,
-          image_path: Helpers.resourcesPath("uploads/arrangements"),
+          image_path: Helpers.resourcesPath('uploads/arrangements'),
           image_url: `/api/v1/file/${image.extname}/${fileName}`,
-        };
+        }
       } else {
         payload = {
           title: title,
           description: description,
-        };
+        }
       }
 
       // Update data
-      await Arrangement.query().where("id", arrangement_id).update(payload);
+      await Arrangement.query().where('id', arrangement_id).update(payload)
 
       // Get updated data
       let data = await Arrangement.query()
-        .with("Program")
-        .where("id", arrangement_id)
-        .first();
+        .with('Program')
+        .where('id', arrangement_id)
+        .first()
 
-      return response.send(data);
+      return response.send(data)
     } catch (error) {
-      console.log(error.message);
-      return response.status(500).send(error.message);
+      console.log(error.message)
+      return response.status(500).send(error.message)
     }
   }
 
@@ -306,7 +332,7 @@ class ArrangementController {
   //     // Check if data exist
   //     if (!find) {
   //       return response.status(400).send({
-  //         message: "arrangement not found",
+  //         message: "Tatanan Tidak Ditemukan",
   //       });
   //     }
 
@@ -350,7 +376,7 @@ class ArrangementController {
   //     // Check if data exist
   //     if (!find) {
   //       return response.status(400).send({
-  //         message: "arrangement not found",
+  //         message: "Tatanan Tidak Ditemukan",
   //       });
   //     }
 
@@ -376,39 +402,39 @@ class ArrangementController {
     try {
       // Validate request
       const rules = {
-        arrangement_id: "required|integer",
-      };
+        id: 'required|integer',
+      }
 
-      const validation = await validate(request.all(), rules);
+      const validation = await validate(request.all(), rules)
 
       if (validation.fails()) {
-        return response.status(422).send(validation.messages()[0]);
+        return response.status(422).send(validation.messages()[0])
       }
 
       // All input
-      const arrangement_id = request.input("arrangement_id");
+      const arrangement_id = request.input('id')
 
       // Find data
-      let find = await Arrangement.find(arrangement_id);
+      let find = await Arrangement.find(arrangement_id)
 
       // Check if data exist
       if (!find) {
         return response.status(400).send({
-          message: "Tatanan Tidak Ditemukan",
-        });
+          message: 'Tatanan Tidak Ditemukan',
+        })
       }
 
       // Delete data
-      await Arrangement.query().where("id", arrangement_id).delete();
+      await Arrangement.query().where('id', arrangement_id).delete()
 
       return response.send({
-        message: "Tatanan Berhasil Dihapus",
-      });
+        message: 'Arrangement deleted',
+      })
     } catch (error) {
-      console.log(error.message);
-      return response.status(500).send(error.message);
+      console.log(error.message)
+      return response.status(500).send(error.message)
     }
   }
 }
 
-module.exports = ArrangementController;
+module.exports = ArrangementController

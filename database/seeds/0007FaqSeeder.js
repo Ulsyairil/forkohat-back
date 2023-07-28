@@ -2,7 +2,7 @@
 
 /*
 |--------------------------------------------------------------------------
-| ProgramSeeder
+| FaqSeeder
 |--------------------------------------------------------------------------
 |
 | Make use of the Factory instance to seed database with dummy data or
@@ -13,19 +13,23 @@
 /** @type {import('@adonisjs/lucid/src/Factory')} */
 const Factory = use("Factory");
 const Database = use("Database");
+const Faker = require("@faker-js/faker").default;
 const Moment = require("moment");
 
-class ProgramSeeder {
+class FaqSeeder {
   async run() {
-    await Database.table("programs").insert({
-      title: "Umum",
-      Description: "Program Umum Forkohat",
-      created_at: Moment().format("YYYY-MM-DD HH:mm:ss"),
-      updated_at: Moment().format("YYYY-MM-DD HH:mm:ss"),
-    });
+    const dateNow = Moment().format("YYYY-MM-DD HH:mm:ss");
 
-    console.log("Program Generated");
+    for (let index = 1; index <= 10; index++) {
+      await Database.table("faqs").insert({
+        name: Faker.lorem.sentence(5),
+        created_at: dateNow,
+        updated_at: dateNow,
+      });
+    }
+
+    console.log("FAQ's Generated");
   }
 }
 
-module.exports = ProgramSeeder;
+module.exports = FaqSeeder;

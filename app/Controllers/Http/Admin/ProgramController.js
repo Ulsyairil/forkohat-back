@@ -1,59 +1,76 @@
-"use strict";
+'use strict'
 
-const Helpers = use("Helpers");
-const fs = use("fs");
-const path = use("path");
-const removeFile = Helpers.promisify(fs.unlink);
-const Program = use("App/Models/Program");
-const RandomString = require("randomstring");
-const Moment = require("moment");
-const voca = require("voca");
-const { validate } = use("Validator");
+const Helpers = use('Helpers')
+const fs = use('fs')
+const path = use('path')
+const removeFile = Helpers.promisify(fs.unlink)
+const Program = use('App/Models/Program')
+const RandomString = require('randomstring')
+const Moment = require('moment')
+const voca = require('voca')
+const { validate } = use('Validator')
 
 class ProgramController {
   async index({ request, response }) {
     try {
       // Validate request
       const rules = {
-        page: "required|integer",
-        limit: "required|integer",
-        order: "required|in:asc,desc",
-        search: "string",
-      };
+        page: 'required|integer',
+        limit: 'required|integer',
+        order: 'required|in:asc,desc',
+        search: 'string',
+      }
 
-      const validation = await validate(request.all(), rules);
+      const validation = await validate(request.all(), rules)
 
       if (validation.fails()) {
-        return response.status(422).send(validation.messages()[0]);
+        return response.status(422).send(validation.messages()[0])
       }
 
       // All input
-      const page = request.input("page");
-      const limit = request.input("limit");
-      const order = request.input("order");
-      const search = request.input("search");
+      const page = request.input('page')
+      const limit = request.input('limit')
+      const order = request.input('order')
+      const search = request.input('search')
 
       // Initiate program query
-      let query = Program.query();
+      let query = Program.query()
 
       // Search program query
       if (search) {
         query
-          .where("title", "like", `%${search}%`)
-          .orWhere("description", "like", `%${search}%`)
-          .orWhere("created_at", "like", `%${search}%`)
-          .orWhere("updated_at", "like", `%${search}%`);
+          .where('title', 'like', `%${search}%`)
+          .orWhere('description', 'like', `%${search}%`)
+          .orWhere('created_at', 'like', `%${search}%`)
+          .orWhere('updated_at', 'like', `%${search}%`)
       }
 
       // Find program
-      let data = await query.orderBy("id", order).paginate(page, limit);
+      let data = await query.orderBy('id', order).paginate(page, limit)
 
-      console.log(data);
+      console.log(data)
 
-      return response.send(data);
+      return response.send(data)
     } catch (error) {
-      console.log(error.message);
-      return response.status(500).send(error.message);
+      console.log(error.message)
+      return response.status(500).send(error.message)
+    }
+  }
+
+  async indexAll({ request, response }) {
+    try {
+      // Find program
+      const data = await Program.query()
+        .whereNot('id', 1)
+        .orderBy('title', 'asc')
+        .fetch()
+
+      console.log(data)
+
+      return response.send(data)
+    } catch (error) {
+      console.log(error.message)
+      return response.status(500).send(error.message)
     }
   }
 
@@ -61,32 +78,32 @@ class ProgramController {
     try {
       // Validate request
       const rules = {
-        program_id: "required|integer",
-      };
+        id: 'required|integer',
+      }
 
-      const validation = await validate(request.all(), rules);
+      const validation = await validate(request.all(), rules)
 
       if (validation.fails()) {
-        return response.status(422).send(validation.messages()[0]);
+        return response.status(422).send(validation.messages()[0])
       }
 
       // All input
-      const program_id = request.input("program_id");
+      const program_id = request.input('program_id')
 
       // Find program
-      let data = await Program.query().where("id", program_id).first();
+      let data = await Program.query().where('id', program_id).first()
 
       // Return false if program not exists
       if (!data) {
         return response.status(404).send({
-          message: "Program Tidak Ditemukan",
-        });
+          message: 'Program Tidak Ditemukan',
+        })
       }
 
-      return response.send(data);
+      return response.send(data)
     } catch (error) {
-      console.log(error.message);
-      return response.status(500).send(error.message);
+      console.log(error.message)
+      return response.status(500).send(error.message)
     }
   }
 
@@ -94,51 +111,46 @@ class ProgramController {
     try {
       // Validate request
       const rules = {
-        title: "required|string",
-        description: "required|string",
-      };
+        title: 'required|string',
+        description: 'required|string',
+      }
 
-      const messages = {
-        "title.required": "Judul Program Harus Diisi",
-        "description.required": "Deskripsi Program Harus Diisi",
-      };
-
-      const validation = await validate(request.all(), rules, messages);
+      const validation = await validate(request.all(), rules)
 
       if (validation.fails()) {
-        return response.status(422).send(validation.messages()[0]);
+        return response.status(422).send(validation.messages()[0])
       }
 
       // All input
-      const title = request.input("title");
-      const description = request.input("description");
-      const inputImage = request.file("image", {
-        extnames: ["png", "jpg", "jpeg"],
-      });
+      const title = request.input('title')
+      const description = request.input('description')
+      const inputImage = request.file('image', {
+        extnames: ['png', 'jpg', 'jpeg'],
+      })
 
       // Check input image is null
       if (inputImage == null) {
         return response.status(422).send({
-          message: "Logo Program Harus Diunggah",
-        });
+          message: 'Program Gambar Harus Diunggah',
+        })
       }
 
       // Moving uploaded file
-      let fileName;
+      let fileName
       let random = RandomString.generate({
-        capitalization: "lowercase",
-      });
+        capitalization: 'lowercase',
+      })
 
-      fileName = `${voca.snakeCase(
-        inputImage.clientName.split(".").slice(0, -1).join(".")
-      )}_${random}.${inputImage.extname}`;
+      fileName = `${random}_${new Date().toJSON().slice(0, 10)}.${
+        inputImage.extname
+      }`
 
-      await inputImage.move(Helpers.resourcesPath("uploads/program"), {
+      await inputImage.move(Helpers.resourcesPath('uploads/program'), {
         name: fileName,
-      });
+      })
 
       if (!inputImage.moved()) {
-        return response.status(422).send(inputImage.error());
+        return response.status(422).send(inputImage.error())
       }
 
       // Insert to program table
@@ -147,17 +159,17 @@ class ProgramController {
         description: description,
         image_name: fileName,
         image_mime: inputImage.extname,
-        image_path: Helpers.resourcesPath("uploads/program"),
+        image_path: Helpers.resourcesPath('uploads/program'),
         image_url: `/api/v1/file/${inputImage.extname}/${fileName}`,
-      });
+      })
 
       // Get data created
-      let data = await Program.query().where("id", program.id).first();
+      let data = await Program.query().where('id', program.id).first()
 
-      return response.send(data);
+      return response.send(data)
     } catch (error) {
-      console.log(error.message);
-      return response.status(500).send(error.message);
+      console.log(error.message)
+      return response.status(500).send(error.message)
     }
   }
 
@@ -165,76 +177,69 @@ class ProgramController {
     try {
       // Validate request
       const rules = {
-        program_id: "required|integer",
-        title: "required|string",
-        description: "required|string",
-      };
+        id: 'required|integer',
+        title: 'required|string',
+        description: 'required|string',
+      }
 
-      const messages = {
-        "program_id.required": "ID Program Harus Diisi",
-        "program_id.integer": "ID Program Harus Berupa Angka",
-        "title.required": "Judul Program Harus Diisi",
-        "description.required": "Deskripsi Program Harus Diisi",
-      };
-
-      const validation = await validate(request.all(), rules, messages);
+      const validation = await validate(request.all(), rules)
 
       if (validation.fails()) {
-        return response.status(422).send(validation.messages()[0]);
+        return response.status(422).send(validation.messages()[0])
       }
 
       // All input
-      const program_id = request.input("program_id");
-      const title = request.input("title");
-      const description = request.input("description");
-      const inputImage = request.file("image", {
-        extnames: ["png", "jpg", "jpeg"],
-      });
+      const program_id = request.input('id')
+      const title = request.input('title')
+      const description = request.input('description')
+      const inputImage = request.file('image', {
+        extnames: ['png', 'jpg', 'jpeg'],
+      })
 
       // Find program
-      let findData = await Program.find(program_id);
+      let findData = await Program.find(program_id)
 
       // Return false if program not exists
       if (!findData) {
         return response.status(404).send({
-          message: "Program Tidak Ditemukan",
-        });
+          message: 'Program Tidak Ditemukan',
+        })
       }
 
-      let fileName;
+      let fileName
       let random = RandomString.generate({
-        capitalization: "lowercase",
-      });
+        capitalization: 'lowercase',
+      })
 
       // Upload image
       if (inputImage) {
-        let findImage = await Program.query().where("id", program_id).first();
+        let findImage = await Program.query().where('id', program_id).first()
 
         // Delete image
         if (findImage) {
           removeFile(
             path.join(
-              Helpers.resourcesPath("uploads/program"),
-              findImage.image_name
-            )
-          );
+              Helpers.resourcesPath('uploads/program'),
+              findImage.image_name,
+            ),
+          )
         }
 
-        fileName = `${voca.snakeCase(
-          inputImage.clientName.split(".").slice(0, -1).join(".")
-        )}_${random}.${inputImage.extname}`;
+        fileName = `${random}_${new Date().toJSON().slice(0, 10)}.${
+          inputImage.extname
+        }`
 
-        await inputImage.move(Helpers.resourcesPath("uploads/program"), {
+        await inputImage.move(Helpers.resourcesPath('uploads/program'), {
           name: fileName,
-        });
+        })
 
         if (!inputImage.moved()) {
-          return response.status(422).send(inputImage.error());
+          return response.status(422).send(inputImage.error())
         }
       }
 
       // Update program
-      let query = Program.query().where("id", request.input("program_id"));
+      let query = Program.query().where('id', request.input('program_id'))
 
       if (inputImage) {
         await query.update({
@@ -242,150 +247,68 @@ class ProgramController {
           description: description,
           image_name: fileName,
           image_mime: inputImage.extname,
-          image_path: Helpers.resourcesPath("uploads/program"),
+          image_path: Helpers.resourcesPath('uploads/program'),
           image_url: `/api/v1/file/${inputImage.extname}/${fileName}`,
-        });
+        })
       } else {
         await query.update({
           title: title,
           description: description,
-        });
+        })
       }
 
       // Get data updated
-      let data = await Program.query().where("id", program_id).first();
+      let data = await Program.query().where('id', program_id).first()
 
-      return response.send(data);
+      return response.send(data)
     } catch (error) {
-      console.log(error.message);
-      return response.status(500).send(error.message);
+      console.log(error.message)
+      return response.status(500).send(error.message)
     }
   }
-
-  // async dump({ request, response }) {
-  //   try {
-  //     // Validate request
-  //     const rules = {
-  //       program_id: "required|integer",
-  //     };
-
-  //     const validation = await validate(request.all(), rules);
-
-  //     if (validation.fails()) {
-  //       return response.status(422).send(validation.messages()[0]);
-  //     }
-
-  //     // All input
-  //     const program_id = request.input("program_id");
-
-  //     // Find program
-  //     let findData = await Program.find(program_id);
-
-  //     // Return false if program not exists
-  //     if (!findData) {
-  //       return response.status(404).send({
-  //         message: "Program Tidak Ditemukan",
-  //       });
-  //     }
-
-  //     // Dump program
-  //     await Program.query().where("id", program_id).update({
-  //       deleted_at: Moment.now(),
-  //     });
-
-  //     // Get data dumped
-  //     let data = await Program.query().where("id", program_id).first();
-
-  //     return response.send(data);
-  //   } catch (error) {
-  //     console.log(error.message);
-  //     return response.status(500).send(error.message);
-  //   }
-  // }
-
-  // async restore({ request, response }) {
-  //   try {
-  //     // Validate request
-  //     const rules = {
-  //       program_id: "required|integer",
-  //     };
-
-  //     const validation = await validate(request.all(), rules);
-
-  //     if (validation.fails()) {
-  //       return response.status(422).send(validation.messages()[0]);
-  //     }
-
-  //     // All input
-  //     const program_id = request.input("program_id");
-
-  //     // Find program
-  //     let findData = await Program.find(program_id);
-
-  //     // Return false if program not exists
-  //     if (!findData) {
-  //       return response.status(404).send({
-  //         message: "Program Tidak Ditemukan",
-  //       });
-  //     }
-
-  //     // Restore program
-  //     await Program.query().where("id", program_id).update({
-  //       deleted_at: null,
-  //     });
-
-  //     // Get data restored
-  //     let data = await Program.query().where("id", program_id).first();
-
-  //     return response.send(data);
-  //   } catch (error) {
-  //     console.log(error.message);
-  //     return response.status(500).send(error.message);
-  //   }
-  // }
 
   async destroy({ request, response }) {
     try {
       // Validate request
       const rules = {
-        program_id: "required|integer",
-      };
+        id: 'required|integer',
+      }
 
-      const validation = await validate(request.all(), rules);
+      const validation = await validate(request.all(), rules)
 
       if (validation.fails()) {
-        return response.status(422).send(validation.messages()[0]);
+        return response.status(422).send(validation.messages()[0])
       }
 
       // All input
-      const program_id = request.input("program_id");
+      const program_id = request.input('id')
 
       // Find program
-      let findData = await Program.find(program_id);
+      let findData = await Program.find(program_id)
 
       // Return false if program not exists
       if (!findData) {
         return response.status(404).send({
-          message: "Program Tidak Ditemukan",
-        });
+          message: 'Program Tidak Ditemukan',
+        })
       }
 
       // Delete file
       removeFile(
-        path.join(Helpers.resourcesPath("uploads/program"), findData.file_name)
-      );
+        path.join(Helpers.resourcesPath('uploads/program'), findData.file_name),
+      )
 
       // Delete program
-      await Program.query().where("id", program_id).delete();
+      await Program.query().where('id', program_id).delete()
 
       return response.send({
-        message: "Program Berhasil Dihapus",
-      });
+        message: 'Program deleted',
+      })
     } catch (error) {
-      console.log(error.message);
-      return response.status(500).send(error.message);
+      console.log(error.message)
+      return response.status(500).send(error.message)
     }
   }
 }
 
-module.exports = ProgramController;
+module.exports = ProgramController

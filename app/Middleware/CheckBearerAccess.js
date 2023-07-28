@@ -1,7 +1,8 @@
-"use strict";
+'use strict'
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 /** @typedef {import('@adonisjs/framework/src/View')} View */
+const User = use('App/Models/User')
 
 class CheckBearerAccess {
   /**
@@ -11,44 +12,51 @@ class CheckBearerAccess {
    */
   async handle({ auth, request, response }, next, schemes) {
     // call next to advance the request
-    let bearer = request.header("authorization");
-    if (bearer == undefined)
-      return response.status(401).send({
-        message: "Unauthenticated",
-      });
+    let getUserLoggedIn = await auth.getUser()
+    let getUser = await User.query()
+      .with('Rule')
+      .where('id', getUserLoggedIn.$originalAttributes.id)
+      .first()
+    let userData = getUser.toJSON()
 
-    try {
-      await auth.check();
-    } catch (error) {
-      return response.status(403).send({
-        message: "Missing or invalid api token",
-      });
+    switch (schemes[0]) {
+      case 'superadmin':
+        userData.Rule.is_superadmin
+          ? await next()
+          : response.status(403).send({
+              message: 'Forbidden Access',
+            })
+        break
+
+      case 'admin':
+        userData.Rule.is_admin
+          ? await next()
+          : response.status(403).send({
+              message: 'Forbidden Access',
+            })
+        break
+
+      case 'member':
+        userData.Rule.is_member
+          ? await next()
+          : response.status(403).send({
+              message: 'Forbidden Access',
+            })
+        break
+
+      case 'guest':
+        userData.Rule.is_guest
+          ? await next()
+          : response.status(403).send({
+              message: 'Forbidden Access',
+            })
+        break
+
+      default:
+        await next()
+        break
     }
-
-    let user = await auth.getUser();
-
-    if (schemes[0] == "admin") {
-      if (user.rule_id != 1) {
-        return response.status(403).send({
-          message: "Forbidden Access",
-        });
-      }
-
-      await next();
-    }
-
-    if (schemes[0] == "public") {
-      if (user.rule_id != 2) {
-        return response.status(403).send({
-          message: "Forbidden Access",
-        });
-      }
-
-      await next();
-    }
-
-    await next();
   }
 }
 
-module.exports = CheckBearerAccess;
+module.exports = CheckBearerAccess

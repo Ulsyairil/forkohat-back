@@ -65,7 +65,7 @@ class User extends Model {
   }
 
   Rule() {
-    return this.hasMany("App/Models/Rule", "rule_id", "id");
+    return this.hasOne("App/Models/Rule", "rule_id", "id");
   }
 
   UserFile() {

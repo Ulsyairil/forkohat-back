@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /*
 |--------------------------------------------------------------------------
@@ -17,10 +17,11 @@
 |     Make sure to pass relative path from the project root.
 */
 
-const { Ignitor } = require('@adonisjs/ignitor');
+const { Ignitor } = require("@adonisjs/ignitor");
+require("./start/directory");
 
-new Ignitor(require('@adonisjs/fold'))
-  .preLoad('start/redis')
+new Ignitor(require("@adonisjs/fold"))
+  .preLoad("start/redis")
   .appRoot(__dirname)
   .fireHttpServer()
   .catch(console.error);
