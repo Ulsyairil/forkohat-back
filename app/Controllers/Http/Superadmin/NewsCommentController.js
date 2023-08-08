@@ -67,7 +67,7 @@ class NewsCommentController {
         return response.status(422).send(validation.messages()[0])
       }
 
-      const news_comment_id = request.input('news_comment_id')
+      const news_comment_id = request.input('id')
 
       let data = await NewsComment.query()
         .with('User')
@@ -140,7 +140,7 @@ class NewsCommentController {
         return response.status(422).send(validation.messages()[0])
       }
 
-      const news_comment_id = request.input('news_comment_id')
+      const news_comment_id = request.input('id')
       const comment = request.input('comment')
       const user = await auth.getUser()
 
@@ -187,7 +187,7 @@ class NewsCommentController {
         return response.status(422).send(validation.messages()[0])
       }
 
-      const news_comment_id = request.input('news_comment_id')
+      const news_comment_id = request.input('id')
       const user = await auth.getUser()
 
       const findNewsComment = await NewsComment.query()
