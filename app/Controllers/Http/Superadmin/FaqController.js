@@ -1,11 +1,9 @@
 'use strict'
 
-const Faq = use('App/Models/Faq')
-const FaqTopic = use('App/Models/FaqTopic')
-const Moment = require('moment')
+const FAQ = use('App/Models/Faq')
 const { validate } = use('Validator')
 
-class FaqController {
+class FaqTopicController {
   async index({ request, response }) {
     try {
       // Validate request
@@ -27,24 +25,15 @@ class FaqController {
       const order = request.input('order')
       const search = request.input('search')
 
-      let query = Faq.query()
+      let query = FAQ.query()
 
       if (search) {
-        query.where('name', 'like', `%${search}%`)
+        query
+          .where('title', 'like', `%${search}%`)
+          .orWhere('description', 'like', `%${search}%`)
       }
 
       const data = await query.orderBy('id', order).paginate(page, limit)
-
-      return response.send(data)
-    } catch (error) {
-      console.log(error.message)
-      return response.status(500).send(error.message)
-    }
-  }
-
-  async indexAll({ request, response }) {
-    try {
-      const data = await await Faq.query().orderBy('id', 'asc').fetch()
 
       return response.send(data)
     } catch (error) {
@@ -66,9 +55,9 @@ class FaqController {
         return response.status(422).send(validation.messages()[0])
       }
 
-      const faq_id = request.input('id')
+      const fadId = request.input('id')
 
-      let data = await Faq.find(faq_id)
+      let data = await FAQ.find(fadId)
 
       if (!data) {
         return response.status(404).send({
@@ -87,7 +76,8 @@ class FaqController {
     try {
       // Validate request
       const rules = {
-        name: 'required|string',
+        title: 'required|string',
+        description: 'required|string',
       }
 
       const validation = await validate(request.all(), rules)
@@ -96,10 +86,12 @@ class FaqController {
         return response.status(422).send(validation.messages()[0])
       }
 
-      const name = request.input('name')
+      const title = request.input('title')
+      const description = request.input('description')
 
-      let create = await Faq.create({
-        name: name,
+      let create = await FAQ.create({
+        title: title,
+        description: description,
       })
 
       return response.send(create)
@@ -114,7 +106,8 @@ class FaqController {
       // Validate request
       const rules = {
         id: 'required|integer',
-        name: 'required|string',
+        title: 'required|string',
+        description: 'string',
       }
 
       const validation = await validate(request.all(), rules)
@@ -123,22 +116,24 @@ class FaqController {
         return response.status(422).send(validation.messages()[0])
       }
 
-      const faq_id = request.input('id')
-      const name = request.input('name')
+      const faqId = request.input('id')
+      const title = request.input('title')
+      const description = request.input('description')
 
-      let findData = await Faq.find(faq_id)
+      let findFaq = await FAQ.find(faqId)
 
-      if (!findData) {
+      if (!findFaq) {
         return response.status(404).send({
           message: 'FAQ Tidak Ditemukan',
         })
       }
 
-      await Faq.query().where('id', faq_id).update({
-        name: name,
+      await FAQ.query().where('id', faqId).update({
+        title: title,
+        description: description,
       })
 
-      let data = await Faq.find(faq_id)
+      let data = await FAQ.find(faqId)
 
       return response.send(data)
     } catch (error) {
@@ -160,22 +155,12 @@ class FaqController {
         return response.status(422).send(validation.messages()[0])
       }
 
-      const faq_id = request.input('id')
+      const faqId = request.input('id')
 
-      let findData = await Faq.find(faq_id)
-
-      if (!findData) {
-        return response.status(404).send({
-          message: 'FAQ Tidak Ditemukan',
-        })
-      }
-
-      await FaqTopic.query().where('faq_id', faq_id).delete()
-
-      await Faq.query().where('id', faq_id).delete()
+      await FAQ.query().where('id', faqId).delete()
 
       return response.send({
-        message: 'FAQ deleted',
+        message: 'FAQ berhasil dihapus',
       })
     } catch (error) {
       console.log(error.message)
@@ -184,4 +169,4 @@ class FaqController {
   }
 }
 
-module.exports = FaqController
+module.exports = FaqTopicController

@@ -28,18 +28,10 @@ const Base = Route => {
 
     // FAQ route
     Route.post('faqs', 'Superadmin/FaqController.index')
-    Route.get('faqs', 'Superadmin/FaqController.indexAll')
     Route.get('faq', 'Superadmin/FaqController.get')
     Route.post('faq', 'Superadmin/FaqController.create')
     Route.put('faq', 'Superadmin/FaqController.edit')
     Route.delete('faq', 'Superadmin/FaqController.destroy')
-
-    // FAQ topic route
-    Route.post('faq/topics', 'Superadmin/FaqTopicController.index')
-    Route.get('faq/topic', 'Superadmin/FaqTopicController.get')
-    Route.post('faq/topic', 'Superadmin/FaqTopicController.create')
-    Route.put('faq/topic', 'Superadmin/FaqTopicController.edit')
-    Route.delete('faq/topic', 'Superadmin/FaqTopicController.destroy')
 
     // News route
     Route.post('news', 'Superadmin/NewsController.index')
