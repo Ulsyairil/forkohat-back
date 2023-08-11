@@ -46,7 +46,10 @@ class ProgramController {
       }
 
       // Find program
-      let data = await query.orderBy('id', order).paginate(page, limit)
+      let data = await query
+        .whereNot('id', 1)
+        .orderBy('id', order)
+        .paginate(page, limit)
 
       console.log(data)
 
@@ -88,7 +91,7 @@ class ProgramController {
       }
 
       // All input
-      const program_id = request.input('program_id')
+      const program_id = request.input('id')
 
       // Find program
       let data = await Program.query().where('id', program_id).first()
@@ -136,12 +139,11 @@ class ProgramController {
       }
 
       // Moving uploaded file
-      let fileName
       let random = RandomString.generate({
         capitalization: 'lowercase',
       })
 
-      fileName = `${random}_${new Date().toJSON().slice(0, 10)}.${
+      let fileName = `${random}_${new Date().toJSON().slice(0, 10)}.${
         inputImage.extname
       }`
 
@@ -177,7 +179,7 @@ class ProgramController {
     try {
       // Validate request
       const rules = {
-        id: 'required|integer',
+        program_id: 'required|integer',
         title: 'required|string',
         description: 'required|string',
       }
@@ -189,7 +191,7 @@ class ProgramController {
       }
 
       // All input
-      const program_id = request.input('id')
+      const program_id = request.input('program_id')
       const title = request.input('title')
       const description = request.input('description')
       const inputImage = request.file('image', {
@@ -239,7 +241,7 @@ class ProgramController {
       }
 
       // Update program
-      let query = Program.query().where('id', request.input('program_id'))
+      let query = Program.query().where('id', program_id)
 
       if (inputImage) {
         await query.update({
@@ -295,7 +297,10 @@ class ProgramController {
 
       // Delete file
       removeFile(
-        path.join(Helpers.resourcesPath('uploads/program'), findData.file_name),
+        path.join(
+          Helpers.resourcesPath('uploads/program'),
+          findData.image_name,
+        ),
       )
 
       // Delete program

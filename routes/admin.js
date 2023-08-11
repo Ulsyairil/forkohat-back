@@ -27,18 +27,10 @@ const Base = Route => {
 
     // FAQ route
     Route.post('faqs', 'Admin/FaqController.index')
-    Route.get('faqs', 'Admin/FaqController.indexAll')
     Route.get('faq', 'Admin/FaqController.get')
     Route.post('faq', 'Admin/FaqController.create')
     Route.put('faq', 'Admin/FaqController.edit')
     Route.delete('faq', 'Admin/FaqController.destroy')
-
-    // FAQ topic route
-    Route.post('faq/topics', 'Admin/FaqTopicController.index')
-    Route.get('faq/topic', 'Admin/FaqTopicController.get')
-    Route.post('faq/topic', 'Admin/FaqTopicController.create')
-    Route.put('faq/topic', 'Admin/FaqTopicController.edit')
-    Route.delete('faq/topic', 'Admin/FaqTopicController.destroy')
 
     // News route
     Route.post('news', 'Admin/NewsController.index')
@@ -119,6 +111,7 @@ const Base = Route => {
 
     // Carousel route
     Route.post('carousels', 'Admin/CarouselController.index')
+    Route.get('carousel', 'Admin/CarouselController.get')
     Route.post('carousel', 'Admin/CarouselController.create')
     Route.put('carousel', 'Admin/CarouselController.edit')
     Route.delete('carousel', 'Admin/CarouselController.destroy')

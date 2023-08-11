@@ -1,9 +1,15 @@
 'use strict'
 
+const Helpers = use('Helpers')
+const fs = use('fs')
+const path = use('path')
+const removeFile = Helpers.promisify(fs.unlink)
 const Arrangement = use('App/Models/Arrangement')
 const Moment = require('moment')
 const { validate } = use('Validator')
 const Program = use('App/Models/Program')
+const RandomString = require('randomstring')
+const voca = require('voca')
 
 class ArrangementController {
   async index({ request, response }) {
@@ -185,8 +191,7 @@ class ArrangementController {
       })
 
       // Move image
-      let fileName
-      fileName = `${random}_${new Date().toJSON().slice(0, 10)}.${
+      let fileName = `${random}_${new Date().toJSON().slice(0, 10)}.${
         image.extname
       }`
 

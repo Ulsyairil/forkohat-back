@@ -118,9 +118,9 @@ class NewsController {
         capitalization: 'lowercase',
       })
 
-      let fileName = `${voca.snakeCase(
-        inputImage.clientName.split('.').slice(0, -1).join('.'),
-      )}_${random}.${inputImage.extname}`
+      let fileName = `${random}_${new Date().toJSON().slice(0, 10)}.${
+        inputImage.extname
+      }`
 
       await inputImage.move(Helpers.resourcesPath('uploads/news'), {
         name: fileName,
@@ -190,9 +190,9 @@ class NewsController {
           path.join(Helpers.resourcesPath('uploads/news'), findNews.image_name),
         )
 
-        fileName = `${voca.snakeCase(
-          inputImage.clientName.split('.').slice(0, -1).join('.'),
-        )}_${random}.${inputImage.extname}`
+        fileName = `${random}_${new Date().toJSON().slice(0, 10)}.${
+          inputImage.extname
+        }`
 
         await inputImage.move(Helpers.resourcesPath('uploads/news'), {
           name: fileName,

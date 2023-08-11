@@ -47,6 +47,32 @@ class CarouselController {
     }
   }
 
+  async get({ request, response }) {
+    try {
+      const rules = {
+        id: 'required|integer',
+      }
+
+      const validation = await validate(request.all(), rules)
+
+      if (validation.fails()) {
+        return response.status(422).send(validation.messages()[0])
+      }
+
+      const id = request.input('id')
+      const data = await Carousel.query().where('id', id).first()
+
+      return data == ('' || null)
+        ? response.status(404).send({
+          message: 'not found',
+        })
+        : response.status(200).send(data)
+    } catch (error) {
+      console.log(error.message)
+      return response.status(500).send(error.message)
+    }
+  }
+
   async create({ request, response }) {
     try {
       const rules = {
@@ -78,9 +104,7 @@ class CarouselController {
         capitalization: 'lowercase',
       })
 
-      let fileName = `${random}_${new Date().toJSON().slice(0, 10)}.${
-        image.extname
-      }`
+      let fileName = `${random}_${(new Date().toJSON().slice(0, 10))}.${image.extname}`
 
       await image.move(Helpers.resourcesPath('uploads/carousel'), {
         name: fileName,
@@ -147,8 +171,8 @@ class CarouselController {
         removeFile(
           path.join(
             Helpers.resourcesPath('uploads/carousel'),
-            findData.image_name,
-          ),
+            findData.image_name
+          )
         )
 
         // Move uploaded image
@@ -156,9 +180,7 @@ class CarouselController {
           capitalization: 'lowercase',
         })
 
-        let fileName = `${random}_${new Date().toJSON().slice(0, 10)}.${
-          image.extname
-        }`
+        let fileName = `${random}_${(new Date().toJSON().slice(0, 10))}.${image.extname}`
 
         await image.move(Helpers.resourcesPath('uploads/carousel'), {
           name: fileName,
@@ -223,8 +245,8 @@ class CarouselController {
         removeFile(
           path.join(
             Helpers.resourcesPath('uploads/carousel'),
-            findFile.image_name,
-          ),
+            findFile.image_name
+          )
         )
       }
 

@@ -54,12 +54,9 @@ class EventController {
         .with('Author')
         .with('Arrangement')
         .with('Arrangement.Program')
-        .where('arrangement_id', arrangement_id)
 
       if (search) {
-        query
-          .where('title', 'like', `%${search}%`)
-          .orWhere('description', 'like', `%${search}%`)
+        query.where('title', 'like', `%${search}%`)
       }
 
       if (trash == '0' || trash == false) {
@@ -71,6 +68,7 @@ class EventController {
       }
 
       let data = await query
+        .where('arrangement_id', arrangement_id)
         .where('showed', showed)
         .orderBy('id', order)
         .paginate(page, limit)
@@ -126,7 +124,7 @@ class EventController {
         registration_date: 'date',
         end_registration_date: 'required_if:registration_date,date',
         expired_date: 'required|date',
-        registration_url: 'url',
+        registration_url: 'string',
         showed: 'required|in:member,public',
       }
 
@@ -227,7 +225,7 @@ class EventController {
         registration_date: 'date',
         end_registration_date: 'date',
         expired_date: 'required|date',
-        registration_url: 'url',
+        registration_url: 'string',
         showed: 'required|in:member,public',
       }
 
@@ -279,7 +277,7 @@ class EventController {
         )
       }
 
-      let updateEvent = Event.query().where('id', request.input('event_id'))
+      let updateEvent = Event.query().where('id', event_id)
 
       // Update event table
       if (image) {
@@ -397,9 +395,7 @@ class EventController {
       })
 
       // Get data restored
-      let data = await Event.query()
-        .where('id', request.input('event_id'))
-        .first()
+      let data = await Event.query().where('id', event_id).first()
 
       return response.send(data)
     } catch (error) {
@@ -440,6 +436,10 @@ class EventController {
       convert.forEach(value => {
         removeFile(path.join(value.path, value.name))
       })
+
+      removeFile(
+        path.join(Helpers.resourcesPath('uploads/event'), findData.image_name),
+      )
 
       await EventFile.query().where('event_id', event_id).delete()
       await Event.query().where('id', event_id).delete()
