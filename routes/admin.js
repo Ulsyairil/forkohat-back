@@ -115,6 +115,13 @@ const Base = Route => {
     Route.post('carousel', 'Admin/CarouselController.create')
     Route.put('carousel', 'Admin/CarouselController.edit')
     Route.delete('carousel', 'Admin/CarouselController.destroy')
+
+    // Orgs routes
+    Route.post('orgs', 'Admin/OrgController.index')
+    Route.get('org', 'Admin/OrgController.get')
+    Route.post('org', 'Admin/OrgController.create')
+    Route.put('org', 'Admin/OrgController.edit')
+    Route.delete('org', 'Admin/OrgController.destroy')
   })
     .prefix('api/v1/admin')
     .middleware(['auth', 'api:admin'])

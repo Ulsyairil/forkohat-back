@@ -128,6 +128,13 @@ const Base = Route => {
     Route.post('carousel', 'Superadmin/CarouselController.create')
     Route.put('carousel', 'Superadmin/CarouselController.edit')
     Route.delete('carousel', 'Superadmin/CarouselController.destroy')
+
+    // Orgs routes
+    Route.post('orgs', 'Superadmin/OrgController.index')
+    Route.get('org', 'Superadmin/OrgController.get')
+    Route.post('org', 'Superadmin/OrgController.create')
+    Route.put('org', 'Superadmin/OrgController.edit')
+    Route.delete('org', 'Superadmin/OrgController.destroy')
   })
     .prefix('api/v1/superadmin')
     .middleware(['auth', 'api:superadmin'])

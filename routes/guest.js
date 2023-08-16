@@ -1,4 +1,4 @@
-const Base = (Route) => {
+const Base = Route => {
   Route.group(function () {
     // Program
     Route.post('programs', 'Guest/ProgramController.index')
@@ -7,7 +7,7 @@ const Base = (Route) => {
     Route.post('arrangements', 'Guest/ArrangementController.index')
     Route.post(
       'arrangement/generals',
-      'Guest/ArrangementController.indexGeneral'
+      'Guest/ArrangementController.indexGeneral',
     )
 
     // Arrangement item route
@@ -46,6 +46,10 @@ const Base = (Route) => {
 
     // Profile Route
     Route.put('profile/password', 'ProfileController.changePassword')
+
+    // Orgs routes
+    Route.post('orgs', 'Guest/OrgController.index')
+    Route.get('org', 'Guest/OrgController.get')
   })
     .prefix('api/v1/guest')
     .middleware(['auth', 'api:guest'])
