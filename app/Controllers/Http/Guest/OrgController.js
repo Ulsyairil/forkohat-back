@@ -7,7 +7,7 @@ const { validate } = use('Validator')
 class OrgController {
   async index({ request, response }) {
     try {
-      let data = await Org.query().with('User').orderBy('id', 'asc')
+      let data = await Org.query().with('User').orderBy('id', 'asc').fetch()
 
       return response.send(data)
     } catch (error) {

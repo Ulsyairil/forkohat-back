@@ -5,17 +5,18 @@ const Factory = use('Factory')
 const Database = use('Database')
 const Faker = require('@faker-js/faker').fakerID_ID
 const Moment = require('moment')
+const Voca = require('voca')
 
 class FakeOrganizationChartSeeder {
   async run() {
     const dateNow = Moment().format('YYYY-MM-DD HH:mm:ss')
-    const jobArea = Faker.person.jobArea()
+    const jobArea = Voca.upperCase(Faker.person.jobArea())
 
     await Database.table('orgs').insert({
       user_id: 4,
       area: jobArea,
-      office: 'CEO Office',
-      position_name: 'Chief Executive Officer',
+      office: 'CEO OFFICE',
+      position_name: 'CEO',
       created_at: dateNow,
       updated_at: dateNow,
     })
@@ -23,8 +24,8 @@ class FakeOrganizationChartSeeder {
     await Database.table('orgs').insert({
       user_id: 5,
       area: jobArea,
-      office: 'CTO Office',
-      position_name: 'Chief Technology Officer',
+      office: 'CTO OFFICE',
+      position_name: 'CTO',
       created_at: dateNow,
       updated_at: dateNow,
     })
@@ -32,8 +33,8 @@ class FakeOrganizationChartSeeder {
     await Database.table('orgs').insert({
       user_id: 6,
       area: jobArea,
-      office: 'CFO Office',
-      position_name: 'Chief Financial Officer',
+      office: 'CFO OFFICE',
+      position_name: 'CFO',
       created_at: dateNow,
       updated_at: dateNow,
     })
@@ -43,8 +44,8 @@ class FakeOrganizationChartSeeder {
         user_id: index,
         parent_id: 2,
         area: jobArea,
-        office: 'IT Office',
-        position_name: 'Staff IT',
+        office: 'IT OFFICE',
+        position_name: 'STAFF IT',
         created_at: dateNow,
         updated_at: dateNow,
       })
@@ -55,8 +56,8 @@ class FakeOrganizationChartSeeder {
         user_id: index,
         parent_id: 3,
         area: jobArea,
-        office: 'Financial Office',
-        position_name: 'Financial Marketing',
+        office: 'FINANCIAL OFFICE',
+        position_name: 'FINANCIAL MARKETING',
         created_at: dateNow,
         updated_at: dateNow,
       })

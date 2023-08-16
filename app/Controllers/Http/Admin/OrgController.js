@@ -7,7 +7,7 @@ const { validate } = use('Validator')
 class OrgController {
   async index({ request, response }) {
     try {
-      let data = await Org.query().with('User').orderBy('id', 'asc')
+      let data = await Org.query().with('User').orderBy('id', 'asc').fetch()
 
       return response.send(data)
     } catch (error) {
@@ -63,9 +63,9 @@ class OrgController {
 
       const userId = request.input('user_id')
       const parentId = request.input('parent_id')
-      const area = voca.titleCase(request.input('area'))
-      const office = voca.titleCase(request.input('office'))
-      const positionName = voca.titleCase(request.input('position_name'))
+      const area = voca.upperCase(request.input('area'))
+      const office = voca.upperCase(request.input('office'))
+      const positionName = voca.upperCase(request.input('position_name'))
 
       // Store data
       let store = await Org.create({
@@ -106,9 +106,9 @@ class OrgController {
       const id = request.input('id')
       const userId = request.input('user_id')
       const parentId = request.input('parent_id')
-      const area = voca.titleCase(request.input('area'))
-      const office = voca.titleCase(request.input('office'))
-      const positionName = voca.titleCase(request.input('position_name'))
+      const area = voca.upperCase(request.input('area'))
+      const office = voca.upperCase(request.input('office'))
+      const positionName = voca.upperCase(request.input('position_name'))
 
       // Find data
       const findData = await Org.find(id)
