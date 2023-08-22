@@ -131,6 +131,7 @@ const Base = Route => {
 
     // Orgs routes
     Route.post('orgs', 'Superadmin/OrgController.index')
+    Route.get('orgs', 'Superadmin/OrgController.indexAll')
     Route.get('org', 'Superadmin/OrgController.get')
     Route.post('org', 'Superadmin/OrgController.create')
     Route.put('org', 'Superadmin/OrgController.edit')

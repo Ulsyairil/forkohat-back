@@ -118,6 +118,7 @@ const Base = Route => {
 
     // Orgs routes
     Route.post('orgs', 'Admin/OrgController.index')
+    Route.get('orgs', 'Admin/OrgController.indexAll')
     Route.get('org', 'Admin/OrgController.get')
     Route.post('org', 'Admin/OrgController.create')
     Route.put('org', 'Admin/OrgController.edit')

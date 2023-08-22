@@ -7,6 +7,48 @@ const { validate } = use('Validator')
 class OrgController {
   async index({ request, response }) {
     try {
+      const rules = {
+        page: 'required|integer',
+        limit: 'required|integer',
+        order: 'required|in:asc,desc',
+        search: 'string',
+      }
+
+      const validation = await validate(request.all(), rules)
+
+      if (validation.fails()) {
+        return response.status(422).send(validation.messages()[0])
+      }
+
+      const page = request.input('page')
+      const limit = request.input('limit')
+      const order = request.input('order')
+      const search = request.input('search')
+
+      // Get data
+      let query = Org.query().with('User')
+
+      if (search) {
+        query
+          .whereHas('User', builder => {
+            builder.where('fullname', 'like', `%${search}%`)
+          })
+          .orWhere('area', 'like', `%${search}%`)
+          .orWhere('office', 'like', `%${search}%`)
+          .orWhere('positionName', 'like', `%${search}%`)
+      }
+
+      let data = await query.orderBy('id', order).paginate(page, limit)
+
+      return response.send(data)
+    } catch (error) {
+      console.log(error.message)
+      return response.status(500).send(error.message)
+    }
+  }
+
+  async indexAll({ request, response }) {
+    try {
       let data = await Org.query().with('User').orderBy('id', 'asc').fetch()
 
       return response.send(data)
@@ -69,11 +111,11 @@ class OrgController {
 
       // Store data
       let store = await Org.create({
-        user_id: userId,
-        parent_id: parentId,
+        userId: userId,
+        parentId: parentId,
         area: area,
         office: office,
-        position_name: positionName,
+        positionName: positionName,
       })
 
       // Get data stored
@@ -121,11 +163,11 @@ class OrgController {
 
       // Update data
       await Org.query().where('id', id).update({
-        user_id: userId,
-        parent_id: parentId,
+        userId: userId,
+        parentId: parentId,
         area: area,
         office: office,
-        position_name: positionName,
+        positionName: positionName,
       })
 
       // Get data created

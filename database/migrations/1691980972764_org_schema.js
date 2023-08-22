@@ -8,17 +8,24 @@ class OrgSchema extends Schema {
     this.create('orgs', table => {
       table.bigIncrements()
       table
-        .bigInteger('user_id')
+        .bigInteger('userId')
         .notNullable()
         .unsigned()
         .references('id')
         .inTable('users')
         .onUpdate('cascade')
         .onDelete('cascade')
-      table.bigInteger('parent_id').nullable()
+      table
+        .bigInteger('parentId')
+        .nullable()
+        .unsigned()
+        .references('id')
+        .inTable('orgs')
+        .onUpdate('cascade')
+        .onDelete('cascade')
       table.text('area').nullable()
       table.string('office').nullable()
-      table.string('position_name').notNullable()
+      table.string('positionName').notNullable()
       table.timestamps()
     })
   }

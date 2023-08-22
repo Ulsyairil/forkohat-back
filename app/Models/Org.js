@@ -26,7 +26,7 @@ class Org extends Model {
   }
 
   User() {
-    return this.hasOne('App/Models/User', 'user_id', 'id')
+    return this.hasOne('App/Models/User', 'userId', 'id')
   }
 }
 

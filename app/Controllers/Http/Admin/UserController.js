@@ -68,6 +68,8 @@ class UserController {
       const data = await User.query()
         .with('Rule')
         .with('Rule.Permission')
+        .whereNot('rule_id', 1)
+        .whereNot('rule_id', 2)
         .whereNull('deleted_at')
         .orderBy('fullname', 'asc')
         .fetch()
@@ -97,6 +99,8 @@ class UserController {
       const data = await User.query()
         .with('Rule')
         .with('Rule.Permission')
+        .whereNot('rule_id', 1)
+        .whereNot('rule_id', 2)
         .where('id', user_id)
         .first()
 

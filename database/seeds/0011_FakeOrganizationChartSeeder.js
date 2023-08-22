@@ -13,39 +13,41 @@ class FakeOrganizationChartSeeder {
     const jobArea = Voca.upperCase(Faker.person.jobArea())
 
     await Database.table('orgs').insert({
-      user_id: 4,
+      userId: 4,
       area: jobArea,
       office: 'CEO OFFICE',
-      position_name: 'CEO',
+      positionName: 'CEO',
       created_at: dateNow,
       updated_at: dateNow,
     })
 
     await Database.table('orgs').insert({
-      user_id: 5,
+      userId: 5,
+      parentId: 1,
       area: jobArea,
       office: 'CTO OFFICE',
-      position_name: 'CTO',
+      positionName: 'CTO',
       created_at: dateNow,
       updated_at: dateNow,
     })
 
     await Database.table('orgs').insert({
-      user_id: 6,
+      userId: 6,
+      parentId: 1,
       area: jobArea,
       office: 'CFO OFFICE',
-      position_name: 'CFO',
+      positionName: 'CFO',
       created_at: dateNow,
       updated_at: dateNow,
     })
 
     for (let index = 7; index <= 10; index++) {
       await Database.table('orgs').insert({
-        user_id: index,
-        parent_id: 2,
+        userId: index,
+        parentId: 2,
         area: jobArea,
         office: 'IT OFFICE',
-        position_name: 'STAFF IT',
+        positionName: 'STAFF IT',
         created_at: dateNow,
         updated_at: dateNow,
       })
@@ -53,11 +55,11 @@ class FakeOrganizationChartSeeder {
 
     for (let index = 11; index <= 13; index++) {
       await Database.table('orgs').insert({
-        user_id: index,
-        parent_id: 3,
+        userId: index,
+        parentId: 3,
         area: jobArea,
         office: 'FINANCIAL OFFICE',
-        position_name: 'FINANCIAL MARKETING',
+        positionName: 'FINANCIAL MARKETING',
         created_at: dateNow,
         updated_at: dateNow,
       })
