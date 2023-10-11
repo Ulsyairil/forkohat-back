@@ -1,56 +1,69 @@
-const fs = require("fs");
-const path = require("path");
+const fs = require('fs')
+const path = require('path')
 
 try {
-  fs.mkdirSync(path.join(process.cwd(), "/resources/uploads/carousel"), {
+  fs.mkdirSync(path.join(process.cwd(), '/resources/uploads/carousel'), {
     recursive: true,
-  });
+  })
 
-  console.log(
-    `Directory created : ${process.cwd()}/resources/uploads/carousel`
-  );
+  console.log(`Directory created : ${process.cwd()}/resources/uploads/carousel`)
 } catch (error) {
-  console.log(error);
+  console.log(error)
 }
 
 try {
-  fs.mkdirSync(path.join(process.cwd(), "/resources/uploads/gallery"), {
+  fs.mkdirSync(path.join(process.cwd(), '/resources/uploads/gallery'), {
     recursive: true,
-  });
+  })
 
-  console.log(`Directory created : ${process.cwd()}/resources/uploads/gallery`);
+  console.log(`Directory created : ${process.cwd()}/resources/uploads/gallery`)
 } catch (error) {
-  console.log(error);
+  console.log(error)
 }
 
 try {
-  fs.mkdirSync(path.join(process.cwd(), "/resources/uploads/news"), {
+  fs.mkdirSync(path.join(process.cwd(), '/resources/uploads/news'), {
     recursive: true,
-  });
+  })
 
-  console.log(`Directory created : ${process.cwd()}/resources/uploads/news`);
+  console.log(`Directory created : ${process.cwd()}/resources/uploads/news`)
 } catch (error) {
-  console.log(error);
+  console.log(error)
 }
 
 try {
-  fs.mkdirSync(path.join(process.cwd(), "/resources/uploads/arrangements"), {
+  fs.mkdirSync(path.join(process.cwd(), '/resources/uploads/arrangements'), {
     recursive: true,
-  });
+  })
 
   console.log(
     `Directory created : ${process.cwd()}/resources/uploads/arrangements`
-  );
+  )
 } catch (error) {
-  console.log(error);
+  console.log(error)
 }
 
 try {
-  fs.mkdirSync(path.join(process.cwd(), "/resources/uploads/event"), {
-    recursive: true,
-  });
+  fs.mkdirSync(
+    path.join(process.cwd(), '/resources/uploads/arrangements/items'),
+    {
+      recursive: true,
+    }
+  )
 
-  console.log(`Directory created : ${process.cwd()}/resources/uploads/event`);
+  console.log(
+    `Directory created : ${process.cwd()}/resources/uploads/arrangements/items`
+  )
 } catch (error) {
-  console.log(error);
+  console.log(error)
+}
+
+try {
+  fs.mkdirSync(path.join(process.cwd(), '/resources/uploads/event'), {
+    recursive: true,
+  })
+
+  console.log(`Directory created : ${process.cwd()}/resources/uploads/event`)
+} catch (error) {
+  console.log(error)
 }
