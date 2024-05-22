@@ -1,12 +1,12 @@
 'use strict'
 
-/** @type {import('@adonisjs/lucid/src/Factory')} */
-const Factory = use('Factory')
+/** @type {import('@adonisjs/lucid/src/Schema')} */
+const Schema = use('Schema')
 const Database = use('Database')
 const Moment = require('moment')
 
-class ProgramSeeder {
-  async run() {
+class AddDefaultValueProgramsSchema extends Schema {
+  async up() {
     const dateNow = Moment().format('YYYY-MM-DD HH:mm:ss')
 
     await Database.table('programs').insert([
@@ -59,9 +59,9 @@ class ProgramSeeder {
         updated_at: dateNow,
       },
     ])
-
-    console.log('Programs Generated')
   }
+
+  down() {}
 }
 
-module.exports = ProgramSeeder
+module.exports = AddDefaultValueProgramsSchema

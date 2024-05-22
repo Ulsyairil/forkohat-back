@@ -18,3 +18,6 @@ database/*.sqlite
 # Uploading files
 resources/uploads/*
 tmp/*
+
+# Logs
+logs/*

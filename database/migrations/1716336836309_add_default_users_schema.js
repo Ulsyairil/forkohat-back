@@ -1,16 +1,13 @@
 'use strict'
 
-/** @type {import('@adonisjs/lucid/src/Factory')} */
-const Factory = use('Factory')
+/** @type {import('@adonisjs/lucid/src/Schema')} */
+const Schema = use('Schema')
+const Moment = require('moment')
 const Database = use('Database')
 const Hash = use('Hash')
-const Chance = require('chance')
-const Faker = require('@faker-js/faker').fakerID_ID
-const Moment = require('moment')
 
-class UserSeeder {
-  async run() {
-    const RandomNumber = new Chance()
+class AddDefaultUsersSchema extends Schema {
+  async up () {
     const dateNow = Moment().format('YYYY-MM-DD HH:mm:ss')
 
     await Database.table('users').insert([
@@ -42,9 +39,10 @@ class UserSeeder {
         updated_at: dateNow,
       },
     ])
+  }
 
-    console.log('Users Generated')
+  down () {
   }
 }
 
-module.exports = UserSeeder
+module.exports = AddDefaultUsersSchema

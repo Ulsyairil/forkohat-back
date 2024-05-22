@@ -1,12 +1,12 @@
 'use strict'
 
-/** @type {import('@adonisjs/lucid/src/Factory')} */
-const Factory = use('Factory')
-const Database = use('Database')
+/** @type {import('@adonisjs/lucid/src/Schema')} */
+const Schema = use('Schema')
 const Moment = require('moment')
+const Database = use('Database')
 
-class RuleSeeder {
-  async run() {
+class AddDefaultRulesSchema extends Schema {
+  async up () {
     const dateNow = Moment().format('YYYY-MM-DD HH:mm:ss')
 
     await Database.table('rules').insert([
@@ -29,9 +29,10 @@ class RuleSeeder {
         updated_at: dateNow,
       },
     ])
+  }
 
-    console.log('Rules Generated')
+  down () {
   }
 }
 
-module.exports = RuleSeeder
+module.exports = AddDefaultRulesSchema
