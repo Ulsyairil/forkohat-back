@@ -130,7 +130,7 @@ class AuthController {
       }
 
       await User.create({
-        rule_id: 2,
+        rule_id: 3,
         fullname: fullname,
         email: email,
         username: username,
