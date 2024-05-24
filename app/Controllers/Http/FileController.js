@@ -14,15 +14,15 @@ const Helpers = use('Helpers')
 class FileController {
   async index({ params, request, response }) {
     try {
-      if (params.mime == null || params.mime == '') {
+      if (!params.mime) {
         return response.status(422).send({
-          message: '"mime" harus diisi',
+          message: 'mime harus diisi',
         })
       }
 
-      if (params.filename == null || params.filename == '') {
+      if (!params.filename) {
         return response.status(422).send({
-          message: '"filename" Harus Diisi',
+          message: 'filename Harus Diisi',
         })
       }
 
